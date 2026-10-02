@@ -1,0 +1,102 @@
+/* ==========================================================================
+   Sponsors — light band, copy left / 3x2 logo grid right
+   ========================================================================== */
+
+.sponsors {
+  background-color: var(--surface-light-alt);
+  border-bottom: 1px solid var(--border-on-light);
+}
+
+.sponsors-inner {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  align-items: center;
+  gap: clamp(32px, 5vw, 60px);
+}
+
+.sponsors-description {
+  max-width: 400px;
+  margin-bottom: 28px;
+}
+
+/* ---------- Logo grid ---------- */
+
+.sponsors-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.sponsor-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 92px;
+  padding: 16px;
+  border: 1px solid var(--border-on-light);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-white);
+  transition: border-color var(--ease), transform var(--ease),
+    background-color var(--ease);
+}
+
+.sponsor-mark:hover {
+  transform: translateY(-2px);
+  border-color: rgba(47, 111, 228, 0.3);
+  background-color: #ffffff;
+}
+
+.sponsor-logo {
+  width: auto;
+  max-width: 100%;
+  height: 40px;
+  object-fit: contain;
+  filter: grayscale(100%);
+  opacity: 0.72;
+  transition: filter var(--ease), opacity var(--ease);
+}
+
+.sponsor-mark:hover .sponsor-logo {
+  filter: none;
+  opacity: 1;
+}
+
+.sponsor-wordmark {
+  color: #5b6784;
+  font-size: clamp(15px, 1.9vw, 19px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+  transition: color var(--ease);
+}
+
+.sponsor-mark:hover .sponsor-wordmark {
+  color: var(--text-on-light);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  .sponsors-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .sponsors-description {
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .sponsors-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .sponsor-mark {
+    min-height: 76px;
+    padding: 12px;
+  }
+}

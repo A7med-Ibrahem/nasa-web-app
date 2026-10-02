@@ -1,0 +1,124 @@
+/* ==========================================================================
+   About — three column intro with statistics
+   ========================================================================== */
+
+.about-inner {
+  display: grid;
+  grid-template-columns: 1.05fr 1.05fr 0.9fr;
+  align-items: center;
+  gap: clamp(28px, 4vw, 52px);
+}
+
+/* ---------- Left: copy ---------- */
+
+.about-description {
+  margin-bottom: 28px;
+  max-width: 400px;
+}
+
+/* ---------- Center: figure ---------- */
+
+.about-figure {
+  margin: 0;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--navy-850);
+}
+
+.about-image {
+  width: 100%;
+  height: 340px;
+  object-fit: cover;
+}
+
+/* ---------- Right: statistics ---------- */
+
+.about-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.about-stat {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.about-stat-icon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border: 1px solid rgba(90, 155, 255, 0.45);
+  border-radius: var(--radius-md);
+  color: var(--blue-strong);
+  background-color: rgba(74, 158, 255, 0.08);
+}
+
+.about-stat-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.about-stat-value {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.about-stat-label {
+  margin-top: 3px;
+  color: var(--muted-on-dark);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1000px) {
+  .about-inner {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+
+  .about-stats {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px 32px;
+  }
+
+  .about-stat {
+    flex: 1 1 180px;
+  }
+
+  .about-image {
+    height: 300px;
+  }
+}
+
+@media (max-width: 720px) {
+  .about-inner {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .about-description {
+    max-width: none;
+  }
+
+  .about-image {
+    height: 240px;
+  }
+
+  .about-stats {
+    flex-direction: column;
+    gap: 18px;
+  }
+}

@@ -1,0 +1,91 @@
+/* ==========================================================================
+   Previous events — light band, copy left / image gallery right
+   ========================================================================== */
+
+.previous-events {
+  background-color: var(--surface-light);
+  border-bottom: 1px solid var(--border-on-light);
+}
+
+.previous-events-inner {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  align-items: center;
+  gap: clamp(32px, 5vw, 56px);
+}
+
+.previous-events-text .section-desc {
+  max-width: 400px;
+}
+
+.previous-events-action {
+  margin-top: 26px;
+}
+
+/* ---------- Gallery ---------- */
+
+.events-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.event-media {
+  min-width: 0;
+}
+
+.event-media-link {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--border-on-light);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-light-alt);
+}
+
+.event-image {
+  width: 100%;
+  height: clamp(180px, 22vw, 240px);
+  object-fit: cover;
+  transition: transform 320ms ease;
+}
+
+.event-media-link:hover .event-image {
+  transform: scale(1.05);
+}
+
+.event-year-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+  background-color: var(--blue-ink);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  .previous-events-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .previous-events-text .section-desc {
+    max-width: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .events-gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .event-image {
+    height: 200px;
+  }
+}
