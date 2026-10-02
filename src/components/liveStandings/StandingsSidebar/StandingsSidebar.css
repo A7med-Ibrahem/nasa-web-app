@@ -1,0 +1,49 @@
+/* ==========================================================================
+   Standings sidebar — layout + the card surface all three cards share
+   ========================================================================== */
+
+.standings-sidebar {
+  display: grid;
+  align-content: start;
+  gap: 20px;
+  min-width: 0;
+}
+
+/*
+ * The shared card surface. Built from the same tokens as the homepage challenge
+ * card (`--card-navy`, `--border-on-dark`, `--radius-lg`) so the dashboard reads
+ * as the same site.
+ */
+.sidebar-card {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-lg);
+  background-color: var(--card-navy);
+  transition: transform var(--ease), border-color var(--ease),
+    background-color var(--ease);
+}
+
+.sidebar-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(140, 180, 255, 0.28);
+  background-color: var(--card-navy-strong);
+}
+
+/*
+ * A card with a media header runs its media to the card edge, so the shared
+ * padding is neutralised by an explicit modifier on that card. An explicit class
+ * is used rather than `:has()` so the layout does not depend on selector support.
+ */
+.sidebar-card--flush {
+  padding: 0;
+}
+
+.sidebar-card-title {
+  margin-bottom: 16px;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}

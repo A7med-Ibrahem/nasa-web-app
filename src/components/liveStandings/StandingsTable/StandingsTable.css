@@ -1,0 +1,126 @@
+/* ==========================================================================
+   Standings table — the main dashboard card
+   --------------------------------------------------------------------------
+   The card surface and the scroll container are deliberately separate boxes.
+   The surface owns the border / radius / background / internal padding so the
+   table does not touch the card edge; the wrapper owns `overflow-x` alone.
+   ========================================================================== */
+
+/* ---------- Card surface ---------- */
+
+.standings-table-card {
+  /*
+   * `min-width: 0` lets this grid item shrink below its content's intrinsic
+   * width. Without it a grid item defaults to `min-width: auto`, which refuses
+   * to shrink, and the wide table would stretch the grid and the document with
+   * it — this is the single most important line for page-level overflow.
+   */
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-lg);
+  background-color: var(--card-navy);
+  transition: border-color var(--ease), background-color var(--ease);
+}
+
+.standings-table-card:hover {
+  border-color: rgba(140, 180, 255, 0.22);
+}
+
+/* ---------- Scroll container ---------- */
+
+.standings-table-wrapper {
+  /*
+   * Contained horizontal scrolling. `tabIndex` + a focusable region (see
+   * StandingsTable.jsx) keeps the rail reachable by keyboard, matching the
+   * challenge rail on the homepage.
+   */
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+
+  border-radius: calc(var(--radius-lg) - 6px);
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 165, 235, 0.45) transparent;
+}
+
+.standings-table-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.standings-table-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.standings-table-wrapper::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-pill);
+  background-color: rgba(120, 165, 235, 0.4);
+}
+
+.standings-table-wrapper:focus-visible {
+  outline: 2px solid var(--blue-strong);
+  outline-offset: 2px;
+}
+
+/* ---------- Table ---------- */
+
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/*
+ * Below the desktop breakpoint five columns cannot stay legible in a phone's
+ * width, so the table holds a minimum width and the *wrapper* scrolls. The page
+ * itself remains exactly viewport-wide — that is the whole reason the scroll box
+ * exists rather than a page-level `overflow-x`.
+ */
+@media (max-width: 860px) {
+  .standings-table {
+    min-width: 540px;
+  }
+}
+
+/* ---------- Header row ---------- */
+
+.standings-table thead th {
+  padding: 15px 16px;
+  border-bottom: 1px solid var(--border-on-dark);
+  color: var(--muted-on-dark-alt);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/*
+ * Rank is the narrowest column, team is the widest, challenge is medium, score
+ * and movement are narrow. Widths are on the header cells so the browser shares
+ * one column model across `<thead>` and `<tbody>`.
+ */
+.standings-table-col-rank {
+  width: 78px;
+}
+
+.standings-table-col-team {
+  width: auto;
+}
+
+.standings-table-col-challenge {
+  width: 26%;
+  min-width: 150px;
+}
+
+.standings-table-col-score {
+  width: 124px;
+  text-align: right;
+}
+
+.standings-table-col-movement {
+  width: 104px;
+  text-align: right;
+}

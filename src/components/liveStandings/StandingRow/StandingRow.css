@@ -1,0 +1,239 @@
+/* ==========================================================================
+   Standing row — one <tr> of the standings table
+   ========================================================================== */
+
+.standing-row {
+  transition: background-color var(--ease);
+}
+
+/*
+ * Desktop hover is a surface tint only. A `translateY` lift is deliberately not
+ * applied: a transform on a `<tr>` is inconsistent across engines, and even
+ * where it works it would overlap the adjacent row's separator and read as a
+ * neighbouring row moving. The spec lists the lift as optional; the tint is the
+ * half that is reliable everywhere.
+ */
+.standing-row:hover {
+  background-color: rgba(255, 255, 255, 0.035);
+}
+
+/*
+ * First place is highlighted with the tokens the project already uses for the
+ * leader treatment on the homepage challenge rail — a brighter card background
+ * and a stronger left accent — instead of introducing a medal-gold colour. The
+ * background is painted on the row's own cells because a <tr> cannot carry a
+ * background reliably across engines.
+ */
+.standing-row[data-standing-rank="1"]:hover {
+  background-color: rgba(13, 41, 71, 0.55);
+}
+
+.standing-row[data-standing-rank="1"] .standing-cell {
+  background-color: var(--card-navy-strong);
+}
+
+.standing-row[data-standing-rank="1"] .standing-cell--rank {
+  box-shadow: inset 2px 0 0 var(--nasa-red);
+}
+
+/*
+ * The row now sits inside the table card's padding, so the leader row's fill is a
+ * rounded rectangle inset from the card edge. Its outer top corners are rounded
+ * to match that inset, otherwise the fill would show square corners against the
+ * card's rounded ones.
+ */
+.standing-row[data-standing-rank="1"] .standing-cell:first-child {
+  border-top-left-radius: calc(var(--radius-lg) - 6px);
+}
+
+.standing-row[data-standing-rank="1"] .standing-cell:last-child {
+  border-top-right-radius: calc(var(--radius-lg) - 6px);
+}
+
+/* ---------- Cells ---------- */
+
+/* 14px block padding around a 40px avatar keeps the row at ~68px. */
+.standing-cell {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-on-dark);
+  vertical-align: middle;
+}
+
+.standing-row:last-child .standing-cell {
+  border-bottom: 0;
+}
+
+.standing-cell--challenge {
+  color: var(--muted-on-dark);
+}
+
+/* ---------- Rank ---------- */
+
+.standing-rank {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted-on-dark);
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.standing-row[data-standing-rank="1"] .standing-rank {
+  color: #ffffff;
+}
+
+.standing-rank-crown {
+  display: inline-flex;
+  color: var(--nasa-red);
+}
+
+/* ---------- Team identity ---------- */
+
+.standing-team {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.standing-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(140, 180, 255, 0.22);
+  border-radius: 50%;
+  background-color: rgba(74, 158, 255, 0.08);
+  color: var(--blue-strong);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  user-select: none;
+}
+
+.standing-team-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.standing-team-name {
+  overflow: hidden;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Challenge ---------- */
+
+.standing-challenge {
+  display: block;
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Score ---------- */
+
+.standing-score {
+  display: block;
+  color: #ffffff;
+  font-size: 19px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  text-align: right;
+}
+
+/* ---------- Movement ---------- */
+
+.standing-movement {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  min-width: 40px;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.standing-movement svg {
+  flex: none;
+}
+
+.standing-movement-value {
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Direction is carried by the arrow glyph first; colour only reinforces it, and
+ * both states come from the locked palette (blue accent vs muted red, the same
+ * red the live indicators and the brand rule already use).
+ */
+.standing-movement--up {
+  color: var(--blue-strong);
+}
+
+.standing-movement--down {
+  color: var(--nasa-red);
+}
+
+.standing-movement--none {
+  color: var(--muted-on-dark-alt);
+}
+
+/* ---------- Responsive ---------- */
+
+/*
+ * The five-column table keeps a `min-width` (see StandingsTable.css) and lets the
+ * wrapper scroll, so nothing is hidden at small widths — rank, team, score and
+ * movement all stay readable without horizontal page overflow. Only density is
+ * trimmed here.
+ */
+@media (max-width: 860px) {
+  .standing-cell {
+    padding: 12px 12px;
+  }
+
+  .standing-team {
+    gap: 10px;
+  }
+
+  .standing-team-name {
+    font-size: 14px;
+  }
+
+  .standing-challenge {
+    font-size: 12px;
+  }
+
+  .standing-score {
+    font-size: 17px;
+  }
+
+  .standing-movement {
+    min-width: 32px;
+  }
+}
+
+@media (max-width: 560px) {
+  .standing-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 11px;
+  }
+
+  .standing-team-name {
+    font-size: 13px;
+  }
+}

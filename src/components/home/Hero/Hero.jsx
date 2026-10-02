@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { Link } from "react-router-dom";
 import "./Hero.css";
 
 import { hero } from "../../../data/homepageData";
@@ -61,15 +62,17 @@ export default function Hero() {
           <p className="hero-description" data-reveal-item>{hero.description}</p>
 
           <div className="hero-actions" data-reveal-item>
-            <a href={hero.primaryAction.href} className="btn btn--primary">
+            {/* Router links, so "Live Standings" is a client-side
+                navigation rather than a full document reload. */}
+            <Link to={hero.primaryAction.href} className="btn btn--primary">
               {hero.primaryAction.label}
               <PrimaryIcon />
-            </a>
+            </Link>
 
-            <a href={hero.secondaryAction.href} className="btn btn--ghost-dark">
+            <Link to={hero.secondaryAction.href} className="btn btn--ghost-dark">
               <SecondaryIcon />
               {hero.secondaryAction.label}
-            </a>
+            </Link>
           </div>
         </div>
       </div>

@@ -90,6 +90,64 @@ export function RocketIcon({ size = 28 }) {
   );
 }
 
+/* --------------------------------------------------------------------------
+   Standings icons
+   -------------------------------------------------------------------------- */
+
+/* Movement is drawn as an arrow rather than a triangle so it stays legible at
+   the small size it appears in the standings table. */
+export function TrendUpIcon({ size = 14 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <path d="M6 18 18 6" />
+      <path d="M9.5 6H18v8.5" />
+    </svg>
+  );
+}
+
+export function TrendDownIcon({ size = 14 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <path d="M6 6l12 12" />
+      <path d="M18 9.5V18H9.5" />
+    </svg>
+  );
+}
+
+export function CrownIcon({ size = 15 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <path d="M4 17h16" />
+      <path d="M4 17 3 7.5l4.6 3.2L12 5l4.4 5.7L21 7.5 20 17" />
+    </svg>
+  );
+}
+
+/* Two figures: distinct from UsersIcon, which shows a single person plus a
+   second partial figure, and used where a *group* of teams is meant. */
+export function TeamIcon({ size = 18 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <circle cx="8.5" cy="8" r="2.8" />
+      <circle cx="16.5" cy="9.5" r="2.2" />
+      <path d="M3.5 18a5 5 0 0 1 10 0" />
+      <path d="M14.5 18a3.6 3.6 0 0 1 6-1.7" />
+    </svg>
+  );
+}
+
+export function ChartIcon({ size = 18 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <path d="M4 20V4" />
+      <path d="M4 20h16" />
+      <path d="M8.5 20v-6" />
+      <path d="M13 20v-9" />
+      <path d="M17.5 20v-4" />
+    </svg>
+  );
+}
+
 export function MenuIcon({ size = 22 }) {
   return (
     <svg {...base} width={size} height={size}>

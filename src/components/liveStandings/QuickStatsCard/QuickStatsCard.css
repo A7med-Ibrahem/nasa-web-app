@@ -1,0 +1,55 @@
+/* ==========================================================================
+   Quick stats — sidebar card
+   ========================================================================== */
+
+.quick-stat-list {
+  display: grid;
+  gap: 2px;
+}
+
+.quick-stat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border-on-dark);
+}
+
+.quick-stat:first-child {
+  border-top: 0;
+  padding-top: 4px;
+}
+
+.quick-stat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background-color: rgba(74, 158, 255, 0.08);
+  color: var(--blue-strong);
+}
+
+.quick-stat-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.quick-stat-value {
+  color: #ffffff;
+  font-size: 26px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.quick-stat-label {
+  margin-top: 3px;
+  color: var(--muted-on-dark-alt);
+  font-size: 13px;
+  line-height: 1.4;
+}

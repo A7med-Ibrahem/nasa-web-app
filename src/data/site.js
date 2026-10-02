@@ -25,12 +25,13 @@ export const site = {
   logoAlt: "NASA Space Apps Hurghada",
 };
 
-/* Primary navigation. `id` is what a router will match against when page
-   routing is introduced, so the active link stays a single data decision. */
+/* Primary navigation. `id` is what the router matches against, so the active
+   link stays a single data decision rather than a hardcoded check in the
+   Navbar. */
 export const navigationLinks = [
   { id: "home", label: "Home", href: "/" },
   { id: "challenges", label: "Challenges", href: "/challenges" },
-  { id: "standings", label: "Live Standings", href: "/standings" },
+  { id: "standings", label: "Live Standings", href: "/live-standings" },
   { id: "about", label: "About", href: "#about" },
 ];
 
@@ -48,7 +49,7 @@ export const footer = {
   links: [
     { id: "home", label: "Home", href: "/" },
     { id: "challenges", label: "Challenges", href: "/challenges" },
-    { id: "standings", label: "Live Standings", href: "/standings" },
+    { id: "standings", label: "Live Standings", href: "/live-standings" },
     { id: "about", label: "About", href: "/about" },
   ],
   socials: [

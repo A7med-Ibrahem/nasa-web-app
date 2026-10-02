@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
 
 // Order matters: design tokens must be defined before the reset and
 // primitives that consume them, and the shared motion layer loads last so it
@@ -12,6 +13,10 @@ import App from "./App.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <App />
+    {/* The router wraps the app, not MainLayout, so navigating between pages
+        never unmounts the shared shell. */}
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </StrictMode>,
 );

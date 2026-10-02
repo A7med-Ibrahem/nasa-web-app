@@ -1,0 +1,225 @@
+/* ==========================================================================
+   Live Standings hero — dark space stage
+   --------------------------------------------------------------------------
+   Deliberately the same composition, spacing scale and tokens as
+   components/home/Hero/Hero.css, at a slightly shorter height because this
+   hero carries one heading rather than a full homepage lockup. Nothing here
+   introduces a colour that variables.css does not already define.
+   ========================================================================== */
+
+.standings-hero {
+  position: relative;
+  /* Clips the oversized Earth art so it can never widen the document. */
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  min-height: clamp(300px, 42vh, 400px);
+  padding-block: clamp(40px, 5vw, 60px);
+  background-color: var(--navy-950);
+  background-image: radial-gradient(
+      ellipse 80% 60% at 78% 42%,
+      rgba(74, 158, 255, 0.16),
+      transparent 70%
+    ),
+    linear-gradient(180deg, var(--navy-900), var(--navy-950) 78%);
+}
+
+/* ---------- Earth visual ---------- */
+
+/*
+ * ~44% of the hero width, and deliberately pushed past the right edge so part of
+ * the planet leaves the frame. `overflow: hidden` on the hero above is what makes
+ * that bleed safe instead of a horizontal-overflow bug.
+ */
+.standings-hero-media {
+  position: absolute;
+  top: 50%;
+  right: -5%;
+  z-index: 0;
+  width: min(44%, 640px);
+  height: 128%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.standings-hero-media-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 72% 50%;
+  /* Kept in sync with the `hero-float` keyframes, which supply the same value
+     while animating. Both paths must match so the crop never jumps when motion
+     is disabled by a media query or by the OS setting. */
+  transform: scale(1.05);
+}
+
+/* Dissolves the artwork's left edge into the page background and adds the
+   bright rim + bottom falloff, exactly as the homepage hero does. */
+.standings-hero-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+      90deg,
+      var(--navy-950) 0%,
+      rgba(3, 20, 38, 0.9) 16%,
+      rgba(3, 20, 38, 0.42) 42%,
+      rgba(3, 20, 38, 0) 66%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(3, 20, 38, 0.55) 0%,
+      transparent 22%,
+      transparent 66%,
+      var(--navy-950) 99%
+    );
+}
+
+/* ---------- Readability scrim over the text side ---------- */
+
+.standings-hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: linear-gradient(
+    90deg,
+    rgba(3, 20, 38, 0.9) 0%,
+    rgba(3, 20, 38, 0.55) 40%,
+    rgba(3, 20, 38, 0) 72%
+  );
+}
+
+/* ---------- Content ---------- */
+
+.standings-hero-inner {
+  position: relative;
+  z-index: 2;
+}
+
+.standings-hero-content {
+  max-width: 560px;
+}
+
+/* ---------- Live badge ---------- */
+
+.standings-hero-badge {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 22px;
+  color: var(--blue-strong);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.standings-hero-badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--nasa-red);
+
+  /* The same live-dot treatment the navbar Live Standings pill already uses. */
+  animation: live-dot-pulse 2.4s var(--ease-motion) infinite;
+}
+
+.standings-hero-badge-rule {
+  width: 24px;
+  height: 2px;
+  border-radius: 2px;
+  background-color: var(--nasa-red);
+}
+
+.standings-hero-badge-detail {
+  color: var(--muted-on-dark);
+  letter-spacing: 0.16em;
+}
+
+/* ---------- Headline & copy ---------- */
+
+/*
+ * 36px floor / 60px ceiling: on a ~1440px viewport the 5.2vw term lands near the
+ * top of the requested 52-64px band, and the floor keeps a phone in the 36-42px
+ * band without a separate breakpoint.
+ */
+.standings-hero-title {
+  font-size: clamp(36px, 5.2vw, 60px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.standings-hero-description {
+  max-width: 520px;
+  margin-top: 16px;
+  color: var(--muted-on-dark);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  .standings-hero-media {
+    width: 74%;
+    height: 118%;
+    right: -10%;
+    opacity: 0.9;
+  }
+
+  .standings-hero-scrim {
+    background-image: linear-gradient(
+      90deg,
+      rgba(3, 20, 38, 0.94) 0%,
+      rgba(3, 20, 38, 0.75) 60%,
+      rgba(3, 20, 38, 0.6) 100%
+    );
+  }
+}
+
+@media (max-width: 620px) {
+  .standings-hero {
+    min-height: auto;
+    padding-block: 44px 52px;
+  }
+
+  .standings-hero-content {
+    max-width: 100%;
+  }
+
+  .standings-hero-description {
+    font-size: 15px;
+  }
+
+  .standings-hero-media {
+    width: 130%;
+    height: 100%;
+    top: auto;
+    right: -30%;
+    bottom: 0;
+    transform: none;
+    opacity: 0.5;
+  }
+
+  .standings-hero-media::after {
+    background-image: linear-gradient(
+      180deg,
+      rgba(3, 20, 38, 0.95) 0%,
+      rgba(3, 20, 38, 0.55) 45%,
+      rgba(3, 20, 38, 0.8) 100%
+    );
+  }
+
+  .standings-hero-scrim {
+    background-image: linear-gradient(
+      180deg,
+      rgba(3, 20, 38, 0.86) 0%,
+      rgba(3, 20, 38, 0.78) 100%
+    );
+  }
+}

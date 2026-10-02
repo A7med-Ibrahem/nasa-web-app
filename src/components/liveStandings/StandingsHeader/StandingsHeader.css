@@ -1,0 +1,78 @@
+/* ==========================================================================
+   Standings header — title, supporting line, freshness metadata
+   ========================================================================== */
+
+.standings-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  margin-bottom: clamp(20px, 2.4vw, 28px);
+}
+
+.standings-header-text {
+  min-width: 0;
+}
+
+.standings-header-title {
+  font-size: clamp(26px, 2.6vw, 32px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: #ffffff;
+}
+
+.standings-header-description {
+  margin-top: 8px;
+  max-width: 520px;
+  color: var(--muted-on-dark);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ---------- Freshness metadata ---------- */
+
+.standings-header-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+
+/*
+ * The reference marks this with a green dot. The locked palette has no green, so
+ * the accent blue is used instead of inventing one — which also keeps the "live"
+ * language consistent with the eyebrow and section accents elsewhere in the site,
+ * where red is reserved for the live indicators themselves.
+ */
+.standings-header-status-dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--blue-strong);
+}
+
+.standings-header-status-label {
+  color: var(--muted-on-dark-alt);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.standings-header-status-time {
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 620px) {
+  .standings-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+}

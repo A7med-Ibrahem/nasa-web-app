@@ -46,7 +46,7 @@ export const hero = {
   },
   secondaryAction: {
     label: "Live Standings",
-    href: "/standings",
+    href: "/live-standings",
     icon: "signal",
   },
 };

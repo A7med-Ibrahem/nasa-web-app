@@ -1,0 +1,56 @@
+/* ==========================================================================
+   Standings dashboard — main/sidebar grid
+   ========================================================================== */
+
+.standings-section {
+  background-color: var(--navy-section);
+}
+
+/* ---------- Body grid ---------- */
+
+/*
+ * Desktop split is ~70/30 within the existing 1200px container: the main column
+ * takes the flexible track and the sidebar is capped at 340px. The gap sits in
+ * the 24-32px band the design asks for.
+ */
+.standings-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 340px);
+  gap: clamp(24px, 2.6vw, 32px);
+  align-items: start;
+}
+
+/*
+ * `min-width: 0` on the main column is what actually prevents horizontal page
+ * overflow: a grid item defaults to `min-width: auto`, which refuses to shrink
+ * below its content, and a wide table would then stretch the grid and the
+ * document with it.
+ */
+.standings-main {
+  min-width: 0;
+}
+
+/* ---------- Responsive: sidebar drops below the table ---------- */
+
+/*
+ * Between 768px and the two-column floor above, the sidebar narrows to 280px so
+ * the main column keeps as much room as possible before the table has to scroll
+ * internally.
+ */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .standings-grid {
+    grid-template-columns: minmax(0, 1fr) 280px;
+  }
+}
+
+/*
+ * Below 768px the dashboard becomes one column. The sidebar keeps its own
+ * position in the DOM, so the reading order is: Overall Standings, freshness
+ * metadata, standings table, Current Challenge, Quick Stats, Standings by
+ * Challenge.
+ */
+@media (max-width: 768px) {
+  .standings-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

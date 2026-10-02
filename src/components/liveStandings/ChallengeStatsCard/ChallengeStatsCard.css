@@ -1,0 +1,62 @@
+/* ==========================================================================
+   Standings by challenge — sidebar card
+   ========================================================================== */
+
+.challenge-stat-list {
+  display: grid;
+  gap: 14px;
+}
+
+.challenge-stat-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.challenge-stat-name {
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.challenge-stat-teams {
+  flex: none;
+  color: var(--muted-on-dark-alt);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+}
+
+.challenge-stat-track {
+  display: block;
+  height: 4px;
+  margin-top: 8px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background-color: rgba(140, 180, 255, 0.1);
+}
+
+/*
+ * The indicator colours are the three blues that already exist in
+ * variables.css. `data-tone` maps to an existing custom property rather than to
+ * a literal colour, so the palette stays defined in exactly one place.
+ */
+.challenge-stat-bar {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+}
+
+.challenge-stat-bar[data-tone="blue-strong"] {
+  background-color: var(--blue-strong);
+}
+
+.challenge-stat-bar[data-tone="blue"] {
+  background-color: var(--blue);
+}
+
+.challenge-stat-bar[data-tone="blue-deep"] {
+  background-color: var(--blue-deep);
+}

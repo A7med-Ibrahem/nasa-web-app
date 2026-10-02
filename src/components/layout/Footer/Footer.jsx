@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import "./Footer.css";
 
 import { footer, site } from "../../../data/site";
@@ -15,7 +16,7 @@ function FooterBrand() {
   }
 
   return (
-    <a href={footer.brand.href} className="footer-brand">
+    <Link to={footer.brand.href} className="footer-brand">
       <span className="logo-frame footer-logo-frame">
         <img
           className="footer-logo"
@@ -25,7 +26,7 @@ function FooterBrand() {
           onError={() => setHasImageFailed(true)}
         />
       </span>
-    </a>
+    </Link>
   );
 }
 
@@ -44,9 +45,9 @@ export default function Footer() {
             <ul className="footer-nav-list">
               {footer.links.map((link) => (
                 <li key={link.id}>
-                  <a href={link.href} className="footer-nav-link">
+                  <Link to={link.href} className="footer-nav-link">
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

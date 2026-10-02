@@ -6,23 +6,23 @@ Frontend for **NASA Space Apps Hurghada**, a global hackathon where innovators,
 creators and problem-solvers tackle real-world challenges using NASA open data
 and space technology.
 
-This is a static, single-page frontend built with React and Vite. The homepage
-is implemented; additional pages (Challenges, Standings, Events, Sponsors, …)
-are planned. There is **no backend yet** — all content currently comes from
-static data modules, structured so each export can later be replaced by an API
-response of identical shape.
+This is a frontend built with React and Vite. The homepage and the
+**Live Standings** page (`/live-standings`) are implemented; additional pages
+(Challenges, Events, Sponsors, …) are planned. There is **no backend yet** — all
+content currently comes from static data modules, structured so each export can
+later be replaced by an API response of identical shape.
 
 ## Tech Stack
 
 - React 19
+- React Router 7 (client-side routing)
 - Vite 8
 - JavaScript (JSX)
 - CSS (plain CSS with custom properties — no CSS framework)
 - ESLint 10 (flat config, with `eslint-plugin-react-hooks` and
   `eslint-plugin-react-refresh`)
 
-No router, state manager, data-fetching library or UI kit is installed. Page
-routing is the first planned addition.
+No state manager, data-fetching library or UI kit is installed.
 
 ## Project Structure
 
@@ -43,47 +43,66 @@ src/
 │   │   ├── PreviousEvents/
 │   │   ├── CoreTeam/
 │   │   └── Sponsors/
+│   ├── liveStandings/     Live Standings blocks — not reusable outside the page
+│   │   ├── LiveStandingsHero/
+│   │   ├── StandingsSection/
+│   │   ├── StandingsSidebar/
+│   │   ├── StandingsTable/
+│   │   ├── StandingRow/
+│   │   ├── CurrentChallenge/
+│   │   ├── QuickStats/
+│   │   └── ChallengeStats/
 │   └── layout/            Page chrome shared by every page
 │       ├── Navbar/
 │       └── Footer/
 │
 ├── data/
 │   ├── site.js            Site-wide chrome: brand, navigation, footer
-│   └── homepageData.js    Home page content only
+│   ├── homepageData.js    Home page content only
+│   └── liveStandingsData.js  Live Standings page content only
 │
 ├── hooks/
-│   └── useEscapeKey.js    Escape-to-close behaviour (used by the mobile menu)
+│   ├── useEscapeKey.js        Escape-to-close behaviour (mobile menu)
+│   ├── usePrefersReducedMotion.js
+│   ├── useReveal.js           Scroll reveals + viewport reporting
+│   ├── useCountUp.js          One-shot numeric count-up
+│   └── usePointerParallax.js  Pointer-driven --mx/--my offset for hero art
 │
 ├── layouts/
-│   └── MainLayout/        Skip link + Navbar + <main> + Footer
+│   └── MainLayout/        Skip link + Navbar + <main> + Footer (router layout route)
 │
 ├── pages/
-│   └── Home/              Route-level composition of the home sections
+│   ├── Home/              Route-level composition of the home sections
+│   └── LiveStandings/     Route-level composition of the standings page
 │
 ├── styles/
 │   ├── variables.css      Design tokens (:root custom properties)
-│   └── globals.css        Reset, element defaults, shared primitives
+│   ├── globals.css        Reset, element defaults, shared primitives
+│   └── animations.css     The shared motion layer (reveals, floats, hovers)
 │
-├── App.jsx                Composition point — selects the page inside MainLayout
-└── main.jsx               React entry point; imports the global stylesheets
+├── App.jsx                Route table — maps paths to pages inside MainLayout
+└── main.jsx               React entry point; router + global stylesheets
 ```
 
 ### Where things belong
 
 | Concern | Location |
 | --- | --- |
-| A route/screen | `pages/<Name>/<Name>.jsx` |
+| A route/screen | `pages/<Name>/<Name>.jsx`, registered in `App.jsx` |
 | Chrome shared by all pages | `layouts/`, `components/layout/` |
 | Reusable UI used by 2+ pages | `components/common/` |
 | UI used by one page only | `components/<page>/` next to its page |
 | Copy and content | `data/` |
 | Behaviour shared across components | `hooks/` |
 | Design tokens / reset / shared CSS primitives | `styles/` |
+| All motion (reveals, floats, hovers) | `styles/animations.css` + `hooks/useReveal.js` |
 | Component styling | next to the component, e.g. `Hero/Hero.css` |
 
 `src/services/` is reserved for future API modules and does not exist yet —
 add it when the first real endpoint is integrated. Do not add placeholder
-services, fake `fetch` calls or hard-coded API URLs.
+services, fake `fetch` calls or hard-coded API URLs. Page data modules are
+written to mirror an API payload, so the swap is a change of import rather than
+a change of component.
 
 ## Development
 
@@ -97,15 +116,21 @@ npm run preview   # serve the production build locally
 
 ## Current Status
 
-- The **homepage is implemented** and approved.
-- The **backend is not connected yet**; all content is static and lives in
-  `src/data/`.
-- **No router is installed.** `App.jsx` renders `Home` inside `MainLayout`;
-  adding React Router later only requires changing `App.jsx` and adding files
-  under `pages/`.
+- The **homepage** and the **Live Standings page** (`/live-standings`) are
+  implemented and share one Navbar, one Footer, one palette and one motion
+  layer.
+- **Routing** is React Router 7. `MainLayout` is the layout route, so the
+  Navbar, skip link and Footer stay mounted across navigations. Adding a page
+  means a `<Route>` in `App.jsx` plus a file in `pages/`.
+- **The backend is not connected yet**; all content is static and lives in
+  `src/data/`. The Live Standings "Last updated" value is a placeholder in
+  `liveStandingsData.js` — it is not read from the browser clock, and no
+  realtime connection exists.
 - **Placeholder content** remains where official assets or copy do not exist
-  yet: sponsor wordmarks, team avatars, and previous-event photography. These
-  are marked `null` in the data so no request is made for missing files.
-- Planned pages: `/challenges`, `/challenges/:id`, `/standings`, `/about`,
-  `/events`, `/events/:year`, `/sponsors`. Navigation already points at those
-  paths.
+  yet: sponsor wordmarks, team portraits, standings team avatars, previous-event
+  photography, and the Hurghada skyline. These are either `null` in the data
+  (so no request is made for a missing file) or drawn as initials placeholders.
+- Routes referenced by the chrome but not yet built (`/challenges`, `/about`)
+  redirect to the homepage rather than 404.
+- Planned pages: `/challenges`, `/challenges/:id`, `/about`, `/events`,
+  `/events/:year`, `/sponsors`.
