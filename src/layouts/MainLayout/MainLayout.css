@@ -1,0 +1,30 @@
+/* ==========================================================================
+   Main layout — the page shell every route renders inside
+   --------------------------------------------------------------------------
+   Sections manage their own backgrounds; the shell only guarantees a neutral,
+   viewport-width canvas and the skip link used by assistive technology.
+   ========================================================================== */
+
+.layout-main {
+  display: flow-root;
+}
+
+.skip-link {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  z-index: 2000;
+  padding: 12px 20px;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  background-color: var(--nasa-red);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transform: translate(-50%, -120%);
+  transition: transform var(--ease);
+}
+
+.skip-link:focus-visible {
+  transform: translate(-50%, 0);
+}

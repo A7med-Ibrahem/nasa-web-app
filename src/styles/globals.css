@@ -1,0 +1,332 @@
+/* ==========================================================================
+   NASA Space Apps Hurghada — global styles
+   --------------------------------------------------------------------------
+   Reset, element defaults, and the small set of primitives that genuinely
+   span pages: .container, .section, the type scale, button/link styles, the
+   brand logo frame and accessibility helpers.
+
+   Component-specific styling lives next to its component (Hero/Hero.css,
+   layout/Navbar/Navbar.css, ...). Nothing section-specific belongs here.
+
+   Requires variables.css to be imported first.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Reset
+   -------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: 84px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  margin: 0;
+  /* `width: auto` + global border-box: the document never exceeds the viewport. */
+  max-width: 100%;
+  background-color: var(--navy-950);
+  color: var(--text-on-dark);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+ul,
+ol {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   Focus visibility
+   -------------------------------------------------------------------------- */
+
+:focus-visible {
+  outline: 2px solid var(--blue-strong);
+  outline-offset: 3px;
+}
+
+.on-light :focus-visible,
+.surface-light :focus-visible {
+  outline-color: var(--blue-ink);
+}
+
+/* --------------------------------------------------------------------------
+   Layout primitives
+   -------------------------------------------------------------------------- */
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: var(--section-pad);
+}
+
+.section--dark {
+  background-color: var(--navy-section);
+  color: var(--text-on-dark);
+}
+
+.section--light {
+  background-color: var(--surface-light);
+  color: var(--text-on-light);
+}
+
+/* --------------------------------------------------------------------------
+   Typography primitives
+   -------------------------------------------------------------------------- */
+
+.eyebrow {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--blue-strong);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.section-title {
+  font-size: clamp(26px, 3.2vw, 34px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.14;
+  text-wrap: balance;
+}
+
+.section-desc {
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.on-dark .section-desc,
+.section--dark .section-desc {
+  color: var(--muted-on-dark);
+}
+
+.on-light .section-desc,
+.section--light .section-desc {
+  color: var(--muted-on-light);
+}
+
+/* --------------------------------------------------------------------------
+   Buttons & arrow links
+   -------------------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 13px 24px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--ease), border-color var(--ease),
+    color var(--ease), transform var(--ease);
+}
+
+.btn svg {
+  flex: none;
+  transition: transform var(--ease);
+}
+
+.btn:hover svg {
+  transform: translateX(3px);
+}
+
+.btn--primary {
+  background-color: var(--nasa-red);
+  border-color: var(--nasa-red);
+  color: #ffffff;
+}
+
+.btn--primary:hover {
+  background-color: #c8161d;
+  border-color: #c8161d;
+}
+
+.btn--ghost-dark {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+}
+
+.btn--ghost-dark:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.btn--ghost-light {
+  background-color: transparent;
+  border-color: rgba(6, 26, 47, 0.22);
+  color: var(--text-on-light);
+}
+
+.btn--ghost-light:hover {
+  background-color: rgba(6, 26, 47, 0.05);
+  border-color: rgba(6, 26, 47, 0.4);
+}
+
+/* Text link with trailing arrow — used for "View all" style actions. */
+.arrow-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--blue-strong);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.arrow-link svg {
+  flex: none;
+  transition: transform var(--ease);
+}
+
+.arrow-link:hover {
+  color: #86bdff;
+}
+
+.arrow-link:hover svg {
+  transform: translateX(3px);
+}
+
+.arrow-link--on-light {
+  color: var(--blue-ink);
+}
+
+.arrow-link--on-light:hover {
+  color: var(--text-on-light);
+}
+
+/* --------------------------------------------------------------------------
+   Brand logo frame
+   --------------------------------------------------------------------------
+   src/assets/logos/nasa-logo.png is 1536x1024. Measured from its alpha
+   channel, the visible lockup occupies only the middle 63.9% x 43.7% of that
+   canvas and the remaining margin is fully transparent:
+   left 269px, right 285px, top 303px, bottom 274px.
+
+   Sizing the <img> box directly therefore renders the visible logo far
+   smaller than the box, and sizing by width alone would also force a ~190px
+   tall navbar. Instead each context declares the frame size it wants for the
+   *visible* logo, and the untouched canvas is centred inside that frame.
+
+   The frame is a flex box with a fixed height, so the taller canvas overflows
+   it symmetrically. Those overflow areas are transparent and paint nothing,
+   while the artwork itself is never cropped, stretched or distorted: the
+   shared rule below keeps `width: 100%; height: auto`, which preserves the
+   intrinsic aspect ratio exactly.
+
+   Because the image width always equals the frame width, this introduces no
+   horizontal bleed and can never widen the document.
+
+   `:where()` keeps these shared defaults at zero specificity so each context
+   can override them (e.g. the Current Event logo scales past its frame) without
+   depending on stylesheet order.
+   -------------------------------------------------------------------------- */
+
+:where(.logo-frame) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  /* Transparent margin bleeds freely by default - it paints nothing, so there
+     is no visible box. A context may opt into clipping to stop the oversized
+     canvas reaching past its column (see .current-event-logo-frame). */
+  overflow: visible;
+}
+
+:where(.logo-frame) > img {
+  width: 100%;
+  height: auto;
+  max-width: none;
+  object-fit: contain;
+  /* The transparent margin is not part of the click target; the anchor's own
+     frame box handles activation. */
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Accessibility utilities
+   -------------------------------------------------------------------------- */
+
+/* Screen-reader-only helper (mobile menu labels, icon-only links, etc.) */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

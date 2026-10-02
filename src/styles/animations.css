@@ -1,0 +1,322 @@
+/* ==========================================================================
+   NASA Space Apps Hurghada — motion layer
+   --------------------------------------------------------------------------
+   One shared stylesheet for every reveal, float, pulse and micro-interaction
+   on the page. Loaded after globals.css so it can extend existing component
+   rules without overriding them.
+
+   Ground rules for everything in this file:
+     - only `opacity` and `transform` are animated (plus the `--mx` / `--my`
+       custom properties used for the hero parallax)
+     - no new colours, gradients, shadows or layout changes
+     - reveals run once, driven by IntersectionObserver from useReveal
+     - `prefers-reduced-motion: reduce` disables the lot and leaves content
+       exactly where it would be with JavaScript switched off
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Reveals
+   --------------------------------------------------------------------------
+   The hook writes `data-reveal="pending"` while an element is still hidden and
+   flips it to `"done"` when it first intersects. Nothing is hidden by default,
+   so a browser without JavaScript — or without IntersectionObserver — simply
+   renders the finished page.
+
+   The transition itself is a keyframe animation with `fill-mode: backwards`
+   rather than a transition on the element, because several reveal targets
+   already declare their own `transition` for hover states. Animating keeps
+   those hover transitions intact and, once the animation ends, hands `opacity`
+   and `transform` straight back to the stylesheet so hover transforms work.
+   -------------------------------------------------------------------------- */
+
+[data-reveal="pending"] {
+  opacity: 0;
+}
+
+[data-reveal="done"] {
+  animation-duration: var(--motion-slow);
+  animation-timing-function: var(--ease-motion);
+  animation-delay: var(--reveal-delay, 0ms);
+  animation-fill-mode: backwards;
+}
+
+[data-reveal="done"]:not([data-reveal-variant]) {
+  animation-name: reveal-rise;
+}
+
+[data-reveal="done"][data-reveal-variant="up"] {
+  animation-name: reveal-rise;
+}
+
+[data-reveal="done"][data-reveal-variant="fade"] {
+  animation-name: reveal-fade;
+}
+
+[data-reveal="done"][data-reveal-variant="left"] {
+  animation-name: reveal-left;
+}
+
+[data-reveal="done"][data-reveal-variant="right"] {
+  animation-name: reveal-right;
+}
+
+[data-reveal="done"][data-reveal-variant="scale"] {
+  animation-name: reveal-scale;
+}
+
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--reveal-distance, 20px), 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Opacity only — used by elements that already own their transform, such as
+   the hero media which is positioned with translateY(-50%). */
+@keyframes reveal-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes reveal-left {
+  from {
+    opacity: 0;
+    transform: translate3d(calc(var(--reveal-distance, 20px) * -1), 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes reveal-right {
+  from {
+    opacity: 0;
+    transform: translate3d(var(--reveal-distance, 20px), 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes reveal-scale {
+  from {
+    opacity: 0;
+    transform: scale(var(--reveal-scale, 0.96));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The challenge rail is a scroll container, so it clips its own vertical
+   overflow. Cards therefore rise a shorter distance, which keeps them from
+   sliding in from behind the rail's own edge. */
+.challenge-list {
+  --reveal-distance: 14px;
+}
+
+/* --------------------------------------------------------------------------
+   Continuous ambient motion
+   -------------------------------------------------------------------------- */
+
+/* The Earth keeps its scale(1.05) crop inside the animation and reads the
+   pointer offset from `--mx` / `--my`, which usePointerParallax writes as an
+   inline custom property on <section class="hero"> and which therefore inherit
+   down to this element. Nothing may re-declare them here: a local declaration
+   would beat the inherited value and silently disable the parallax. The `0px`
+   fallbacks keep the resting position when the pointer never moves, when the
+   device is touch-only, and when the effect is switched off. */
+.hero-media-image {
+  animation: hero-float 6.5s var(--ease-motion) infinite;
+}
+
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: scale(1.05) translate3d(var(--mx, 0px), var(--my, 0px), 0);
+  }
+  50% {
+    transform: scale(1.05)
+      translate3d(var(--mx, 0px), calc(var(--my, 0px) - 6px), 0);
+  }
+}
+
+/* The current-event logo floats inside its frame. The frame clips, so the
+   artwork can never drift out of view. */
+.current-event-logo {
+  animation: logo-float 7s var(--ease-motion) infinite;
+}
+
+@keyframes logo-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+.navbar-pill-dot {
+  animation: live-dot-pulse 2.4s var(--ease-motion) infinite;
+}
+
+@keyframes live-dot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.15);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Micro-interactions
+   -------------------------------------------------------------------------- */
+
+/* The active-link indicator is the same 2px red bar, only animated. Hovering a
+   non-active link scales the identical bar in, so the two read as one system
+   rather than a second style. */
+.navbar-link[aria-current="page"]::after {
+  transform: scaleX(1);
+  transition: transform var(--motion-slow) var(--ease-motion);
+}
+
+.navbar-link:not([aria-current="page"])::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background-color: var(--nasa-red);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform var(--motion-normal) var(--ease-motion);
+}
+
+.navbar-link:not([aria-current="page"]):hover::after,
+.navbar-link:not([aria-current="page"]):focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* translateY(-2px) / scale(0.98) without disturbing the surrounding layout. */
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.footer-social-link:hover {
+  transform: translateY(-2px) scale(1.04);
+}
+
+/* --------------------------------------------------------------------------
+   Mobile navigation
+   -------------------------------------------------------------------------- */
+
+.navbar-mobile {
+  animation: menu-panel-in var(--motion-normal) var(--ease-motion) both;
+}
+
+@keyframes menu-panel-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.navbar-mobile-links > li {
+  animation: menu-item-in var(--motion-normal) var(--ease-motion) backwards;
+}
+
+.navbar-mobile-links > li:nth-child(1) {
+  animation-delay: 40ms;
+}
+
+.navbar-mobile-links > li:nth-child(2) {
+  animation-delay: 80ms;
+}
+
+.navbar-mobile-links > li:nth-child(3) {
+  animation-delay: 120ms;
+}
+
+.navbar-mobile-links > li:nth-child(4) {
+  animation-delay: 160ms;
+}
+
+.navbar-mobile-links > li:nth-child(5) {
+  animation-delay: 200ms;
+}
+
+@keyframes menu-item-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -6px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Responsive and accessibility
+   -------------------------------------------------------------------------- */
+
+/* The hero collage is only floated and parallaxed on desktop: below 900px the
+   artwork moves underneath the copy, where drifting it would be distracting. */
+@media (max-width: 900px) {
+  .hero-media-image {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Ambient and one-shot motion stops. The hero float and parallax are driven
+     by the same keyframes, so stopping the animation also returns the artwork
+     to its resting crop. */
+  [data-reveal],
+  .hero-media-image,
+  .current-event-logo,
+  .navbar-pill-dot,
+  .navbar-mobile,
+  .navbar-mobile-links > li {
+    animation: none;
+  }
+
+  /* Nothing is ever left hidden, whatever state the observer last wrote. */
+  [data-reveal="pending"] {
+    opacity: 1;
+  }
+
+  /* The hover lifts this stylesheet adds are withdrawn; hover colour changes
+     stay, so controls remain distinguishable without any movement. */
+  .btn:hover,
+  .btn:active,
+  .footer-social-link:hover {
+    transform: none;
+  }
+}

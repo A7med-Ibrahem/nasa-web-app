@@ -1,0 +1,118 @@
+/* ==========================================================================
+   Current event — light band with branding lockup
+   ========================================================================== */
+
+.current-event {
+  background-color: var(--surface-white);
+  border-block: 1px solid var(--border-on-light);
+}
+
+.current-event-inner {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  align-items: center;
+  gap: clamp(32px, 5vw, 60px);
+}
+
+.current-event-description {
+  max-width: 460px;
+}
+
+/* ---------- Event details ---------- */
+
+.current-event-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 32px;
+  margin-top: 28px;
+}
+
+.current-event-detail {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.current-event-detail-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border: 1px solid rgba(47, 111, 228, 0.28);
+  border-radius: var(--radius-sm);
+  background-color: rgba(47, 111, 228, 0.07);
+  color: var(--blue-ink);
+}
+
+.current-event-detail-value {
+  color: var(--text-on-light);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ---------- Branding ----------
+   There is deliberately NO panel, card, rounded rectangle, border, shadow,
+   gradient/haze or skyline behind the logo. The logo sits directly on the
+   white section background.
+
+   `.current-event-logo-frame` is a bare geometry box only: transparent, no
+   border, no radius, no shadow, no padding. Its sole job is to size the logo
+   and to clip the oversized transparent canvas - see styles/globals.css. Because the
+   canvas is rendered at 132% of the frame, without clipping it would extend
+   past the grid column and widen the document. The clip is safe: the visible
+   artwork measures ~422x192px inside a 500x290px frame, so only transparent
+   margin is ever cut and the logo is never cropped. */
+
+.current-event-logo-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  width: min(100%, 500px);
+  height: 290px;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  overflow: hidden;
+}
+
+.current-event-logo {
+  width: 132%;
+  height: auto;
+  max-width: none;
+  object-fit: contain;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  .current-event-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .current-event-logo-frame {
+    height: 240px;
+    order: -1;
+  }
+
+  .current-event-description {
+    max-width: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .current-event-details {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Stays prominent on phones: ~290px wide visible lockup on a 360px screen. */
+  .current-event-logo-frame {
+    width: min(100%, 340px);
+    height: 180px;
+  }
+}

@@ -1,0 +1,70 @@
+/* ==========================================================================
+   NASA Space Apps Hurghada — design tokens
+   --------------------------------------------------------------------------
+   The single source of truth for colour, layout, shape, typography and motion
+   values. Loaded before globals.css so the reset and primitives below can
+   resolve them.
+
+   Values are intentionally unchanged from the approved design; this file only
+   centralises what was already declared on :root.
+   ========================================================================== */
+
+:root {
+  /* Surfaces */
+  --navy-950: #031426;
+  --navy-900: #061a2f;
+  --navy-850: #071a31;
+  --navy-section: #071b31;
+  --card-navy: #0b2540;
+  --card-navy-strong: #0d2947;
+
+  --surface-light: #f4f7fc;
+  --surface-light-alt: #f7f9fc;
+  --surface-white: #ffffff;
+
+  /* Accents */
+  --nasa-red: #ed1c24;
+  --nasa-red-soft: rgba(237, 28, 36, 0.16);
+  --blue: #4a9eff;
+  --blue-strong: #5d9cff;
+  --blue-deep: #1d4f9e;
+  --blue-ink: #2f6fe4;
+
+  /* Text */
+  --text-on-dark: #ffffff;
+  --text-on-light: #061a2f;
+  --muted-on-dark: #aeb9cb;
+  --muted-on-dark-alt: #9aa8bd;
+  --muted-on-light: #52607a;
+
+  /* Borders */
+  --border-on-dark: rgba(140, 180, 255, 0.14);
+  --border-on-light: rgba(6, 26, 47, 0.1);
+
+  /* Layout */
+  --container: 1200px;
+  --gutter: clamp(20px, 5vw, 40px);
+  --section-pad: clamp(56px, 7vw, 88px);
+
+  /* Shape */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+
+  /* Typography */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+
+  /* Motion */
+  --ease: 180ms ease;
+
+  --motion-fast: 180ms;
+  --motion-normal: 320ms;
+  --motion-slow: 620ms;
+  --motion-slower: 720ms;
+  --motion-stagger: 90ms;
+
+  --ease-motion: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-motion-in: cubic-bezier(0.32, 0, 0.24, 1);
+}

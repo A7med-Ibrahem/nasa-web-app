@@ -1,6 +1,0 @@
-/* Page shell. Sections manage their own backgrounds; the shell only guarantees
-   a neutral, viewport-width canvas. */
-
-.app-main {
-  display: flow-root;
-}

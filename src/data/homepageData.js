@@ -1,37 +1,23 @@
 /* ==========================================================================
    Homepage content — single source of truth for the marketing homepage.
    --------------------------------------------------------------------------
+   Scoped to the Home page only. Content shared by every page (brand, primary
+   navigation, footer) lives in site.js instead, so future pages never have to
+   import homepage-only data.
+
    This module is intentionally plain static data so that, once a backend
    exists, each export can be swapped for an API response with an identical
    shape. Components only consume these objects; none of them build content
    inline.
    ========================================================================== */
 
+import { site } from "./site";
+import heroEarthImage from "../assets/images/hero-earth.jpeg";
 import earthClimateImage from "../assets/images/earth-climate.jpeg";
 import spaceExplorationImage from "../assets/images/space-exploration.jpeg";
 import technologyImage from "../assets/images/technology.jpeg";
 import sustainabilityImage from "../assets/images/sustainability.jpeg";
 import aboutImage from "../assets/images/about-space.jpeg";
-import brandLogo from "../assets/images/nasa-logo.png";
-
-/* --------------------------------------------------------------------------
-   Site level
-   -------------------------------------------------------------------------- */
-
-export const site = {
-  name: "NASA Space Apps Hurghada",
-  shortName: "Space Apps Hurghada",
-  tagline: "Space • Science • Technology",
-  year: 2026,
-  copyright: "© 2026 NASA Space Apps Hurghada. All rights reserved.",
-};
-
-export const navigationLinks = [
-  { id: "home", label: "Home", href: "/" },
-  { id: "challenges", label: "Challenges", href: "/challenges" },
-  { id: "standings", label: "Live Standings", href: "/standings" },
-  { id: "about", label: "About", href: "#about" },
-];
 
 /* --------------------------------------------------------------------------
    Hero
@@ -45,6 +31,12 @@ export const hero = {
   },
   tagline: "Space • Science • Technology",
   titleLines: ["Big Challenges.", "Bigger Impact."],
+  /* Decorative background art: rendered with an empty alt and an aria-hidden
+     wrapper, because the message is carried by the copy beside it. */
+  image: {
+    src: heroEarthImage,
+    alt: "",
+  },
   description:
     "NASA Space Apps is a global hackathon that brings together innovators, creators, and problem-solvers to tackle real-world challenges using space data.",
   primaryAction: {
@@ -113,8 +105,9 @@ export const currentEvent = {
   endDate: "2026-04-26",
   dateLabel: "April 24 – 26, 2026",
   location: "Hurghada, Egypt",
-  logo: brandLogo,
-  logoAlt: "NASA Space Apps Hurghada",
+  /* The brand logo comes from site.js so the asset has a single definition. */
+  logo: site.logo,
+  logoAlt: site.logoAlt,
   links: { details: "/events/nasa-space-apps-hurghada-2026" },
 };
 
@@ -274,50 +267,4 @@ export const sponsors = {
     { id: "aws", name: "AWS", logo: null },
     { id: "esri", name: "Esri", logo: null },
   ],
-};
-
-/* --------------------------------------------------------------------------
-   Footer
-   -------------------------------------------------------------------------- */
-
-export const footer = {
-  brand: {
-    name: "NASA Space Apps Hurghada",
-    logo: brandLogo,
-    logoAlt: "NASA Space Apps Hurghada",
-    href: "/",
-  },
-  links: [
-    { id: "home", label: "Home", href: "/" },
-    { id: "challenges", label: "Challenges", href: "/challenges" },
-    { id: "standings", label: "Live Standings", href: "/standings" },
-    { id: "about", label: "About", href: "/about" },
-  ],
-  socials: [
-    {
-      id: "x",
-      label: "X",
-      href: "https://x.com/",
-      icon: "x",
-    },
-    {
-      id: "linkedin",
-      label: "LinkedIn",
-      href: "https://www.linkedin.com/",
-      icon: "linkedin",
-    },
-    {
-      id: "instagram",
-      label: "Instagram",
-      href: "https://www.instagram.com/",
-      icon: "instagram",
-    },
-    {
-      id: "youtube",
-      label: "YouTube",
-      href: "https://www.youtube.com/",
-      icon: "youtube",
-    },
-  ],
-  bottomNote: "Space • Science • Technology",
 };
