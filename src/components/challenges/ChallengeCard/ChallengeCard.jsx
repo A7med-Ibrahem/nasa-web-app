@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import "./ChallengeCard.css";
 
 import { site } from "../../../data/site";
-import { difficultyLabels } from "../../../data/challengesData";
 import { challengeIcons } from "../../common/Icons/iconRegistry";
 
 /**
@@ -11,14 +10,17 @@ import { challengeIcons } from "../../common/Icons/iconRegistry";
  * Fully presentational: it receives a single `challenge` record through props
  * and renders whatever that record contains, so the same card serves today's
  * static data and a future API response with an identical shape (title,
- * description, category, image, season, difficulty, slug, organizer) without
- * any JSX changing. Nothing here is challenge-specific.
+ * shortDescription, category, image, season, slug, organizer) without any JSX
+ * changing. Nothing here is challenge-specific.
  *
  * The record renders inside a list item + `<article>` with a heading, and the
  * whole card wraps in a router `Link` to /challenges/:slug — client
  * navigation, no `window.location`, and `slug` is already part of the data.
  * An `<article>` inside an `<a>` is valid HTML5 as long as the anchor holds no
  * interactive descendants, which it does not.
+ *
+ * Difficulty is not part of the official 2026 data, so no difficulty block is
+ * rendered; the footer carries organizer and season only.
  */
 export default function ChallengeCard({ challenge }) {
   const {
@@ -28,16 +30,14 @@ export default function ChallengeCard({ challenge }) {
     category,
     categoryLabel,
     categoryIcon,
-    description,
+    shortDescription,
     image,
     imageAlt,
     organizer,
     season,
-    difficulty,
   } = challenge;
 
   const CategoryIcon = challengeIcons[categoryIcon];
-  const DifficultyIcon = challengeIcons.bars;
 
   return (
     <li className="challenge-tile">
@@ -65,7 +65,7 @@ export default function ChallengeCard({ challenge }) {
               {title}
             </h3>
 
-            <p className="challenge-tile-description">{description}</p>
+            <p className="challenge-tile-description">{shortDescription}</p>
           </div>
 
           <div className="challenge-tile-footer">
@@ -81,13 +81,6 @@ export default function ChallengeCard({ challenge }) {
               <span className="challenge-tile-organizer">{organizer}</span>
               <span className="challenge-tile-divider" aria-hidden="true" />
               <span className="challenge-tile-season">{season}</span>
-            </p>
-
-            <p
-              className={`challenge-tile-difficulty challenge-tile-difficulty--${difficulty}`}
-            >
-              {DifficultyIcon ? <DifficultyIcon size={14} /> : null}
-              <span>{difficultyLabels[difficulty]}</span>
             </p>
           </div>
         </article>

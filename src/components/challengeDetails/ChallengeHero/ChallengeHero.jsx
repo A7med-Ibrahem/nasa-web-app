@@ -2,10 +2,7 @@ import { useRef } from "react";
 import { Link } from "react-router-dom";
 import "./ChallengeHero.css";
 
-import {
-  challengeDetailsPage,
-  difficultyLabels,
-} from "../../../data/challengesData";
+import { challengeDetailsPage } from "../../../data/challengesData";
 import { CalendarIcon } from "../../common/Icons/Icons";
 import { challengeIcons } from "../../common/Icons/iconRegistry";
 import { useRevealGroup } from "../../../hooks/useReveal";
@@ -31,16 +28,14 @@ export default function ChallengeHero({ challenge }) {
     category,
     categoryLabel,
     categoryIcon,
-    description,
+    shortDescription,
     image,
     imageAlt,
     season,
-    difficulty,
   } = challenge;
 
   const { eyebrow, breadcrumbLabel, parent } = challengeDetailsPage.hero;
   const CategoryIcon = challengeIcons[categoryIcon];
-  const DifficultyIcon = challengeIcons.bars;
 
   // Copy leads and the figure trails, so DOM order is reveal order and no
   // explicit --reveal-index is needed.
@@ -96,22 +91,14 @@ export default function ChallengeHero({ challenge }) {
             </h1>
 
             <p className="challenge-hero-description" data-reveal-item>
-              {description}
+              {shortDescription}
             </p>
 
             {/*
-              Metadata badges. Difficulty carries an icon *and* its text label
-              as well as its accent colour, so it is never distinguished by
-              colour alone.
+              Metadata badges. Season is the only record-derived pill now —
+              the official 2026 data defines no difficulty rating.
             */}
             <p className="challenge-hero-meta" data-reveal-item>
-              <span
-                className={`challenge-hero-pill challenge-hero-pill--${difficulty}`}
-              >
-                {DifficultyIcon ? <DifficultyIcon size={14} /> : null}
-                <span>{difficultyLabels[difficulty] ?? difficulty}</span>
-              </span>
-
               <span className="challenge-hero-pill">
                 <CalendarIcon size={14} />
                 <span>{season}</span>

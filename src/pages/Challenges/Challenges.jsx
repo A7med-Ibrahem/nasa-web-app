@@ -39,7 +39,7 @@ export default function Challenges() {
   /*
    * Category and search compose: a challenge must match the selected
    * category (or "all") AND contain the query — case-insensitively — in its
-   * title, description or category fields.
+   * title, short description, category fields or domains.
    */
   const filteredChallenges = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -56,12 +56,16 @@ export default function Challenges() {
         return true;
       }
 
-      return [
+      const haystack = [
         challenge.title,
+        challenge.shortDescription,
         challenge.description,
         challenge.category,
         challenge.categoryLabel,
-      ].some((field) => field.toLowerCase().includes(query));
+        ...(Array.isArray(challenge.domains) ? challenge.domains : []),
+      ];
+
+      return haystack.some((field) => field.toLowerCase().includes(query));
     });
   }, [selectedCategory, searchQuery]);
 

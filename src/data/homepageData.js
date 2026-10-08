@@ -12,11 +12,10 @@
    ========================================================================== */
 
 import { site } from "./site";
+import { staticChallenges } from "./challengesData";
 import heroEarthImage from "../assets/images/hero-earth.jpeg";
-import earthClimateImage from "../assets/images/earth-climate.jpeg";
 import spaceExplorationImage from "../assets/images/space-exploration.jpeg";
 import technologyImage from "../assets/images/technology.jpeg";
-import sustainabilityImage from "../assets/images/sustainability.jpeg";
 import aboutImage from "../assets/images/about-space.jpeg";
 
 /* --------------------------------------------------------------------------
@@ -113,7 +112,24 @@ export const currentEvent = {
 
 /* --------------------------------------------------------------------------
    Top challenges
+   --------------------------------------------------------------------------
+
+   The cards are NOT duplicated here: they are a thin projection of the first
+   four official challenges from the shared source of truth
+   (data/challengesData.js), reshaped into the field names the homepage card
+   reads. Adding or re-ordering challenges updates both routes in one place,
+   and the homepage can never drift out of sync with /challenges.
    -------------------------------------------------------------------------- */
+
+const featuredChallenges = staticChallenges.slice(0, 4).map((challenge) => ({
+  id: challenge.id,
+  slug: challenge.slug,
+  category: challenge.categoryLabel,
+  title: challenge.title,
+  description: challenge.shortDescription,
+  image: challenge.image,
+  imageAlt: challenge.imageAlt,
+}));
 
 export const challenges = {
   eyebrow: "TOP CHALLENGES",
@@ -121,48 +137,7 @@ export const challenges = {
   description:
     "Discover real-world problems and use the power of space data to create innovative solutions.",
   action: { label: "View All Challenges", href: "/challenges", icon: "arrow" },
-  items: [
-    {
-      id: "climate-resilience",
-      slug: "climate-resilience",
-      category: "EARTH & CLIMATE",
-      title: "Climate Resilience",
-      description:
-        "Build solutions to help communities adapt to climate change and natural disasters.",
-      image: earthClimateImage,
-      imageAlt: "Earth seen from space showing cloud systems",
-    },
-    {
-      id: "future-of-exploration",
-      slug: "future-of-exploration",
-      category: "SPACE EXPLORATION",
-      title: "Future of Exploration",
-      description:
-        "Support the next generation of space exploration and human settlement.",
-      image: spaceExplorationImage,
-      imageAlt: "Spacecraft exploring a distant planet",
-    },
-    {
-      id: "open-innovation",
-      slug: "open-innovation",
-      category: "TECHNOLOGY",
-      title: "Open Innovation",
-      description:
-        "Use NASA open data to build tools that improve lives on Earth.",
-      image: technologyImage,
-      imageAlt: "Satellite technology in orbit",
-    },
-    {
-      id: "sustainable-future",
-      slug: "sustainable-future",
-      category: "SUSTAINABILITY",
-      title: "Sustainable Future",
-      description:
-        "Develop solutions for a more sustainable and resilient planet.",
-      image: sustainabilityImage,
-      imageAlt: "Green Earth with sustainable energy research",
-    },
-  ],
+  items: featuredChallenges,
 };
 
 /* --------------------------------------------------------------------------

@@ -5,36 +5,38 @@
    Mirrors how site.js, homepageData.js and liveStandingsData.js feed the
    shared chrome, the homepage and the Live Standings page.
 
+   The homepage "Top Challenges" rail (data/homepageData.js) and both
+   challenge routes read this one module, so a challenge has exactly one
+   definition everywhere it appears.
+
    ------------------------------------------------------------------------
-   DEMO CONTENT NOTICE
+   2026 CHALLENGES
    ------------------------------------------------------------------------
-   The challenge descriptions, `longDescription` paragraphs, `sections` copy
-   and metadata below are local frontend fixtures written to exercise this
-   UI. They are NOT official NASA challenge statements — official Space Apps
-   challenge text is published on the global Space Apps site, which is what
-   the `resources` and registration links point at. Swap this module for an
-   API response of identical shape and nothing in the presentation layer
-   changes.
+   The records below describe the official NASA Space Apps 2026 challenges.
+   Titles, slugs, categories, short descriptions, main objectives and
+   recommended content come from the 2026 Challenges document.
+
+   The document does not establish a difficulty rating, deadlines, prizes,
+   locations or statistics for these challenges, so no such values are
+   invented here. Fields the document does not cover ship empty (`[]` / `null`)
+   and the details page simply omits those blocks.
 
    ------------------------------------------------------------------------
    BACKEND BOUNDARY
    ------------------------------------------------------------------------
-   There is no backend yet, so everything below is static fixture data. The
-   records are shaped deliberately like a REST payload instead of like JSX
-   helpers, which is what makes the swap a one-line change later:
+   There is no backend yet, so everything below is static data. The records
+   are shaped deliberately like a REST payload instead of like JSX helpers,
+   which is what makes the swap a one-line change later:
 
        import { staticChallenges } from "../services/challengesService";
 
-   Three rules keep that promise:
+   Two rules keep that promise:
 
      1. Components are presentational. The listing page derives its filtered
         list from `staticChallenges`, and ChallengeCard / ChallengeDetails
         render whatever record they are given through props — no card or page
         JSX is written per challenge.
-     2. Stable identifiers (`id`, `slug`, `category`, `difficulty`) are plain
-        enum-like values, so they can later come straight from an API and
-        drive routes such as /challenges/:slug without renaming anything.
-     3. Detail lookup is done by slug — exactly how a future
+     2. Detail lookup is done by slug — exactly how a future
         `GET /api/challenges/:slug` would be called — see
         pages/ChallengeDetails/ChallengeDetails.jsx.
 
@@ -54,8 +56,8 @@ import aboutSpaceImage from "../assets/images/about-space.jpeg";
 /* --------------------------------------------------------------------------
    Shared external destinations
    --------------------------------------------------------------------------
-   Both URLs are live, official NASA / Space Apps properties (verified when
-   written): no placeholder or invented links appear anywhere in this file.
+   This is a live, official Space Apps property (verified when written): no
+   placeholder or invented link appears anywhere in this file.
    -------------------------------------------------------------------------- */
 
 /* Where "Join" CTAs point. The project ships no registration endpoint yet,
@@ -63,6 +65,11 @@ import aboutSpaceImage from "../assets/images/about-space.jpeg";
    both CTAs at this one value means the local Hurghada form can replace it
    later without touching a single component. */
 const REGISTER_URL = "https://www.spaceappschallenge.org/";
+
+/* The 2026 edition this site is built for. Kept as constants so the season
+   string has a single definition across every challenge record. */
+const SEASON = "2026";
+const ORGANIZER = "NASA Space Apps";
 
 /* --------------------------------------------------------------------------
    Hero
@@ -86,6 +93,10 @@ export const challengesHero = {
    --------------------------------------------------------------------------
    `id` is the stable value stored on each challenge and the value the filter
    compares against; `label` and `icon` are presentation.
+
+   The 2026 challenge document supports Earth & Climate, Space Exploration
+   and Health & Humanity for the listed challenges; Technology stays available
+   as a filter but no artificial technology-only challenge is created.
    -------------------------------------------------------------------------- */
 
 export const challengeCategories = [
@@ -105,283 +116,551 @@ export const challengeCategories = [
    challenge points at a file that is not already part of the build.
 
    Shape (details-only fields marked):
-     id, slug, title, category, categoryLabel, categoryIcon, description,
-     image, imageAlt, organizer, season, difficulty,
-     longDescription[]  — paragraphs for "About this challenge"
-     sections[]         — { id, title, content } rendered in data order;
-                          `content` is a string or an array of paragraphs,
-                          so section count and length vary per challenge
-     resources[]        — { title, url }; empty hides the whole section
+     id, slug, title, category, categoryLabel, categoryIcon,
+     shortDescription, description, image, imageAlt, season, organizer,
+     overview            — one framing paragraph for "Challenge Overview"
+     mainObjective       — the challenge's stated objective
+     targetAudience      — who the challenge is for (null when unspecified)
+     keyInsights[]       — headline takeaways
+     identifiedChallenges[] — the main problems to address
+     recommendations[]   — suggested solution directions (not requirements)
+     successMetrics[]    — how a strong solution could be judged
+     domains[]           — relevant technical / topical tags (searchable)
    -------------------------------------------------------------------------- */
 
 export const staticChallenges = [
   {
-    id: "climate-resilience",
-    slug: "climate-resilience",
-    title: "Climate Resilience",
-    category: "earth-climate",
-    categoryLabel: "Earth & Climate",
-    categoryIcon: "leaf",
-    description:
-      "Develop innovative solutions to help communities adapt to and recover from the impacts of climate change, including extreme weather, rising sea levels, and more.",
-    image: earthClimateImage,
-    imageAlt: "Earth seen from space showing swirling cloud systems",
-    organizer: "NASA",
-    season: "2025 Season",
-    difficulty: "medium",
-    longDescription: [
-      "Climate Resilience is about helping communities read the signals that come from Earth — weather, water, land, and sea — and act on them before a hazard becomes a disaster.",
-      "Teams work with open Earth observation data and turn raw measurements into something a local decision-maker, a farmer, or a family can actually use: a clearer picture of risk, and more time to respond.",
-    ],
-    sections: [
-      {
-        id: "challenge",
-        title: "The Challenge",
-        content:
-          "Communities around the world face heat waves, floods, droughts, and rising seas. The data describing these risks is openly available, but it rarely reaches the people making everyday decisions in the places where the impact is felt first.",
-      },
-      {
-        id: "what-to-do",
-        title: "What You Need To Do",
-        content:
-          "Choose a climate or Earth-observation dataset, decide who you are building for, and ship a working prototype that turns that data into one clear, useful answer. Document where your numbers come from and be ready to demo your solution at the end of the weekend.",
-      },
-      {
-        id: "impact",
-        title: "Why It Matters",
-        content:
-          "Resilience is not about predicting the future perfectly — it is about giving people enough warning and enough understanding to act. A good solution buys a community time it would not otherwise have.",
-      },
-    ],
-    resources: [
-      { title: "NASA Open Data Portal", url: "https://data.nasa.gov/" },
-      { title: "NASA Space Apps Challenge", url: REGISTER_URL },
-    ],
-  },
-  {
-    id: "mars-data-challenge",
-    slug: "mars-data-challenge",
-    title: "Mars Data Challenge",
+    id: "abandoned-but-not-forgotten",
+    slug: "abandoned-but-not-forgotten",
+    title:
+      "Abandoned but not Forgotten: Storytelling about NASA's Discarded Equipment on the Moon and Mars",
     category: "space-exploration",
     categoryLabel: "Space Exploration",
     categoryIcon: "planet",
+    shortDescription:
+      "Tell the story of NASA hardware left on the Moon, Mars, and in deep space, exploring its original purpose, mission history, and scientific contributions.",
     description:
-      "Use real Mars data to uncover insights, create visualizations, or build tools that support future exploration and colonization efforts.",
+      "Tell the story of NASA hardware left on the Moon, Mars, and in deep space, exploring its original purpose, mission history, and scientific contributions.",
     image: spaceExplorationImage,
     imageAlt: "Spacecraft exploring a distant planet",
-    organizer: "NASA",
-    season: "2025 Season",
-    difficulty: "hard",
-    longDescription: [
-      "Mars Data Challenge invites teams to work with real information returned by missions to the Red Planet — imagery, terrain, atmospheric readings, and mission timelines.",
-      "The goal is not to plan a mission, but to make Mars easier to understand: visualise something hidden in the raw data, or build a tool that helps the next team ask better questions.",
+    season: SEASON,
+    organizer: ORGANIZER,
+    overview:
+      "NASA has left equipment across the Moon, Mars and deep space — landers, rovers, instruments and other hardware that finished their missions but remain part of exploration history. This challenge asks teams to bring those discarded artifacts back into view, explaining what each object was designed to do, what it accomplished and what it still teaches us.",
+    mainObjective:
+      "Make the history and scientific impact of NASA's discarded exploration hardware accessible through engaging educational storytelling.",
+    targetAudience: null,
+    keyInsights: [],
+    identifiedChallenges: [],
+    recommendations: [
+      "Interactive timelines",
+      "Maps and imagery",
+      "3D models",
+      "Simplified hardware explanations",
+      "Scientific discoveries enabled by each piece of equipment",
     ],
-    sections: [
-      {
-        id: "challenge",
-        title: "The Challenge",
-        content:
-          "Decades of Mars exploration have produced an enormous public archive. It is rich, messy, and scattered — which means most of it is never seen by anyone outside the teams that generated it.",
-      },
-      {
-        id: "what-to-do",
-        title: "What You Need To Do",
-        content: [
-          "Pick one Martian dataset your team is curious about, clean it, and build something with it: an interactive visualisation, a comparison tool, a story told through the numbers, or a small model.",
-          "Be ready to explain the science you relied on and where a viewer can verify it.",
-        ],
-      },
-      {
-        id: "impact",
-        title: "Why It Matters",
-        content:
-          "Every future mission is planned on top of the data already collected. Making that data legible today shortens the distance between a question and an answer — on Mars and on Earth.",
-      },
+    successMetrics: [],
+    domains: [
+      "Space History",
+      "Science Communication",
+      "3D Visualization",
+      "Interactive Timelines",
     ],
-    resources: [{ title: "NASA Open Data Portal", url: "https://data.nasa.gov/" }],
   },
   {
-    id: "ocean-health",
-    slug: "ocean-health",
-    title: "Ocean Health",
+    id: "earth-system-trend-detective",
+    slug: "earth-system-trend-detective",
+    title: "Be An Earth System Trend Detective!",
     category: "earth-climate",
     categoryLabel: "Earth & Climate",
     categoryIcon: "leaf",
+    shortDescription:
+      "Explore NASA environmental data to discover how Earth system variables change over time and across different regions.",
     description:
-      "Build solutions to monitor, protect, and restore ocean ecosystems, from coral reefs to marine biodiversity.",
-    /* The blue-marble artwork is the closest existing asset to an ocean
-       challenge; no new image is downloaded for it. */
-    image: heroEarthImage,
-    imageAlt: "The blue Earth seen from space with oceans and clouds",
-    organizer: "NASA",
-    season: "2025 Season",
-    difficulty: "medium",
-    longDescription: [
-      "Ocean Health focuses on the part of the planet that covers most of it: coral reefs, marine biodiversity, fisheries, and the changing chemistry of seawater.",
-      "Teams translate ocean datasets into tools that make the state of the sea visible — and into actions that help the people who depend on it most.",
+      "Explore NASA environmental data to discover how Earth system variables change over time and across different regions.",
+    image: earthClimateImage,
+    imageAlt: "Earth seen from space showing swirling cloud systems",
+    season: SEASON,
+    organizer: ORGANIZER,
+    overview:
+      "Earth's land, oceans, atmosphere and ice are always changing, and NASA missions record those changes in enormous open datasets. This challenge asks teams to dig into that data, identify how environmental variables shift over time and across regions, and communicate what they find clearly.",
+    mainObjective:
+      "Analyze NASA mission measurements and model outputs, identify trends, measure their magnitude, and assess statistical significance.",
+    targetAudience: null,
+    keyInsights: [],
+    identifiedChallenges: [],
+    recommendations: [
+      "Time-series analysis",
+      "Statistical testing",
+      "Geospatial analysis",
+      "Interactive charts and maps",
     ],
-    sections: [
-      {
-        id: "challenge",
-        title: "The Challenge",
-        content:
-          "Ocean systems are under pressure from warming, acidification, pollution, and overfishing. The signals exist in open datasets, but they are hard to see at the scale of a single reef, coastline, or fishing community.",
-      },
-      {
-        id: "what-to-do",
-        title: "What You Need To Do",
-        content:
-          "Select an ocean or Earth-observation dataset, choose a place or a problem to focus on, and build a prototype that monitors, explains, or flags change. A dashboard, an alert, a map, or a story are all valid outcomes.",
-      },
-      {
-        id: "impact",
-        title: "Why It Matters",
-        content:
-          "Billions of people rely on healthy oceans for food and livelihoods. What gets measured and understood gets protected — and the earlier a change is noticed, the cheaper it is to respond to.",
-      },
+    successMetrics: [],
+    domains: [
+      "Earth Observation",
+      "Time-Series Analysis",
+      "Statistical Testing",
+      "Geospatial Analysis",
     ],
-    /* Deliberately empty: proves the Resources section is optional in the
-       UI without shipping a fake link. */
-    resources: [],
   },
   {
-    id: "space-tech-for-a-better-earth",
-    slug: "space-tech-for-a-better-earth",
-    title: "Space Tech for a Better Earth",
-    category: "technology",
-    categoryLabel: "Technology",
-    categoryIcon: "gear",
+    id: "junior-astronaut-mission-trainer",
+    slug: "junior-astronaut-mission-trainer",
+    title: "Build a Junior Astronaut Mission Trainer",
+    category: "space-exploration",
+    categoryLabel: "Space Exploration",
+    categoryIcon: "planet",
+    shortDescription:
+      "Create an interactive educational experience where students manage a lunar or Martian outpost and make mission-critical engineering decisions.",
     description:
-      "Leverage space technology and data to solve challenges on Earth, from agriculture to disaster response.",
+      "Create an interactive educational experience where students manage a lunar or Martian outpost and make mission-critical engineering decisions.",
+    image: spaceExplorationImage,
+    imageAlt: "Spacecraft exploring a distant planet",
+    season: SEASON,
+    organizer: ORGANIZER,
+    overview:
+      "Long-duration missions to the Moon and Mars will depend on crews making sound engineering decisions under tight resource constraints. This challenge asks teams to build an interactive training experience in which students run a lunar or Martian outpost and learn how life support, power, food and other systems fit together.",
+    mainObjective:
+      "Teach STEM, resource management, systems engineering, and problem-solving through an engaging space mission simulation.",
+    targetAudience: "Students",
+    keyInsights: [],
+    identifiedChallenges: [],
+    recommendations: [
+      "Resource constraints",
+      "Life support",
+      "Radiation shielding",
+      "Power",
+      "Food production",
+      "Random events",
+      "Missions",
+      "Mission success and failure scenarios",
+    ],
+    successMetrics: [],
+    domains: [
+      "STEM Education",
+      "Systems Engineering",
+      "Resource Management",
+      "Simulation",
+    ],
+  },
+  {
+    id: "clps-lunar-mission-browser",
+    slug: "clps-lunar-mission-browser",
+    title: "CLPS Lunar Mission Browser",
+    category: "space-exploration",
+    categoryLabel: "Space Exploration",
+    categoryIcon: "planet",
+    shortDescription:
+      "Explore lunar landing locations and dates by visualizing the positions of the Sun and Earth relative to the lunar horizon.",
+    description:
+      "Explore lunar landing locations and dates by visualizing the positions of the Sun and Earth relative to the lunar horizon.",
     image: aboutSpaceImage,
     imageAlt: "Satellite orbiting above the Earth",
-    organizer: "NASA",
-    season: "2025 Season",
-    difficulty: "medium",
-    longDescription: [
-      "Space Tech for a Better Earth asks a simple question: which technologies built for space already make life on the ground better?",
-      "From satellite imagery to sensor hardware, teams apply space-derived tools to everyday problems — agriculture, disaster response, transport, or energy.",
+    season: SEASON,
+    organizer: ORGANIZER,
+    overview:
+      "The Commercial Lunar Payload Services (CLPS) program is delivering landers to many different locations on the Moon, and local conditions such as sunlight and Earth visibility vary widely from site to site. This challenge asks teams to visualise lunar landing sites together with the astronomical conditions that affect them.",
+    mainObjective:
+      "Make lunar landing-site comparisons and astronomical conditions easier to understand for mission planners, educators, and the public.",
+    targetAudience: null,
+    keyInsights: [],
+    identifiedChallenges: [],
+    recommendations: [
+      "An interactive lunar map",
+      "Landing-site selection",
+      "Date selection",
+      "Illumination conditions",
+      "Solar power potential",
+      "Communication windows",
     ],
-    sections: [
-      {
-        id: "challenge",
-        title: "The Challenge",
-        content:
-          "Satellites, sensors, and communication systems designed for space routinely generate value on Earth, yet many communities and industries never use them. The gap is rarely the technology itself — it is the packaging.",
-      },
-      {
-        id: "what-to-do",
-        title: "What You Need To Do",
-        content:
-          "Take one space technology or dataset and apply it to a concrete Earth problem. Build a working demonstration of the idea, explain the pipeline from space to user, and be honest about what your prototype does not yet do.",
-      },
-      {
-        id: "impact",
-        title: "Why It Matters",
-        content:
-          "The return on space investment is measured on the ground: earlier disaster warnings, healthier crops, smarter logistics. Somebody has to build that bridge — this weekend, it is your team.",
-      },
-    ],
-    resources: [
-      { title: "NASA Open Data Portal", url: "https://data.nasa.gov/" },
-      { title: "NASA Open APIs", url: "https://api.nasa.gov/" },
+    successMetrics: [],
+    domains: [
+      "Lunar Exploration",
+      "Geospatial Visualization",
+      "Mission Planning",
+      "Solar Illumination",
     ],
   },
   {
-    id: "global-health",
-    slug: "global-health",
-    title: "Global Health",
+    id: "astronaut-health-monitoring-software",
+    slug: "astronaut-health-monitoring-software",
+    title: "Create Health Monitoring Software for Astronauts on Space Missions",
     category: "health-humanity",
     categoryLabel: "Health & Humanity",
     categoryIcon: "heart",
+    shortDescription:
+      "Design software that helps astronauts monitor health indicators and understand health trends during long-duration space missions.",
     description:
-      "Create solutions to improve access to healthcare, track disease outbreaks, or support mental and physical well-being around the world.",
-    /* No health-specific art exists in the project, so the closest existing
-       asset is reused rather than downloading something new. */
+      "Design software that helps astronauts monitor health indicators and understand health trends during long-duration space missions.",
     image: technologyImage,
     imageAlt: "A satellite in orbit above the Earth",
-    organizer: "NASA",
-    season: "2025 Season",
-    difficulty: "easy",
-    longDescription: [
-      "Global Health invites participants to use open data to improve how people access care, how outbreaks are tracked, and how wellbeing is supported.",
-      "No medical background is required — clear thinking and honest data handling matter more than specialist knowledge.",
+    season: SEASON,
+    organizer: ORGANIZER,
+    overview:
+      "Astronauts on long-duration space missions must keep track of their health with limited access to ground-based medical support. This challenge asks teams to design software that helps crews monitor health indicators, spot concerning trends and manage their own wellbeing during a mission.",
+    mainObjective:
+      "Support health monitoring, early identification of potential problems, and health self-management during missions.",
+    targetAudience: null,
+    keyInsights: [],
+    identifiedChallenges: [],
+    recommendations: [
+      "An astronaut health dashboard",
+      "Health indicator tracking",
+      "Historical trends",
+      "Abnormal-pattern alerts",
+      "Clear health information",
     ],
-    /* Two sections instead of three: the details page renders whatever the
-       record contains, with no fixed section list. */
-    sections: [
-      {
-        id: "challenge",
-        title: "The Challenge",
-        content:
-          "Health data is unevenly distributed and hard to combine. A signal that an outbreak is starting, or that a community is being missed by existing services, is often buried across several sources that were never designed to work together.",
-      },
-      {
-        id: "what-to-do",
-        title: "What You Need To Do",
-        content:
-          "Find two open sources that can be combined responsibly, define the question you want to answer, and build a small working tool around it. Handle sensitive data carefully and state your assumptions plainly.",
-      },
+    successMetrics: [],
+    domains: [
+      "Space Health",
+      "Health Data Visualization",
+      "Trend Analysis",
+      "Astronaut Wellbeing",
     ],
-    resources: [],
   },
   {
-    id: "a-brighter-future",
-    slug: "a-brighter-future",
-    title: "A Brighter Future",
-    category: "technology",
-    categoryLabel: "Technology",
-    categoryIcon: "gear",
+    id: "dancing-with-the-sars",
+    slug: "dancing-with-the-sars",
+    title: "Dancing with the SARs",
+    category: "earth-climate",
+    categoryLabel: "Earth & Climate",
+    categoryIcon: "leaf",
+    shortDescription:
+      "Use NASA-ISRO Synthetic Aperture Radar (NISAR) mission data to explore and visualize changes on Earth's surface.",
     description:
-      "Imagine and build solutions that use space data, AI, and technology to create a more sustainable, inclusive, and resilient future.",
+      "Use NASA-ISRO Synthetic Aperture Radar (NISAR) mission data to explore and visualize changes on Earth's surface.",
+    image: heroEarthImage,
+    imageAlt: "The blue Earth seen from space with oceans and clouds",
+    season: SEASON,
+    organizer: ORGANIZER,
+    overview:
+      "The NASA-ISRO Synthetic Aperture Radar (NISAR) mission observes Earth's surface with radar that can see through clouds and darkness. This challenge asks teams to turn that data into tools that make surface changes — from earthquakes to glacier movement — easier to see and understand.",
+    mainObjective:
+      "Make satellite radar observations more understandable and useful for identifying environmental and surface changes.",
+    targetAudience: null,
+    keyInsights: [],
+    identifiedChallenges: [],
+    recommendations: [
+      "Interactive maps",
+      "Location and time selection",
+      "Radar observation comparisons",
+      "Exploration of events such as earthquakes, wildfires, wetland loss, agricultural changes, and glacier movement",
+    ],
+    successMetrics: [],
+    domains: [
+      "Synthetic Aperture Radar",
+      "Earth Observation",
+      "Change Detection",
+      "Data Visualization",
+    ],
+  },
+  {
+    id: "field-shift-adapting-farms",
+    slug: "field-shift-adapting-farms",
+    title: "Field Shift: Adapting Farms with NASA Data",
+    category: "earth-climate",
+    categoryLabel: "Earth & Climate",
+    categoryIcon: "leaf",
+    shortDescription:
+      "Combine NASA Earth observations, soil information, crop characteristics, and farmer priorities to explore more resilient crop-rotation strategies.",
+    description:
+      "Combine NASA Earth observations, soil information, crop characteristics, and farmer priorities to explore more resilient crop-rotation strategies.",
     image: sustainabilityImage,
     imageAlt: "Green Earth seen from space",
-    organizer: "NASA",
-    season: "2025 Season",
-    difficulty: "medium",
-    longDescription: [
-      "A Brighter Future is the open-ended challenge: imagine how space data, AI, and thoughtful design can make the next decade more sustainable, inclusive, and resilient.",
-      "It rewards teams that start from a real human need and use technology as the means, not the point.",
+    season: SEASON,
+    organizer: ORGANIZER,
+    overview:
+      "Farmers must decide what to plant and how to rotate crops in the face of changing soil, water and climate conditions. This challenge asks teams to combine NASA Earth observations with soil data, crop information and farmer priorities to explore more resilient crop-rotation strategies.",
+    mainObjective:
+      "Support agricultural decisions that improve soil health, optimize water use, and help farms adapt to environmental change.",
+    targetAudience: null,
+    keyInsights: [],
+    identifiedChallenges: [],
+    recommendations: [
+      "Farm location",
+      "Soil characteristics",
+      "Crop selection",
+      "Farmer priorities",
+      "Comparisons of crop-rotation strategies",
     ],
-    /* Four sections: section count, titles and length all vary per record,
-       and the page never hardcodes any of them. */
-    sections: [
-      {
-        id: "challenge",
-        title: "The Challenge",
-        content:
-          "The tools that shape the future — open data, machine learning, low-cost sensing — are more accessible than ever, and more unevenly distributed. The question is which problems they get pointed at.",
-      },
-      {
-        id: "what-to-do",
-        title: "What You Need To Do",
-        content:
-          "Start from a need you have seen up close, then work backwards to the data and technology that could address it. Ship something functional, however small, and show who benefits from it.",
-      },
-      {
-        id: "grounded",
-        title: "Keep It Grounded",
-        content:
-          "A convincing pitch is not a working product. Choose scope you can finish, measure your impact honestly, and say clearly what you would build next with more time.",
-      },
-      {
-        id: "impact",
-        title: "Why It Matters",
-        content:
-          "Sustainable and inclusive progress is built from many small, workable ideas. The prototype you finish this weekend can be the first version of something a community keeps using.",
-      },
+    successMetrics: [],
+    domains: ["Agriculture", "Earth Observation", "Soil Health", "Water Management"],
+  },
+  {
+    id: "flame-in-freefall",
+    slug: "flame-in-freefall",
+    title:
+      "Flame in Freefall: AI-Powered Fire Safety Insights from Microgravity Combustion Data",
+    category: "space-exploration",
+    categoryLabel: "Space Exploration",
+    categoryIcon: "planet",
+    shortDescription:
+      "Explore NASA microgravity combustion experiments through an AI-powered research dashboard designed to surface useful fire-safety insights.",
+    description:
+      "Explore NASA microgravity combustion experiments through an AI-powered research dashboard designed to surface useful fire-safety insights.",
+    image: spaceExplorationImage,
+    imageAlt: "Spacecraft exploring a distant planet",
+    season: SEASON,
+    organizer: ORGANIZER,
+    overview:
+      "Studying how fire behaves in microgravity helps researchers design safer spacecraft and habitats. This challenge asks teams to build an AI-powered research dashboard that makes NASA's microgravity combustion experiments easier to search, compare and interpret for fire-safety research.",
+    mainObjective:
+      "Make combustion research easier to search, compare, and interpret to support fire-safety research and future human space missions.",
+    targetAudience: null,
+    keyInsights: [],
+    identifiedChallenges: [],
+    recommendations: [
+      "Experiment search",
+      "Research summaries",
+      "Comparisons of combustion conditions",
+      "Relevant study rankings",
+      "Pattern exploration",
+      "Explanations of potential fire-safety implications",
     ],
-    resources: [{ title: "NASA Space Apps Challenge", url: REGISTER_URL }],
+    successMetrics: [],
+    domains: [
+      "Microgravity Combustion",
+      "Fire Safety",
+      "Research Tools",
+      "Data Search",
+    ],
+  },
+  {
+    id: "modis-viirs-hotspots-harmonization",
+    slug: "modis-viirs-hotspots-harmonization",
+    title: "Harmonization of MODIS and VIIRS Hot Spots",
+    category: "earth-climate",
+    categoryLabel: "Earth & Climate",
+    categoryIcon: "leaf",
+    shortDescription:
+      "Combine MODIS and VIIRS active-fire hotspot records into a consistent calendar for exploring when and where burning has occurred.",
+    description:
+      "Combine MODIS and VIIRS active-fire hotspot records into a consistent calendar for exploring when and where burning has occurred.",
+    image: earthClimateImage,
+    imageAlt: "Earth seen from space showing swirling cloud systems",
+    season: SEASON,
+    organizer: ORGANIZER,
+    overview:
+      "MODIS and VIIRS are two NASA instruments that detect active fires, but their records are not directly consistent with each other. This challenge asks teams to harmonise those hotspot datasets into a single comparable record that makes historical fire activity easier to explore.",
+    mainObjective:
+      "Improve the consistency of historical fire monitoring and support analysis, early warning, and emergency-response planning.",
+    targetAudience: null,
+    keyInsights: [],
+    identifiedChallenges: [],
+    recommendations: [
+      "Standardized hotspot data",
+      "Interactive maps",
+      "Historical calendars",
+      "Geographic filtering",
+      "Date selection",
+      "Fire-activity exploration",
+    ],
+    successMetrics: [],
+    domains: [
+      "Active Fire Data",
+      "Earth Observation",
+      "Data Harmonization",
+      "Historical Analysis",
+    ],
+  },
+  {
+    id: "earth-analogs-for-moon-and-mars",
+    slug: "earth-analogs-for-moon-and-mars",
+    title:
+      "Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars",
+    category: "space-exploration",
+    categoryLabel: "Space Exploration",
+    categoryIcon: "planet",
+    shortDescription:
+      "Find locations on Earth whose geological, environmental, or physical characteristics resemble potential lunar or Martian landing sites and base locations.",
+    description:
+      "Find locations on Earth whose geological, environmental, or physical characteristics resemble potential lunar or Martian landing sites and base locations.",
+    image: aboutSpaceImage,
+    imageAlt: "Satellite orbiting above the Earth",
+    season: SEASON,
+    organizer: ORGANIZER,
+    overview:
+      "Testing equipment and procedures for the Moon and Mars is difficult, so researchers rely on places on Earth that resemble those destinations. This challenge asks teams to find and compare terrestrial analog sites whose geology, environment and physical conditions make them useful stand-ins for lunar or Martian locations.",
+    mainObjective:
+      "Help researchers and mission teams identify terrestrial analog environments for testing equipment, technologies, and operational procedures.",
+    targetAudience: null,
+    keyInsights: [],
+    identifiedChallenges: [],
+    recommendations: [
+      "Earth-location comparisons",
+      "Terrain and geology analysis",
+      "Temperature",
+      "Elevation",
+      "Surface composition",
+      "Environmental conditions",
+      "Transparent similarity rankings",
+    ],
+    successMetrics: [],
+    domains: [
+      "Terrestrial Analogs",
+      "Geology",
+      "Site Comparison",
+      "Similarity Ranking",
+    ],
+  },
+  {
+    id: "interplanetary-survival-guide-martian-map",
+    slug: "interplanetary-survival-guide-martian-map",
+    title: "Interplanetary Survival Guide: Martian Map",
+    category: "space-exploration",
+    categoryLabel: "Space Exploration",
+    categoryIcon: "planet",
+    shortDescription:
+      "Combine NASA Mars datasets into an integrated map that helps future astronauts understand terrain, routes, destinations, and environmental conditions.",
+    description:
+      "Combine NASA Mars datasets into an integrated map that helps future astronauts understand terrain, routes, destinations, and environmental conditions.",
+    image: spaceExplorationImage,
+    imageAlt: "Spacecraft exploring a distant planet",
+    season: SEASON,
+    organizer: ORGANIZER,
+    overview:
+      "Planning a Marswalk means bringing together terrain, hazards, scientific targets and rover observations into one coherent picture. This challenge asks teams to combine NASA Mars datasets into an integrated map that helps future astronauts understand where they can go and what they will face.",
+    mainObjective:
+      "Support Marswalk planning by making relevant Martian information easier to access and explore.",
+    targetAudience: null,
+    keyInsights: [],
+    identifiedChallenges: [],
+    recommendations: [
+      "Layered maps",
+      "Terrain and elevation",
+      "Geological features",
+      "Hazards",
+      "Scientific targets",
+      "Rover data",
+      "Route-planning concepts",
+    ],
+    successMetrics: [],
+    domains: [
+      "Mars Mapping",
+      "Geospatial Data",
+      "Route Planning",
+      "Environmental Hazards",
+    ],
+  },
+  {
+    id: "planet-x-and-spherex",
+    slug: "planet-x-and-spherex",
+    title: "Planet X and SPHEREx",
+    category: "space-exploration",
+    categoryLabel: "Space Exploration",
+    categoryIcon: "planet",
+    shortDescription:
+      "Build a public-facing sky viewer that uses NASA SPHEREx imagery to compare observations over time and help identify objects that appear to move.",
+    description:
+      "Build a public-facing sky viewer that uses NASA SPHEREx imagery to compare observations over time and help identify objects that appear to move.",
+    image: aboutSpaceImage,
+    imageAlt: "Satellite orbiting above the Earth",
+    season: SEASON,
+    organizer: ORGANIZER,
+    overview:
+      "The SPHEREx mission is surveying the sky in infrared, producing imagery that the public can explore. This challenge asks teams to build a public-facing sky viewer that compares observations over time and helps users spot objects that appear to move.",
+    mainObjective:
+      "Make astronomical observations accessible and support the exploration of moving celestial objects.",
+    targetAudience: null,
+    keyInsights: [],
+    identifiedChallenges: [],
+    recommendations: [
+      "Sky imagery",
+      "Before-and-after comparisons",
+      "Time controls",
+      "Zooming",
+      "Filtering",
+      "Object tracking",
+      "Highlighting potential movement",
+    ],
+    successMetrics: [],
+    domains: [
+      "Astronomy",
+      "Sky Imagery",
+      "Time-Series Comparison",
+      "Object Tracking",
+    ],
+  },
+  {
+    id: "space-mission-design-game",
+    slug: "space-mission-design-game",
+    title: "Space Mission Design Game",
+    category: "space-exploration",
+    categoryLabel: "Space Exploration",
+    categoryIcon: "planet",
+    shortDescription:
+      "Create an interactive game where students design and simulate a space mission while exploring engineering decisions and mission trade-offs.",
+    description:
+      "Create an interactive game where students design and simulate a space mission while exploring engineering decisions and mission trade-offs.",
+    image: technologyImage,
+    imageAlt: "A satellite in orbit above the Earth",
+    season: SEASON,
+    organizer: ORGANIZER,
+    overview:
+      "Designing a space mission means balancing objectives, budgets, hardware and physics, and every choice has trade-offs. This challenge asks teams to build an interactive game in which students design and simulate a mission and see how their engineering decisions play out.",
+    mainObjective:
+      "Make space engineering, systems engineering, and resource management more accessible through educational gameplay.",
+    targetAudience: "Students",
+    keyInsights: [],
+    identifiedChallenges: [],
+    recommendations: [
+      "Mission objectives",
+      "Budgets",
+      "Spacecraft components",
+      "Launch vehicles",
+      "Scientific instruments",
+      "Power",
+      "Mass",
+      "Communications",
+      "Orbital choices",
+      "Mission-performance feedback",
+    ],
+    successMetrics: [],
+    domains: [
+      "Space Engineering",
+      "Systems Engineering",
+      "Game Design",
+      "Resource Management",
+    ],
+  },
+  {
+    id: "earth-information-jukebox",
+    slug: "earth-information-jukebox",
+    title: "The Earth Information Jukebox",
+    category: "earth-climate",
+    categoryLabel: "Earth & Climate",
+    categoryIcon: "leaf",
+    shortDescription:
+      "Transform NASA Earth Information Center visualizations into dynamic sounds so people can experience changes on Earth through sight and sound.",
+    description:
+      "Transform NASA Earth Information Center visualizations into dynamic sounds so people can experience changes on Earth through sight and sound.",
+    image: heroEarthImage,
+    imageAlt: "The blue Earth seen from space with oceans and clouds",
+    season: SEASON,
+    organizer: ORGANIZER,
+    overview:
+      "The NASA Earth Information Center turns Earth data into striking visualizations, but those stories are mostly visual. This challenge asks teams to transform that data into sound so people can experience changes on Earth through both sight and hearing.",
+    mainObjective:
+      "Make Earth science more engaging and accessible through data sonification and multisensory experiences.",
+    targetAudience: null,
+    keyInsights: [],
+    identifiedChallenges: [],
+    recommendations: [
+      "Visualization selection",
+      "Sound generation",
+      "Adjustable audio parameters",
+      "Scientific explanations of sound mappings",
+      "Accessible interaction controls",
+    ],
+    successMetrics: [],
+    domains: [
+      "Data Sonification",
+      "Earth Science",
+      "Accessibility",
+      "Multisensory Visualization",
+    ],
   },
 ];
-
-/* Difficulty is stored as an enum (`easy` | `medium` | `hard`) so an API can
-   send a machine value; the display string lives here as data. */
-export const difficultyLabels = {
-  easy: "Easy",
-  medium: "Medium",
-  hard: "Hard",
-};
 
 /* --------------------------------------------------------------------------
    Challenge details page copy (/challenges/:slug)
@@ -397,14 +676,27 @@ export const challengeDetailsPage = {
     breadcrumbLabel: "Breadcrumb",
     parent: { label: "Challenges", href: "/challenges" },
   },
-  aboutTitle: "About this challenge",
-  /* Sidebar card. Row order and icons are presentational (they live in
-     ChallengeInfo); these are the strings and the record fields behind them. */
+  /* Heading for the challenge's overview paragraph. */
+  overviewTitle: "Challenge Overview",
+  /* Headings for the structured detail fields. A field with no data is simply
+     not rendered, so these strings never label an empty block. */
+  sectionTitles: {
+    objective: "Main Objective",
+    audience: "Target Audience",
+    keyInsights: "Key Insights",
+    identifiedChallenges: "Main Challenges to Address",
+    recommendations: "Suggested Solution Directions",
+    successMetrics: "Success Metrics",
+    domains: "Relevant Domains",
+  },
+  /* Recommendations are challenge context, not mandatory submission criteria. */
+  recommendationsNote:
+    "These are suggested directions from the challenge brief — treat them as context, not mandatory requirements.",
+  /* Sidebar card: labelled values, all sourced from the record. */
   info: {
     title: "Challenge Info",
     labels: {
       category: "Category",
-      difficulty: "Difficulty",
       season: "Season",
       organizer: "Organizer",
     },

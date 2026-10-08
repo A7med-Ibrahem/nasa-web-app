@@ -1,9 +1,6 @@
 import "./ChallengeInfo.css";
 
-import {
-  challengeDetailsPage,
-  difficultyLabels,
-} from "../../../data/challengesData";
+import { challengeDetailsPage } from "../../../data/challengesData";
 import { ArrowRightIcon, CalendarIcon, UsersIcon } from "../../common/Icons/Icons";
 import { challengeIcons } from "../../common/Icons/iconRegistry";
 
@@ -11,7 +8,7 @@ import { challengeIcons } from "../../common/Icons/iconRegistry";
  * "Challenge Info" sidebar card: a labelled-value summary of the record plus
  * the page's primary CTA.
  *
- * The four rows are fixed content (the spec of this card), but every *value*
+ * The rows are fixed content (the spec of this card), but every *value*
  * comes from the challenge record and every string comes from
  * challengeDetailsPage — so an API response with the same shape fills the card
  * untouched. Values degrade to an em dash instead of rendering `undefined`.
@@ -24,10 +21,9 @@ import { challengeIcons } from "../../common/Icons/iconRegistry";
  */
 export default function ChallengeInfo({ challenge }) {
   const { info, join } = challengeDetailsPage;
-  const { categoryLabel, categoryIcon, difficulty, season, organizer } = challenge;
+  const { categoryLabel, categoryIcon, season, organizer } = challenge;
 
   const CategoryIcon = challengeIcons[categoryIcon];
-  const DifficultyIcon = challengeIcons.bars;
 
   /* Presentation only: which glyph sits beside each label. The label and the
      value themselves are data. */
@@ -37,13 +33,6 @@ export default function ChallengeInfo({ challenge }) {
       icon: CategoryIcon ? <CategoryIcon size={16} /> : null,
       label: info.labels.category,
       value: categoryLabel,
-    },
-    {
-      id: "difficulty",
-      icon: DifficultyIcon ? <DifficultyIcon size={16} /> : null,
-      label: info.labels.difficulty,
-      /* Difficulty reaches the UI as an enum; the display string is data. */
-      value: difficultyLabels[difficulty] ?? difficulty,
     },
     {
       id: "season",

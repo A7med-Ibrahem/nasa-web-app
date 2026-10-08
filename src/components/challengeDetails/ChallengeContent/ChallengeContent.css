@@ -32,7 +32,7 @@
 }
 
 /*
- * The About block is the lede: a size and colour step above the record
+ * The Overview block is the lede: a size and colour step above the record
  * sections so the page has a clear entry point. `#dfe7f5` is the same
  * "bright but not pure white" the card metadata already uses.
  */
@@ -40,4 +40,70 @@
   color: #dfe7f5;
   font-size: 17px;
   line-height: 1.7;
+}
+
+/* ---------- Bulleted sections (insights, challenges, directions) ---------- */
+
+.challenge-content-list {
+  max-width: 68ch;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.challenge-content-list li {
+  position: relative;
+  padding-left: 22px;
+  color: var(--muted-on-dark);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.challenge-content-list li + li {
+  margin-top: 10px;
+}
+
+/* Quiet accent bullet, mirroring the category identification glyphs. */
+.challenge-content-list li::before {
+  content: "";
+  position: absolute;
+  top: 0.72em;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--blue-strong);
+}
+
+/* ---------- Domains tags ---------- */
+
+.challenge-content-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.challenge-content-tag {
+  padding: 7px 13px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-pill);
+  background-color: var(--card-navy);
+  color: var(--text-on-dark);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* ---------- Recommendations note ---------- */
+
+.challenge-content-note {
+  max-width: 68ch;
+  margin: 14px 0 0;
+  color: var(--muted-on-dark-alt);
+  font-size: 13px;
+  line-height: 1.6;
 }
