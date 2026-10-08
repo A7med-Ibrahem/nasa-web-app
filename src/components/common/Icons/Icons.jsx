@@ -25,6 +25,28 @@ export function ArrowRightIcon({ size = 18 }) {
   );
 }
 
+export function ArrowLeftIcon({ size = 18 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <path d="M20 12H5" />
+      <path d="M11 6l-6 6 6 6" />
+    </svg>
+  );
+}
+
+/* Trailing arrow leaving a box: the conventional glyph for a link that
+   leaves this site, so external destinations are recognisable without
+   relying on the new-tab behaviour alone. */
+export function ExternalLinkIcon({ size = 16 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <path d="M14 4h6v6" />
+      <path d="M20 4l-8.5 8.5" />
+      <path d="M19 14v5a1.8 1.8 0 0 1-1.8 1.8H5.8A1.8 1.8 0 0 1 4 19V7.8A1.8 1.8 0 0 1 5.8 6H11" />
+    </svg>
+  );
+}
+
 export function SignalIcon({ size = 18 }) {
   return (
     <svg {...base} width={size} height={size}>

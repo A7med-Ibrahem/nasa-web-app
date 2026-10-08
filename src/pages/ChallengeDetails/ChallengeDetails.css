@@ -1,0 +1,144 @@
+/* ==========================================================================
+    Challenge details page — wrapper, two-column layout, shared headings,
+    not-found state
+    --------------------------------------------------------------------------
+    The page owns the things that genuinely span its components: the single
+    dark canvas, the desktop grid that puts the main column beside the
+    Challenge Info card, the h2 typography both of them share, and the
+    not-found screen. Everything else lives with its component.
+
+    Width maths (desktop): the container is 1200px minus gutters (~1120px
+    content), the card track is at most 330px and the gap at most 52px, so the
+    main column sits near 68% — inside the 65–70% target — and every track is
+    minmax(0, ...) so no child can push the grid wider than the container.
+    ========================================================================== */
+
+.challenge-details-page {
+  background-color: var(--navy-950);
+}
+
+/* --------------------------------------------------------------------------
+   Layout
+   -------------------------------------------------------------------------- */
+
+.challenge-details-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 330px);
+  gap: clamp(28px, 4vw, 52px);
+  /* start (not stretch): a stretched grid item would defeat the sticky
+     sidebar below. */
+  align-items: start;
+  padding-block: clamp(32px, 4vw, 48px) var(--section-pad);
+}
+
+.challenge-details-main {
+  display: flex;
+  flex-direction: column;
+  /* Same rhythm as the blocks inside ChallengeContent, so the gap between the
+     sections and the resources list reads as one continuous column. */
+  gap: clamp(30px, 4vw, 44px);
+  min-width: 0;
+}
+
+.challenge-details-aside {
+  min-width: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Shared h2 typography
+   --------------------------------------------------------------------------
+   The main column and the sidebar live in different components but are peers
+   under the same h1, so the page owns their common heading style the way
+   globals.css owns .section-title across homepage sections. The components
+   opt in with this class; they do not import each other's stylesheets.
+   -------------------------------------------------------------------------- */
+
+.challenge-details-heading {
+  color: #ffffff;
+  font-size: clamp(21px, 2.4vw, 26px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+/* --------------------------------------------------------------------------
+   Not-found state
+   --------------------------------------------------------------------------
+   Unknown slug: a real page, not a redirect and not a crash. Centred, one h1
+   (the hero does not render on this path), one action back to the listing.
+   -------------------------------------------------------------------------- */
+
+.challenge-details-notfound {
+  display: flex;
+  align-items: center;
+  min-height: clamp(360px, 54vh, 540px);
+  padding-block: clamp(48px, 8vw, 96px);
+  background-color: var(--navy-950);
+}
+
+.challenge-details-notfound-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.challenge-details-notfound-title {
+  color: #ffffff;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.challenge-details-notfound-description {
+  max-width: 46ch;
+  margin-top: 12px;
+  color: var(--muted-on-dark);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.challenge-details-notfound-inner .btn {
+  margin-top: 26px;
+}
+
+/* The global .btn rule nudges trailing icons right on hover; this button's
+   icon points back, so it mirrors the motion instead of contradicting it. */
+.challenge-details-notfound-inner .btn:hover svg {
+  transform: translateX(-3px);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 881px) {
+  /*
+   * Sticky card on desktop: the Challenge Info summary and its CTA stay in
+   * view while the reader moves through long sections. 112px = the sticky
+   * navbar's 92px minimum height plus breathing room — same figure the
+   * global scroll-padding-top is built around. Below this width the layout
+   * stacks anyway and normal document flow is correct.
+   */
+  .challenge-details-aside {
+    position: sticky;
+    top: 112px;
+  }
+}
+
+@media (max-width: 880px) {
+  /* Single column: main content first, Challenge Info after it — the DOM
+     order already matches, so only the tracks collapse. */
+  .challenge-details-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 620px) {
+  .challenge-details-layout {
+    padding-block: 26px var(--section-pad);
+  }
+}

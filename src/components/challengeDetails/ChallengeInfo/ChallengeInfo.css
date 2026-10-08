@@ -1,0 +1,76 @@
+/* ==========================================================================
+    Challenge details — "Challenge Info" sidebar card
+    --------------------------------------------------------------------------
+    The page's strongest card: same navy surface, border and radius as the
+    challenge tiles, so it reads as part of the same family without borrowing
+    any of their selectors. The h2 takes the page-level
+    `.challenge-details-heading` typography shared with the main column.
+    ========================================================================== */
+
+.challenge-info {
+  padding: clamp(20px, 2.5vw, 26px);
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-md);
+  background-color: var(--card-navy);
+}
+
+/* ---------- Labelled-value rows ---------- */
+/* <dl> semantics: each row is a div wrapping its dt/dd, which HTML5 permits
+   and which lets the hairlines be laid out per row. */
+
+.challenge-info-list {
+  margin: 18px 0 0;
+}
+
+.challenge-info-row {
+  padding-block: 13px;
+  border-bottom: 1px solid var(--border-on-dark);
+}
+
+.challenge-info-row:first-child {
+  padding-top: 0;
+}
+
+.challenge-info-row:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.challenge-info-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted-on-dark);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.challenge-info-icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--blue-strong);
+}
+
+/* Value on its own line under the label: clear at narrow sidebar widths,
+   where a two-column label/value split would start wrapping both sides. */
+.challenge-info-value {
+  margin: 5px 0 0;
+  padding-left: 24px; /* aligns with the label text, past its 16px glyph + gap */
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: break-word;
+}
+
+/* ---------- Primary CTA ---------- */
+
+/* Full width inside the card: on a summary panel the action is the payoff,
+   and a half-width button reads as an afterthought. */
+.challenge-info-cta {
+  width: 100%;
+  margin-top: 22px;
+}

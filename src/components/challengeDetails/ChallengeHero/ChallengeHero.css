@@ -1,0 +1,249 @@
+/* ==========================================================================
+    Challenge details hero — breadcrumb, copy left / challenge image right
+    --------------------------------------------------------------------------
+    Same dark-stage grammar as ChallengesHero.css and LiveStandingsHero.css:
+    navy gradient, copy on the left, artwork on the right, the shared
+    `data-reveal-item` contract. The difference is that the artwork here is
+    the challenge's own image from the record, so it is a framed figure
+    (border + radius, rounded like the cards) instead of a bleeding
+    background — no decorative Earth, no scrim, no extra palette.
+
+    Every colour resolves through variables.css; the per-category accents
+    mirror the identification scheme the card badge already uses.
+    ========================================================================== */
+
+.challenge-hero {
+  overflow: hidden;
+  padding-block: clamp(24px, 3vw, 36px) clamp(44px, 5vw, 64px);
+  background-color: var(--navy-950);
+  background-image: radial-gradient(
+      ellipse 55% 75% at 82% 22%,
+      rgba(74, 158, 255, 0.12),
+      transparent 68%
+    ),
+    linear-gradient(180deg, var(--navy-900), var(--navy-950) 78%);
+}
+
+/* ---------- Breadcrumb ---------- */
+
+.challenge-breadcrumb {
+  margin-bottom: clamp(20px, 3vw, 32px);
+}
+
+.challenge-breadcrumb-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.challenge-breadcrumb-link {
+  color: var(--muted-on-dark);
+  text-decoration: none;
+  transition: color var(--ease);
+}
+
+.challenge-breadcrumb-link:hover {
+  color: var(--blue-strong);
+}
+
+.challenge-breadcrumb-current {
+  min-width: 0;
+  color: var(--text-on-dark);
+  /* A very long title breaks to the next line rather than widening the row. */
+  overflow-wrap: break-word;
+}
+
+.challenge-breadcrumb-separator {
+  margin-right: 8px;
+  color: var(--muted-on-dark-alt);
+}
+
+/* ---------- Layout ---------- */
+
+.challenge-hero-inner {
+  display: grid;
+  /* ~53 / 47: copy keeps the lead, but the framed figure has real presence.
+     minmax(0, ...) on both tracks so nothing can push the grid past the
+     container. */
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(28px, 4vw, 56px);
+  align-items: center;
+}
+
+.challenge-hero-content {
+  min-width: 0;
+}
+
+.challenge-hero-eyebrow {
+  margin-bottom: 14px;
+}
+
+/* ---------- Category badge ---------- */
+
+/*
+ * The card badge's identification scheme at hero scale: accent-coloured
+ * border and glyph on a dark fill, uppercase label. Values resolve through
+ * `--badge-accent`, declared once per category — one rule per category, no
+ * duplicated backgrounds. Colour is reinforcement only; the category name is
+ * always spelled out beside it.
+ */
+.challenge-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 100%;
+  padding: 6px 12px;
+  border: 1px solid var(--badge-accent, var(--blue));
+  border-radius: var(--radius-pill);
+  background-color: rgba(3, 20, 38, 0.6);
+  color: var(--badge-accent, var(--blue));
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.challenge-hero-badge > svg {
+  flex: none;
+}
+
+.challenge-hero-badge--earth-climate {
+  --badge-accent: var(--accent-green);
+}
+
+.challenge-hero-badge--space-exploration {
+  --badge-accent: var(--accent-purple);
+}
+
+.challenge-hero-badge--technology {
+  --badge-accent: var(--blue);
+}
+
+.challenge-hero-badge--health-humanity {
+  --badge-accent: var(--accent-pink);
+}
+
+/* ---------- Title + description ---------- */
+
+.challenge-hero-title {
+  margin-top: 16px;
+  color: #ffffff;
+  font-size: clamp(34px, 4.6vw, 52px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
+.challenge-hero-description {
+  max-width: 560px;
+  margin-top: 14px;
+  color: var(--muted-on-dark);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+/* ---------- Metadata pills ---------- */
+
+.challenge-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+/*
+ * Difficulty keeps its text label and icon alongside the accent colour, so
+ * the level is never signalled by colour alone. The season pill stays
+ * neutral — it carries no state to identify.
+ */
+.challenge-hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-pill);
+  background-color: var(--card-navy);
+  color: var(--text-on-dark);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.challenge-hero-pill > svg {
+  flex: none;
+}
+
+.challenge-hero-pill--easy {
+  color: var(--accent-green);
+}
+
+.challenge-hero-pill--medium {
+  color: var(--accent-amber);
+}
+
+.challenge-hero-pill--hard {
+  color: var(--accent-coral);
+}
+
+/* ---------- Challenge image ---------- */
+
+.challenge-hero-media {
+  position: relative;
+  /* The frame, not the image, defines the box: a missing or swapped asset
+     can change the photo but never the layout. */
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-lg);
+  background-color: var(--card-navy);
+}
+
+.challenge-hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* No-image fallback: the frame stays, quietly holding the category glyph. */
+.challenge-hero-media-fallback {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: var(--muted-on-dark-alt);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 880px) {
+  .challenge-hero-inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+}
+
+@media (max-width: 620px) {
+  .challenge-hero {
+    padding-block: 20px 40px;
+  }
+
+  .challenge-hero-title {
+    font-size: clamp(30px, 8.5vw, 38px);
+  }
+
+  .challenge-hero-description {
+    font-size: 15px;
+  }
+
+  .challenge-hero-media {
+    aspect-ratio: 16 / 9;
+  }
+}

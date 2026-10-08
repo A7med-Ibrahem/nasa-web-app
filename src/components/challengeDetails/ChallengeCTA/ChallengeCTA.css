@@ -1,0 +1,53 @@
+/* ==========================================================================
+    Challenge details — closing CTA band
+    --------------------------------------------------------------------------
+    Full-bleed band between the two-column content and the shared Footer.
+    Restrained by design: one hairline, one faint blue bloom behind the
+    headline, centred type — no glow, no glass, no oversized decoration.
+    ========================================================================== */
+
+.challenge-cta {
+  padding-block: clamp(56px, 7vw, 84px);
+  border-top: 1px solid var(--border-on-dark);
+  background-color: var(--navy-900);
+  background-image: radial-gradient(
+    ellipse 60% 120% at 50% 0%,
+    rgba(74, 158, 255, 0.1),
+    transparent 70%
+  );
+  text-align: center;
+}
+
+.challenge-cta-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.challenge-cta-title {
+  color: #ffffff;
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.16;
+  text-wrap: balance;
+}
+
+.challenge-cta-description {
+  margin-top: 12px;
+  color: var(--muted-on-dark);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.challenge-cta-line {
+  display: block;
+}
+
+.challenge-cta-action {
+  margin-top: 26px;
+  /* The label is long for a phone viewport and `.btn` is nowrap by default;
+     wrapping here beats letting the one element widen the document. */
+  max-width: 100%;
+  white-space: normal;
+}

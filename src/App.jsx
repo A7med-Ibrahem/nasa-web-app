@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import MainLayout from "./layouts/MainLayout/MainLayout";
+import ChallengeDetails from "./pages/ChallengeDetails/ChallengeDetails";
 import Challenges from "./pages/Challenges/Challenges";
 import Home from "./pages/Home/Home";
 import LiveStandings from "./pages/LiveStandings/LiveStandings";
@@ -18,7 +19,11 @@ function App() {
     <Routes>
       <Route element={<MainLayout />}>
         <Route index element={<Home />} />
+        {/* Static listing and dynamic details are sibling routes: the
+            literal path wins for /challenges, :slug catches everything
+            below it, and neither shadows the other. */}
         <Route path="challenges" element={<Challenges />} />
+        <Route path="challenges/:slug" element={<ChallengeDetails />} />
         <Route path="live-standings" element={<LiveStandings />} />
         {/* Pages still to be built keep the shell and land on Home for now,
             rather than 404ing on a link that is already in the chrome. */}

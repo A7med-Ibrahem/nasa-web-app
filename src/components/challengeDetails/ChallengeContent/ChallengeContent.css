@@ -1,0 +1,43 @@
+/* ==========================================================================
+    Challenge details — main column prose
+    --------------------------------------------------------------------------
+    Long-form reading styles only: block rhythm, paragraph flow and a
+    comfortable measure. The h2 typography itself lives on the page-level
+    `.challenge-details-heading` rule in pages/ChallengeDetails/ChallengeDetails.css,
+    which this column shares with the sidebar card.
+    ========================================================================== */
+
+.challenge-content {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(30px, 4vw, 44px);
+  min-width: 0;
+}
+
+.challenge-content-prose {
+  /* ~70ch: past that, line length — not column width — is what makes long
+     copy tiring, so the measure is capped rather than the column. */
+  max-width: 70ch;
+  margin-top: 14px;
+}
+
+.challenge-content-prose p {
+  color: var(--muted-on-dark);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.challenge-content-prose p + p {
+  margin-top: 14px;
+}
+
+/*
+ * The About block is the lede: a size and colour step above the record
+ * sections so the page has a clear entry point. `#dfe7f5` is the same
+ * "bright but not pure white" the card metadata already uses.
+ */
+.challenge-content-block--about .challenge-content-prose p {
+  color: #dfe7f5;
+  font-size: 17px;
+  line-height: 1.7;
+}

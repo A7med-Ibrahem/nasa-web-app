@@ -7,10 +7,12 @@
    ========================================================================== */
 
 import {
+  ArrowLeftIcon,
   ArrowRightIcon,
   BarsIcon,
   ChartIcon,
   CrownIcon,
+  ExternalLinkIcon,
   GearIcon,
   GlobeIcon,
   GridIcon,
@@ -32,6 +34,8 @@ import {
 
 export const actionIcons = {
   arrow: ArrowRightIcon,
+  arrowLeft: ArrowLeftIcon,
+  external: ExternalLinkIcon,
   signal: SignalIcon,
 };
 
