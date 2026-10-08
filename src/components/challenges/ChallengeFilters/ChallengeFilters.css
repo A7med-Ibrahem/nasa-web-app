@@ -1,0 +1,185 @@
+/* ==========================================================================
+    Challenge filters — category pills (left) and search (right)
+    --------------------------------------------------------------------------
+    Sits directly below the hero on the same continuous dark canvas. The row
+    wraps rather than shrinking: on desktop both controls share one line, on
+    tablet the search drops to a second row, and on phones the pill list gets
+    its own horizontal scroll viewport so nothing ever widens the document.
+    ========================================================================== */
+
+.challenge-filters {
+  /* Close to the hero, per the reference: controls read as part of the same
+     dark space stage rather than as a separate band. */
+  padding-block: clamp(16px, 2.2vw, 24px) 0;
+}
+
+.challenge-filters-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 16px;
+  flex-wrap: wrap;
+}
+
+/* ---------- Category pills ---------- */
+
+.challenge-filter-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /*
+   * Shrinkable scroll container at *every* width. Flex line-breaking happens
+   * before shrinking, so on wide screens the pills keep their full size and
+   * the search wraps instead — nothing scrolls. Only when the pills alone
+   * exceed the line (narrow screens) does the box shrink, and the overflow
+   * scrolls *inside* it rather than widening the document. This is what makes
+   * every viewport from 320px up safe without a body overflow-x hack.
+   */
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+
+  /* Room around the pills for the focus ring, cancelled by the negative
+     margin so the first pill still aligns with the container edge. Without
+     it the scroll box would clip the outline of a focused pill. */
+  padding: 4px;
+  margin: -4px;
+
+  /* Subtle, unobtrusive scrollbar — the same treatment the homepage
+     challenge rail uses; invisible while nothing overflows. */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 165, 235, 0.45) transparent;
+}
+
+.challenge-filter-list::-webkit-scrollbar {
+  height: 6px;
+}
+
+.challenge-filter-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.challenge-filter-list::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-pill);
+  background-color: rgba(120, 165, 235, 0.4);
+}
+
+.challenge-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  /* Never squashed by the flex row: shrinking a label makes the pill
+     unreadable, so overflow scrolls instead. */
+  flex: none;
+  height: 44px;
+  padding-inline: 16px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-pill);
+  background-color: var(--navy-900);
+  color: var(--muted-on-dark);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--ease), border-color var(--ease),
+    color var(--ease);
+}
+
+.challenge-filter-pill svg {
+  flex: none;
+}
+
+.challenge-filter-pill:hover {
+  background-color: var(--card-navy);
+  border-color: rgba(140, 180, 255, 0.3);
+  color: #ffffff;
+}
+
+/* Active state: bright blue fill. The label is navy rather than white because
+   white on --blue only reaches ~2.8:1 contrast, while navy-on-blue reaches
+   ~6.8:1 — the fill stays bright without dropping below AA. This rule follows
+   the hover rule above so a hovered active pill never changes appearance. */
+.challenge-filter-pill[aria-pressed="true"] {
+  background-color: var(--blue);
+  border-color: var(--blue);
+  color: var(--navy-950);
+  font-weight: 700;
+}
+
+/* ---------- Search ---------- */
+
+.challenge-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  /* Grows into whatever the pill row leaves over, so the pair always fills
+     one line when it fits; wraps as a unit when it does not. */
+  flex: 1 1 300px;
+  min-width: 0;
+  max-width: 400px;
+  margin-left: auto;
+}
+
+.challenge-search-icon {
+  position: absolute;
+  left: 17px;
+  display: flex;
+  color: var(--muted-on-dark-alt);
+  pointer-events: none;
+}
+
+.challenge-search-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 18px 0 44px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-pill);
+  background-color: var(--navy-900);
+  color: var(--text-on-dark);
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color var(--ease), background-color var(--ease);
+}
+
+.challenge-search-input::placeholder {
+  color: var(--muted-on-dark-alt);
+  opacity: 1;
+}
+
+.challenge-search-input:hover {
+  border-color: rgba(140, 180, 255, 0.3);
+}
+
+.challenge-search-input:focus-visible {
+  border-color: var(--blue);
+  background-color: var(--card-navy);
+  outline-offset: 2px;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  /* Below this width the five pills plus the search no longer share one
+     line: the search takes its own full-width row underneath, and the pill
+     list (already a scroll container — see above) lets the remaining pills
+     be reached by swiping. The scroll belongs to this element alone — the
+     page itself never scrolls sideways. */
+  .challenge-filter-list {
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: 4px;
+  }
+
+  .challenge-filter-pill {
+    scroll-snap-align: start;
+  }
+
+  .challenge-search {
+    flex-basis: 100%;
+    max-width: none;
+    margin-left: 0;
+  }
+}

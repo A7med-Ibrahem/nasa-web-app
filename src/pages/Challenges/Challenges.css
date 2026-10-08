@@ -1,0 +1,12 @@
+/* ==========================================================================
+    Challenges page wrapper
+    --------------------------------------------------------------------------
+    The one continuous dark canvas the hero, filter row and grid share, so the
+    three blocks read as a single space environment rather than as stacked
+    bands. It adds no layout of its own — section spacing lives with each
+    component, exactly as on Home and Live Standings.
+    ========================================================================== */
+
+.challenges-page {
+  background-color: var(--navy-950);
+}

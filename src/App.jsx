@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import MainLayout from "./layouts/MainLayout/MainLayout";
+import Challenges from "./pages/Challenges/Challenges";
 import Home from "./pages/Home/Home";
 import LiveStandings from "./pages/LiveStandings/LiveStandings";
 
@@ -17,10 +18,10 @@ function App() {
     <Routes>
       <Route element={<MainLayout />}>
         <Route index element={<Home />} />
+        <Route path="challenges" element={<Challenges />} />
         <Route path="live-standings" element={<LiveStandings />} />
         {/* Pages still to be built keep the shell and land on Home for now,
             rather than 404ing on a link that is already in the chrome. */}
-        <Route path="challenges" element={<Navigate to="/" replace />} />
         <Route path="about" element={<Navigate to="/" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>

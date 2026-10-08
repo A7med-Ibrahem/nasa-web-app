@@ -148,6 +148,79 @@ export function ChartIcon({ size = 18 }) {
   );
 }
 
+/* --------------------------------------------------------------------------
+   Challenges icons
+   -------------------------------------------------------------------------- */
+
+export function SearchIcon({ size = 16 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <circle cx="11" cy="11" r="6.5" />
+      <path d="m16.2 16.2 4.3 4.3" />
+    </svg>
+  );
+}
+
+export function GridIcon({ size = 15 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <rect x="3.5" y="3.5" width="7" height="7" rx="1.6" />
+      <rect x="13.5" y="3.5" width="7" height="7" rx="1.6" />
+      <rect x="3.5" y="13.5" width="7" height="7" rx="1.6" />
+      <rect x="13.5" y="13.5" width="7" height="7" rx="1.6" />
+    </svg>
+  );
+}
+
+export function LeafIcon({ size = 15 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+      <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+    </svg>
+  );
+}
+
+/* Ringed planet: a plain circle reads as a dot at small sizes, so the tilted
+   orbit ring is what carries the "space exploration" meaning. */
+export function PlanetIcon({ size = 15 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <circle cx="12" cy="12" r="5.6" />
+      <ellipse cx="12" cy="12" rx="10.2" ry="3.9" transform="rotate(-24 12 12)" />
+    </svg>
+  );
+}
+
+export function GearIcon({ size = 15 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <circle cx="12" cy="12" r="4.3" />
+      <path d="M12 4.2V6.9M12 17.1v2.7M4.2 12H6.9M17.1 12h2.7M6.5 6.5l1.9 1.9M15.6 15.6l1.9 1.9M17.5 6.5l-1.9 1.9M8.4 15.6l-1.9 1.9" />
+    </svg>
+  );
+}
+
+export function HeartIcon({ size = 15 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  );
+}
+
+/* Three ascending bars: difficulty reads as "how much of the scale is filled",
+   which a line chart at 12-14px cannot show. */
+export function BarsIcon({ size = 14 }) {
+  return (
+    <svg {...base} width={size} height={size} strokeWidth={2}>
+      <path d="M5 19v-3.6" />
+      <path d="M12 19v-7.4" />
+      <path d="M19 19V8" />
+    </svg>
+  );
+}
+
 export function MenuIcon({ size = 22 }) {
   return (
     <svg {...base} width={size} height={size}>

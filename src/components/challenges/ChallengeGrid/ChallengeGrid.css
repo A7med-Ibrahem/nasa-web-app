@@ -1,0 +1,56 @@
+/* ==========================================================================
+    Challenge grid — 3 / 2 / 1 responsive columns + empty state
+    ========================================================================== */
+
+.challenge-grid-section {
+  /* Comfortable spacing below the filter row, and the page's bottom rhythm
+     before the shared Footer. */
+  padding-block: clamp(24px, 3vw, 34px) var(--section-pad);
+}
+
+.challenge-grid {
+  display: grid;
+  /* minmax(0, 1fr) — not bare 1fr — so long unbroken content inside a card
+     can never force the track (and therefore the page) wider than the
+     container. */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(20px, 2vw, 26px);
+}
+
+/* ---------- Empty state ---------- */
+
+.challenge-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: clamp(48px, 8vw, 88px) 20px;
+  text-align: center;
+}
+
+.challenge-empty-title {
+  color: var(--text-on-dark);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.challenge-empty-description {
+  color: var(--muted-on-dark);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1024px) {
+  .challenge-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 660px) {
+  .challenge-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

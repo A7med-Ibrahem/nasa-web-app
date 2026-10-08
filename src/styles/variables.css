@@ -30,6 +30,16 @@
   --blue-deep: #1d4f9e;
   --blue-ink: #2f6fe4;
 
+  /* Challenges page — identification accents for category badges and
+     difficulty labels. These colours only ever identify a category or a
+     difficulty at small sizes; they are never used as large fills, so the
+     pages built on the tokens above keep their existing palette. */
+  --accent-green: #3ddc97;
+  --accent-purple: #a78bfa;
+  --accent-pink: #f472b6;
+  --accent-amber: #fbbf24;
+  --accent-coral: #f87171;
+
   /* Text */
   --text-on-dark: #ffffff;
   --text-on-light: #061a2f;
