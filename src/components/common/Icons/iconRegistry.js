@@ -19,9 +19,11 @@ import {
   HeartIcon,
   InstagramIcon,
   LeafIcon,
+  LightbulbIcon,
   LinkedInIcon,
   PlanetIcon,
   RocketIcon,
+  ScaleIcon,
   SearchIcon,
   SignalIcon,
   TeamIcon,
@@ -73,4 +75,13 @@ export const socialIcons = {
   linkedin: LinkedInIcon,
   instagram: InstagramIcon,
   youtube: YouTubeIcon,
+};
+
+/* Feature icons for the login page, keyed by the string `icon` values in
+   data/loginData.js. Field-level glyphs (mail, lock, eye) are fixed to one
+   input each, so LoginForm imports those directly from Icons.jsx. */
+export const loginIcons = {
+  scale: ScaleIcon,
+  bulb: LightbulbIcon,
+  users: UsersIcon,
 };

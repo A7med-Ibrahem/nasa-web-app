@@ -8,10 +8,11 @@ import { useRevealGroup } from "../../../hooks/useReveal";
 import { CloseIcon, MenuIcon } from "../../common/Icons/Icons";
 
 /*
- * In-page anchors (About -> #about) are not routes, so they stay plain anchors
- * and let the browser's own scroll behaviour handle them. Everything else goes
- * through NavLink, which sets `aria-current="page"` on the matching item — the
- * single source of truth the existing `.navbar-link[aria-current="page"]` and
+ * A hash href ("#section") is an in-page anchor rather than a route, so it
+ * stays a plain anchor and lets the browser's own scroll behaviour handle it.
+ * Every other item goes through NavLink, which sets `aria-current="page"` on
+ * the matching item — the single source of truth the existing
+ * `.navbar-link[aria-current="page"]` and
  * `.navbar-mobile-link[aria-current="page"]` styles already key off.
  */
 function NavItem({ link, className, onNavigate }) {

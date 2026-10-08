@@ -32,7 +32,7 @@ export const navigationLinks = [
   { id: "home", label: "Home", href: "/" },
   { id: "challenges", label: "Challenges", href: "/challenges" },
   { id: "standings", label: "Live Standings", href: "/live-standings" },
-  { id: "about", label: "About", href: "#about" },
+  { id: "login", label: "Login", href: "/login" },
 ];
 
 /* --------------------------------------------------------------------------

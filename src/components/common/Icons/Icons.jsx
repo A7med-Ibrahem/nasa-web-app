@@ -263,6 +263,75 @@ export function CloseIcon({ size = 22 }) {
 }
 
 /* --------------------------------------------------------------------------
+   Login page icons
+   -------------------------------------------------------------------------- */
+
+/* Balance scales: the beam plus two hanging pans reads as "judging" at small
+   sizes, where a single-pan balance would not. */
+export function ScaleIcon({ size = 20 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <path d="M12 4.5V20" />
+      <path d="M8 20h8" />
+      <path d="M4.5 7.5h15" />
+      <path d="M4.5 7.5 2.4 12a3.4 3.4 0 0 0 4.2 0Z" />
+      <path d="M19.5 7.5 17.4 12a3.4 3.4 0 0 0 4.2 0Z" />
+    </svg>
+  );
+}
+
+export function LightbulbIcon({ size = 20 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <path d="M12 3a6.2 6.2 0 0 0-3.4 11.35c.75.5 1.2 1.3 1.2 2.15V17h4.4v-.5c0-.85.45-1.65 1.2-2.15A6.2 6.2 0 0 0 12 3Z" />
+      <path d="M9.5 19.5h5" />
+      <path d="M10.5 21.5h3" />
+    </svg>
+  );
+}
+
+export function MailIcon({ size = 17 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <rect x="3" y="5.5" width="18" height="13" rx="2" />
+      <path d="m3.8 7.5 7.1 5.1a1.8 1.8 0 0 0 2.2 0l7.1-5.1" />
+    </svg>
+  );
+}
+
+export function LockIcon({ size = 17 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <rect x="4.5" y="10.5" width="15" height="9.5" rx="2" />
+      <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" />
+      <path d="M12 14.4v2.2" />
+    </svg>
+  );
+}
+
+export function EyeIcon({ size = 17 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12Z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+/* Open eye crossed by a single diagonal: the slash is what distinguishes the
+   "hidden" state from EyeIcon at the 16-17px size it appears at. */
+export function EyeOffIcon({ size = 17 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <path d="M3 3l18 18" />
+      <path d="M10.6 6.2A10.9 10.9 0 0 1 12 6c6 0 9.5 6 9.5 6a17.3 17.3 0 0 1-3.4 4.1" />
+      <path d="M6.6 8.3A16.9 16.9 0 0 0 2.5 12s3.5 6 9.5 6a10.6 10.6 0 0 0 3.6-.62" />
+      <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+    </svg>
+  );
+}
+
+/* --------------------------------------------------------------------------
    Social icons (solid glyphs)
    -------------------------------------------------------------------------- */
 

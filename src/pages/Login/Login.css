@@ -1,0 +1,148 @@
+/* ==========================================================================
+    Login page — full-screen space stage
+    --------------------------------------------------------------------------
+    Owns the viewport-filling background (existing hero Earth artwork + a
+    star field + atmospheric glow + readability scrim) and the two-column
+    intro / card layout. Everything else on the page is a child component.
+
+    No new colours: the glow and scrim are alpha variants of --blue and
+    --navy-950, exactly as the hero treatments in components/home/Hero do.
+    ========================================================================== */
+
+.login-page {
+  position: relative;
+  /* Creates the stacking context the negative-z background layers below
+     depend on: without it they would paint behind this element's own
+     background and disappear. */
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+  background-color: var(--navy-950);
+}
+
+/* ---------- Background layers ---------- */
+
+/* Deep-space artwork. `position: fixed` keeps the stage visually stable
+   while content scrolls and, because a fixed layer is sized to the
+   viewport, it can never widen the document. The crop anchor (72% x) is the
+   same one the home hero uses for this asset, so the Earth reads the same
+   way here as it does on the landing page. */
+.login-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: url("../../assets/images/hero-earth.jpeg") 72% 58% / cover
+    no-repeat;
+  pointer-events: none;
+}
+
+/* Star field, atmospheric glow and scrim — painted above the artwork, in
+   that order of layer (first listed = topmost). The scrim is what keeps
+   white headings and muted body copy above AA over any crop of the photo;
+   worst case (a near-white region under the text) still lands near 7:1. */
+.login-page::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(
+      1.5px 1.5px at 12% 18%,
+      rgba(255, 255, 255, 0.75),
+      transparent 60%
+    ),
+    radial-gradient(
+      1px 1px at 28% 42%,
+      rgba(255, 255, 255, 0.5),
+      transparent 60%
+    ),
+    radial-gradient(
+      1.5px 1.5px at 41% 12%,
+      rgba(255, 255, 255, 0.65),
+      transparent 60%
+    ),
+    radial-gradient(
+      1px 1px at 58% 30%,
+      rgba(255, 255, 255, 0.45),
+      transparent 60%
+    ),
+    radial-gradient(
+      1.5px 1.5px at 72% 16%,
+      rgba(255, 255, 255, 0.7),
+      transparent 60%
+    ),
+    radial-gradient(
+      1px 1px at 86% 38%,
+      rgba(255, 255, 255, 0.5),
+      transparent 60%
+    ),
+    radial-gradient(
+      1.5px 1.5px at 8% 62%,
+      rgba(255, 255, 255, 0.55),
+      transparent 60%
+    ),
+    radial-gradient(
+      1px 1px at 92% 68%,
+      rgba(255, 255, 255, 0.45),
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 85% 55% at 50% 112%,
+      rgba(74, 158, 255, 0.34),
+      transparent 68%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(3, 20, 38, 0.9) 0%,
+      rgba(3, 20, 38, 0.8) 45%,
+      rgba(3, 20, 38, 0.85) 100%
+    );
+}
+
+/* ---------- Main ---------- */
+
+.login-main {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding-block: clamp(28px, 5vh, 56px);
+}
+
+/* Intro ~59% / card ~41% of the 1200px container: matches the reference's
+   left-heavy split. minmax(0, ...) on both tracks means neither column can
+   ever force the grid wider than its container. */
+.login-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 430px);
+  gap: clamp(36px, 5vw, 72px);
+  align-items: center;
+  width: 100%;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 880px) {
+  .login-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(32px, 5vh, 44px);
+    justify-items: center;
+  }
+
+  .login-hero {
+    width: 100%;
+  }
+}
+
+@media (max-width: 620px) {
+  .login-main {
+    /* The gutter token already floors at 20px; this simply keeps a little
+       extra breathing room around the card on phones. */
+    padding-block: 24px 36px;
+  }
+}

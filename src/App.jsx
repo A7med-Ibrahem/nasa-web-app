@@ -5,6 +5,7 @@ import ChallengeDetails from "./pages/ChallengeDetails/ChallengeDetails";
 import Challenges from "./pages/Challenges/Challenges";
 import Home from "./pages/Home/Home";
 import LiveStandings from "./pages/LiveStandings/LiveStandings";
+import Login from "./pages/Login/Login";
 
 /**
  * Application composition point.
@@ -13,10 +14,14 @@ import LiveStandings from "./pages/LiveStandings/LiveStandings";
  * once and survive every navigation — pages are swapped inside <main> without
  * remounting the shared chrome. Adding a page means adding a <Route> here and a
  * file in pages/; no section, style or data file moves.
+ *
+ * The one exception is /login: a full-screen login experience with its own
+ * compact header, so it sits beside the layout route instead of inside it.
  */
 function App() {
   return (
     <Routes>
+      <Route path="login" element={<Login />} />
       <Route element={<MainLayout />}>
         <Route index element={<Home />} />
         {/* Static listing and dynamic details are sibling routes: the

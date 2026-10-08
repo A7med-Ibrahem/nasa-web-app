@@ -1,0 +1,129 @@
+/* ==========================================================================
+    Login header — brand lockup left, Back to Event right
+    --------------------------------------------------------------------------
+    Transparent over the shared space background, separated by a hairline
+    border only. Compact (≈68px) compared with the main Navbar's 92px, per
+    the reference.
+    ========================================================================== */
+
+.login-header {
+  position: relative;
+  z-index: 1;
+  border-bottom: 1px solid var(--border-on-dark);
+}
+
+.login-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  min-height: 68px;
+  padding-block: 10px;
+}
+
+/* ---------- Brand lockup ---------- */
+
+.login-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.login-header-brand-name {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  line-height: 1.2;
+}
+
+.login-header-rule {
+  flex: none;
+  width: 1px;
+  height: 30px;
+  background-color: rgba(255, 255, 255, 0.28);
+}
+
+.login-header-location {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.login-header-city {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.login-header-city svg {
+  flex: none;
+  color: var(--blue-strong);
+}
+
+.login-header-local {
+  color: var(--muted-on-dark);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+/* ---------- Back link ---------- */
+
+.login-header-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: var(--radius-pill);
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--ease), border-color var(--ease);
+}
+
+.login-header-back svg {
+  flex: none;
+  transition: transform var(--ease);
+}
+
+.login-header-back:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.login-header-back:hover svg {
+  transform: translateX(-3px);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 560px) {
+  .login-header-brand-name {
+    font-size: 12.5px;
+    letter-spacing: 0.12em;
+  }
+
+  /* The location marker is the first thing to go: brand + back link then
+     share a 320px-wide row without wrapping. */
+  .login-header-rule,
+  .login-header-location {
+    display: none;
+  }
+
+  .login-header-back {
+    padding: 9px 13px;
+    font-size: 12.5px;
+  }
+}

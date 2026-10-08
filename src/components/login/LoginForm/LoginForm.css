@@ -1,0 +1,337 @@
+/* ==========================================================================
+    Login card — sign-in form, right column
+    --------------------------------------------------------------------------
+    Dark navy panel with a subtle blue border and soft glow, consistent with
+    the card language used across the site (see ChallengeInfo.css) rather
+    than heavy glassmorphism. Field styling follows the same conventions as
+    the challenge search input: token border, navy fill, blue focus.
+    ========================================================================== */
+
+.login-card {
+  width: 100%;
+  min-width: 0;
+  padding: clamp(26px, 3vw, 38px);
+  border: 1px solid rgba(140, 180, 255, 0.22);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(
+    180deg,
+    rgba(11, 37, 64, 0.94),
+    rgba(6, 26, 47, 0.96)
+  );
+  box-shadow: 0 24px 60px rgba(2, 12, 26, 0.5),
+    0 0 48px rgba(74, 158, 255, 0.08);
+}
+
+/* ---------- Branding ---------- */
+
+.login-card-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Frame sized for a ~110px wide / ~50px tall visible lockup. See the
+   `.logo-frame` note in styles/globals.css for why the frame exists and why
+   the canvas is allowed to overflow it. */
+.login-card-logo-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 172px;
+  height: 54px;
+}
+
+.login-card-logo {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+
+  /* Same optical re-centring as the navbar logo: the asset's transparent
+     margins are unequal (303px above the artwork, 274px below), which renders
+     as a ~1.4% drop at any frame size. Resolved against the canvas height,
+     so it stays correct whenever the frame scales. */
+  transform: translateY(-1.416%);
+}
+
+.login-card-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  margin-top: 14px;
+  border: 1px solid rgba(140, 180, 255, 0.3);
+  border-radius: 50%;
+  background-color: rgba(74, 158, 255, 0.14);
+  color: var(--blue-strong);
+}
+
+.login-card-title {
+  margin-top: 16px;
+  color: #ffffff;
+  font-size: clamp(20px, 2vw, 23px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.login-card-subtitle {
+  margin-top: 6px;
+  color: var(--muted-on-dark);
+  font-size: 13.5px;
+  line-height: 1.55;
+  text-align: center;
+}
+
+/* ---------- Form ---------- */
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 26px;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.login-field-label {
+  color: #dfe7f5;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.login-field-control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.login-field-icon {
+  position: absolute;
+  left: 15px;
+  display: flex;
+  color: var(--muted-on-dark-alt);
+  pointer-events: none;
+}
+
+.login-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px 0 44px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-md);
+  background-color: var(--navy-900);
+  color: var(--text-on-dark);
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color var(--ease), background-color var(--ease);
+}
+
+.login-input::placeholder {
+  color: var(--muted-on-dark-alt);
+  opacity: 1;
+}
+
+.login-input:hover {
+  border-color: rgba(140, 180, 255, 0.3);
+}
+
+.login-input:focus-visible {
+  border-color: var(--blue);
+  background-color: var(--card-navy);
+  outline-offset: 2px;
+}
+
+.login-input--password {
+  padding-right: 48px;
+}
+
+/* Red is used only as the field's error border (an existing token); the
+   message itself uses --accent-coral, the project's existing error-adjacent
+   token, because --nasa-red text on navy lands near 4:1 — below AA for
+   12-13px copy. */
+.login-input[aria-invalid="true"] {
+  border-color: var(--nasa-red);
+}
+
+.login-field-error {
+  color: var(--accent-coral);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+/* ---------- Password visibility toggle ---------- */
+
+.login-password-toggle {
+  position: absolute;
+  right: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--muted-on-dark-alt);
+  cursor: pointer;
+  transition: color var(--ease), background-color var(--ease);
+}
+
+.login-password-toggle:hover {
+  background-color: rgba(140, 180, 255, 0.12);
+  color: #ffffff;
+}
+
+/* ---------- Remember me / forgot password ---------- */
+
+.login-form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+}
+
+.login-form-remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--muted-on-dark);
+  font-size: 13.5px;
+  cursor: pointer;
+}
+
+.login-form-remember input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--blue);
+  cursor: pointer;
+}
+
+.login-form-forgot {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--blue-strong);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.login-form-forgot:disabled {
+  color: var(--muted-on-dark);
+  cursor: default;
+  opacity: 0.9;
+}
+
+/* ---------- Sign in ---------- */
+
+/* Navy label on bright blue rather than white: white on --blue only reaches
+   ~2.8:1, while navy-on-blue reaches ~6.4:1 — the same decision the active
+   challenge filter pill documents in ChallengeFilters.css. */
+.login-submit {
+  width: 100%;
+  height: 48px;
+  padding-inline: 24px;
+  border-radius: var(--radius-md);
+  background-color: var(--blue);
+  border-color: var(--blue);
+  color: var(--navy-950);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.login-submit:hover {
+  background-color: var(--blue-strong);
+  border-color: var(--blue-strong);
+}
+
+.login-form-status {
+  padding: 11px 13px;
+  border: 1px solid rgba(140, 180, 255, 0.28);
+  border-radius: var(--radius-sm);
+  background-color: rgba(74, 158, 255, 0.1);
+  color: #dfe7f5;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+/* ---------- OR divider ---------- */
+
+.login-form-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.login-form-divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: var(--border-on-dark);
+}
+
+.login-form-divider-text {
+  color: var(--muted-on-dark-alt);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+/* ---------- Back to event ---------- */
+
+.login-form-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--muted-on-dark);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--ease);
+}
+
+.login-form-back svg {
+  flex: none;
+  transition: transform var(--ease);
+}
+
+.login-form-back:hover {
+  color: #ffffff;
+}
+
+.login-form-back:hover svg {
+  transform: translateX(-3px);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 880px) {
+  /* Stacked layout: the card centres itself with a comfortable cap so it
+     reads as near-full-width without touching the viewport edges. */
+  .login-card {
+    max-width: 480px;
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 620px) {
+  .login-card {
+    padding: 24px 20px;
+  }
+
+  .login-form-row {
+    gap: 8px;
+  }
+}
