@@ -114,19 +114,20 @@ export const currentEvent = {
    Top challenges
    --------------------------------------------------------------------------
 
-   The cards are NOT duplicated here: they are a thin projection of the first
-   four official challenges from the shared source of truth
+   The cards are NOT duplicated here: they are a thin projection of the
+   official challenges from the shared source of truth
    (data/challengesData.js), reshaped into the field names the homepage card
    reads. Adding or re-ordering challenges updates both routes in one place,
    and the homepage can never drift out of sync with /challenges.
    -------------------------------------------------------------------------- */
 
-const featuredChallenges = staticChallenges.slice(0, 4).map((challenge) => ({
+const featuredChallenges = staticChallenges.map((challenge) => ({
   id: challenge.id,
   slug: challenge.slug,
   category: challenge.categoryLabel,
   title: challenge.title,
   description: challenge.shortDescription,
+  domains: challenge.domains,
   image: challenge.image,
   imageAlt: challenge.imageAlt,
 }));

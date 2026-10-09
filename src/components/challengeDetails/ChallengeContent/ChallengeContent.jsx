@@ -15,8 +15,7 @@ function toParagraphs(value) {
 
 /**
  * Turn a single value or an array into a non-empty list of strings, used by
- * the bulleted sections (key insights, main challenges to address, suggested
- * directions, success metrics).
+ * the bulleted sections (KPIs).
  */
 function toList(value) {
   if (!value) {
@@ -27,35 +26,50 @@ function toList(value) {
 }
 
 /**
- * Main column of the details page: "Challenge Overview" plus every structured
- * field the record carries, rendered in a fixed order and only when the data
- * exists.
+ * Main column of the details page.
+ *
+ * Reads the official challenge record and renders every supplied field, in
+ * the order laid out by the page brief:
+ *
+ *   Overview            — Main Objective, Business Objectives
+ *   Audience & domains  — Technical/Business Domains, Target Audience
+ *   Understanding       — Key Insights, Main Challenges Identified
+ *   Proposed solution   — Recommendations
+ *   Implementation      — Action / Marketing Plan
+ *   Success metrics     — KPIs
  *
  * Entirely data-driven — the page never hardcodes a section title, and a
  * future API payload with different (or missing) fields needs no JSX edits.
- * Fields the 2026 document does not specify ship empty, so those blocks are
- * simply not rendered. The recommendations block carries a note making clear
- * the suggestions are context, not mandatory submission requirements.
+ * A field the record does not carry is simply not rendered.
  */
 export default function ChallengeContent({ challenge }) {
-  const { overviewTitle, sectionTitles, recommendationsNote } = challengeDetailsPage;
+  const { sectionTitles } = challengeDetailsPage;
 
   const blocks = [];
-
-  if (challenge.overview) {
-    blocks.push({
-      id: "overview",
-      title: overviewTitle,
-      variant: "about",
-      paragraphs: toParagraphs(challenge.overview),
-    });
-  }
 
   if (challenge.mainObjective) {
     blocks.push({
       id: "objective",
       title: sectionTitles.objective,
+      variant: "about",
       paragraphs: toParagraphs(challenge.mainObjective),
+    });
+  }
+
+  if (challenge.businessObjectives) {
+    blocks.push({
+      id: "business-objectives",
+      title: sectionTitles.businessObjectives,
+      paragraphs: toParagraphs(challenge.businessObjectives),
+    });
+  }
+
+  const domains = toList(challenge.domains);
+  if (domains.length > 0) {
+    blocks.push({
+      id: "domains",
+      title: sectionTitles.domains,
+      tags: domains,
     });
   }
 
@@ -67,49 +81,44 @@ export default function ChallengeContent({ challenge }) {
     });
   }
 
-  const keyInsights = toList(challenge.keyInsights);
-  if (keyInsights.length > 0) {
+  if (challenge.keyInsights) {
     blocks.push({
       id: "key-insights",
       title: sectionTitles.keyInsights,
-      items: keyInsights,
+      paragraphs: toParagraphs(challenge.keyInsights),
     });
   }
 
-  const identifiedChallenges = toList(challenge.identifiedChallenges);
-  if (identifiedChallenges.length > 0) {
+  if (challenge.mainChallenges) {
     blocks.push({
-      id: "identified-challenges",
-      title: sectionTitles.identifiedChallenges,
-      items: identifiedChallenges,
+      id: "main-challenges",
+      title: sectionTitles.mainChallenges,
+      paragraphs: toParagraphs(challenge.mainChallenges),
     });
   }
 
-  const recommendations = toList(challenge.recommendations);
-  if (recommendations.length > 0) {
+  if (challenge.recommendations) {
     blocks.push({
       id: "recommendations",
       title: sectionTitles.recommendations,
-      items: recommendations,
-      note: recommendationsNote,
+      paragraphs: toParagraphs(challenge.recommendations),
     });
   }
 
-  const successMetrics = toList(challenge.successMetrics);
-  if (successMetrics.length > 0) {
+  if (challenge.actionMarketingPlan) {
     blocks.push({
-      id: "success-metrics",
-      title: sectionTitles.successMetrics,
-      items: successMetrics,
+      id: "action-marketing-plan",
+      title: sectionTitles.actionMarketingPlan,
+      paragraphs: toParagraphs(challenge.actionMarketingPlan),
     });
   }
 
-  const domains = toList(challenge.domains);
-  if (domains.length > 0) {
+  const kpis = toList(challenge.kpis);
+  if (kpis.length > 0) {
     blocks.push({
-      id: "domains",
-      title: sectionTitles.domains,
-      tags: domains,
+      id: "kpis",
+      title: sectionTitles.kpis,
+      items: kpis,
     });
   }
 
@@ -155,8 +164,6 @@ export default function ChallengeContent({ challenge }) {
               ))}
             </ul>
           ) : null}
-
-          {block.note ? <p className="challenge-content-note">{block.note}</p> : null}
         </section>
       ))}
     </div>

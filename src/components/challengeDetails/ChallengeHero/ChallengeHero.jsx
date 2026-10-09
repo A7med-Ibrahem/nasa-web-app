@@ -3,19 +3,22 @@ import { Link } from "react-router-dom";
 import "./ChallengeHero.css";
 
 import { challengeDetailsPage } from "../../../data/challengesData";
-import { CalendarIcon } from "../../common/Icons/Icons";
+import { ArrowLeftIcon, CalendarIcon } from "../../common/Icons/Icons";
 import { challengeIcons } from "../../common/Icons/iconRegistry";
 import { useRevealGroup } from "../../../hooks/useReveal";
 
 /**
  * Challenge hero (`/challenges/:slug`).
  *
- * Breadcrumb, event eyebrow, category, the one `<h1>` on the page, the
- * challenge's short description, its metadata badges, and the challenge's own
- * image on the right. Same dark-stage composition as the other two heroes in
- * the project — copy left, artwork right — but the artwork here is the
- * challenge photo from the record rather than decorative Earth art, so it is
- * a framed figure instead of a bleeding background.
+ * Breadcrumb (Home / Challenges / current title), event eyebrow, category
+ * badge, the one `<h1>` on the page, the challenge's main objective as the
+ * prominent introduction, its domain tags, a season pill, a back button and
+ * the challenge's own image on the right.
+ *
+ * Same dark-stage composition as the other two heroes in the project — copy
+ * left, artwork right — but the artwork here is the challenge photo from the
+ * record rather than decorative Earth art, so it is a framed figure instead
+ * of a bleeding background.
  *
  * Every string and value comes from props or data/challengesData.js; nothing
  * is challenge-specific. A record without an `image` renders a clean
@@ -28,14 +31,17 @@ export default function ChallengeHero({ challenge }) {
     category,
     categoryLabel,
     categoryIcon,
-    shortDescription,
+    domains,
+    mainObjective,
     image,
     imageAlt,
     season,
   } = challenge;
 
-  const { eyebrow, breadcrumbLabel, parent } = challengeDetailsPage.hero;
+  const { eyebrow, breadcrumbLabel, parent, labels, back } =
+    challengeDetailsPage.hero;
   const CategoryIcon = challengeIcons[categoryIcon];
+  const domainTags = Array.isArray(domains) ? domains : [];
 
   // Copy leads and the figure trails, so DOM order is reveal order and no
   // explicit --reveal-index is needed.
@@ -54,6 +60,14 @@ export default function ChallengeHero({ challenge }) {
         <nav className="challenge-breadcrumb" aria-label={breadcrumbLabel} data-reveal-item>
           <ol className="challenge-breadcrumb-list">
             <li>
+              <Link className="challenge-breadcrumb-link" to="/">
+                {labels.home}
+              </Link>
+            </li>
+            <li>
+              <span className="challenge-breadcrumb-separator" aria-hidden="true">
+                /
+              </span>
               <Link className="challenge-breadcrumb-link" to={parent.href}>
                 {parent.label}
               </Link>
@@ -90,9 +104,23 @@ export default function ChallengeHero({ challenge }) {
               {title}
             </h1>
 
+            {/*
+              The full main objective is the hero's introduction: it is the
+              official, complete statement of what the challenge asks for.
+            */}
             <p className="challenge-hero-description" data-reveal-item>
-              {shortDescription}
+              {mainObjective}
             </p>
+
+            {domainTags.length > 0 ? (
+              <ul className="challenge-hero-tags" data-reveal-item>
+                {domainTags.map((tag) => (
+                  <li className="challenge-hero-tag" key={tag}>
+                    {tag}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
 
             {/*
               Metadata badges. Season is the only record-derived pill now —
@@ -103,6 +131,13 @@ export default function ChallengeHero({ challenge }) {
                 <CalendarIcon size={14} />
                 <span>{season}</span>
               </span>
+            </p>
+
+            <p className="challenge-hero-back" data-reveal-item>
+              <Link className="btn btn--ghost-dark challenge-hero-back-link" to={back.href}>
+                <ArrowLeftIcon size={16} />
+                {back.label}
+              </Link>
             </p>
           </div>
 

@@ -56,7 +56,7 @@
 }
 
 .challenge-breadcrumb-separator {
-  margin-right: 8px;
+  margin-inline: 8px;
   color: var(--muted-on-dark-alt);
 }
 
@@ -191,6 +191,37 @@
 
 .challenge-hero-pill--hard {
   color: var(--accent-coral);
+}
+
+/* ---------- Domain tags + back action ---------- */
+
+.challenge-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.challenge-hero-tag {
+  padding: 6px 12px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-pill);
+  background-color: var(--card-navy);
+  color: var(--muted-on-dark);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.challenge-hero-back {
+  margin-top: 26px;
+}
+
+/* The button's icon points back, so mirror the global trailing-icon nudge. */
+.challenge-hero-back-link:hover svg {
+  transform: translateX(-3px);
 }
 
 /* ---------- Challenge image ---------- */

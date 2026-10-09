@@ -67,8 +67,9 @@
 /* ---------- Cards ---------- */
 
 .challenge-card {
-  /* Desktop: shrink to fit so all four sit in one row with no scrolling. */
-  flex: 1 1 0;
+  /* Fixed basis so the full list overflows the rail and scrolls inside it;
+     the document width is never affected. */
+  flex: 0 0 clamp(260px, 30vw, 320px);
   min-width: 0;
   scroll-snap-align: start;
 
@@ -86,10 +87,20 @@
   background-color: var(--card-navy-strong);
 }
 
-.challenge-card > article {
+/* The router Link that makes the whole card clickable. */
+.challenge-card-link {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.challenge-card-link > article {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
+  min-width: 0;
 }
 
 .challenge-media {
@@ -135,32 +146,56 @@
 
 .challenge-description {
   margin-top: 9px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   color: var(--muted-on-dark);
   font-size: 13px;
   line-height: 1.6;
 }
 
+.challenge-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.challenge-tag {
+  padding: 5px 10px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-pill);
+  background-color: rgba(120, 165, 235, 0.08);
+  color: var(--muted-on-dark);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
 .challenge-arrow {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  /* Pins the affordance to the card foot so all four align. */
+  gap: 8px;
+  /* Pins the affordance to the card foot so all cards align. */
   margin-top: auto;
-  border-radius: 50%;
+  align-self: flex-start;
+  padding: 9px 16px;
+  border-radius: var(--radius-pill);
   background-color: var(--blue-deep);
   color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
   text-decoration: none;
   transition: background-color var(--ease);
 }
 
-.challenge-arrow:hover {
+.challenge-card:hover .challenge-arrow,
+.challenge-card:focus-within .challenge-arrow {
   background-color: var(--blue);
 }
 
-.challenge-arrow:hover svg {
+.challenge-card:hover .challenge-arrow svg,
+.challenge-card:focus-within .challenge-arrow svg {
   transform: translateX(2px);
 }
 

@@ -6,7 +6,7 @@ import ChallengeCTA from "../../components/challengeDetails/ChallengeCTA/Challen
 import ChallengeContent from "../../components/challengeDetails/ChallengeContent/ChallengeContent";
 import ChallengeHero from "../../components/challengeDetails/ChallengeHero/ChallengeHero";
 import ChallengeInfo from "../../components/challengeDetails/ChallengeInfo/ChallengeInfo";
-import ChallengeResources from "../../components/challengeDetails/ChallengeResources/ChallengeResources";
+import ChallengeNav from "../../components/challengeDetails/ChallengeNav/ChallengeNav";
 import { ArrowLeftIcon } from "../../components/common/Icons/Icons";
 import { challengeDetailsPage, staticChallenges } from "../../data/challengesData";
 import { site } from "../../data/site";
@@ -17,12 +17,14 @@ import { site } from "../../data/site";
  * One reusable page for every challenge — never one page per challenge. The
  * slug comes from React Router, is resolved against the challenge collection
  * exactly the way a future `GET /api/challenges/:slug` would be, and the whole
- * record is passed down through props. When a backend exists, the `find`
+ * record is passed down through props. When a backend exists, the lookup
  * becomes an await and nothing below this line changes.
  *
- * Composition only, like every other page: no Navbar, no Footer (MainLayout
- * owns both — the Challenges nav item stays active because `/challenges` is a
- * prefix of every slug route), no styles that belong to another component.
+ * The record's index in the shared list also yields its previous and next
+ * challenges, so the page can offer sequential navigation without a second
+ * data source. Composition only, like every other page: no Navbar, no Footer
+ * (MainLayout owns both — the Challenges nav item stays active because
+ * `/challenges` is a prefix of every slug route).
  *
  * An unknown slug renders a proper not-found state instead of crashing or
  * redirecting silently; the document title follows whichever state renders.
@@ -49,10 +51,18 @@ function ChallengeNotFound() {
 export default function ChallengeDetails() {
   const { slug } = useParams();
 
-  const challenge = useMemo(
-    () => staticChallenges.find((item) => item.slug === slug),
-    [slug],
-  );
+  const { challenge, previous, next } = useMemo(() => {
+    const index = staticChallenges.findIndex((item) => item.slug === slug);
+
+    return {
+      challenge: index >= 0 ? staticChallenges[index] : null,
+      previous: index > 0 ? staticChallenges[index - 1] : null,
+      next:
+        index >= 0 && index < staticChallenges.length - 1
+          ? staticChallenges[index + 1]
+          : null,
+    };
+  }, [slug]);
 
   useEffect(() => {
     document.title = challenge
@@ -73,7 +83,7 @@ export default function ChallengeDetails() {
             Challenge Info card after it. */}
         <div className="challenge-details-main">
           <ChallengeContent challenge={challenge} />
-          <ChallengeResources resources={challenge.resources} />
+          <ChallengeNav previous={previous} next={next} />
         </div>
 
         <aside

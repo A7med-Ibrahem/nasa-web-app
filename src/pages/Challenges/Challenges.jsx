@@ -59,13 +59,22 @@ export default function Challenges() {
       const haystack = [
         challenge.title,
         challenge.shortDescription,
-        challenge.description,
+        challenge.mainObjective,
+        challenge.businessObjectives,
+        challenge.targetAudience,
+        challenge.keyInsights,
+        challenge.mainChallenges,
+        challenge.recommendations,
+        challenge.actionMarketingPlan,
         challenge.category,
         challenge.categoryLabel,
         ...(Array.isArray(challenge.domains) ? challenge.domains : []),
+        ...(Array.isArray(challenge.kpis) ? challenge.kpis : []),
       ];
 
-      return haystack.some((field) => field.toLowerCase().includes(query));
+      return haystack.some(
+        (field) => field && field.toLowerCase().includes(query),
+      );
     });
   }, [selectedCategory, searchQuery]);
 
