@@ -1,0 +1,51 @@
+/* ==========================================================================
+   Staff search input
+   ========================================================================== */
+
+.staff-search {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.staff-search-control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.staff-search-icon {
+  position: absolute;
+  left: 12px;
+  display: flex;
+  color: var(--muted-on-dark-alt);
+  pointer-events: none;
+}
+
+.staff-search-input {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 12px 9px 38px;
+  border: 1px solid rgba(140, 180, 255, 0.26);
+  border-radius: var(--radius-sm);
+  background-color: rgba(3, 20, 38, 0.72);
+  color: #ffffff;
+  font: inherit;
+  font-size: 14px;
+}
+
+.staff-search-input::placeholder {
+  color: var(--muted-on-dark-alt);
+}
+
+.staff-search-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.staff-search-hint {
+  color: var(--muted-on-dark-alt);
+  font-size: 12px;
+  line-height: 1.5;
+}

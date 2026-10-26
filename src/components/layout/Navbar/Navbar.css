@@ -255,7 +255,16 @@
 
 /* ---------- Responsive ---------- */
 
-@media (max-width: 900px) {
+/* Signed-in staff can have six center links (Judge gets both Judge Dashboard
+   and Staff). Tightening the gaps first keeps the single-row bar intact just
+   above the collapse point. */
+@media (max-width: 1180px) {
+  .navbar-links {
+    gap: 18px;
+  }
+}
+
+@media (max-width: 1024px) {
   .navbar-inner {
     grid-template-columns: auto 1fr auto;
     min-height: 76px;

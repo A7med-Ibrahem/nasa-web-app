@@ -1,0 +1,66 @@
+/* ==========================================================================
+   Staff teams roster page
+   --------------------------------------------------------------------------
+   Search card, then a two-column master/detail layout. Below 900px only one
+   panel is visible at a time: the list until a team is picked, then the detail
+   with its Back button. This keeps the page usable at 360px without shrinking
+   the student rows into unreadable columns.
+   ========================================================================== */
+
+.staff-roster {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+.staff-roster-search {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-lg);
+  background-color: rgba(11, 37, 64, 0.5);
+}
+
+.staff-roster-search .staff-search {
+  width: 100%;
+  max-width: 560px;
+}
+
+.staff-roster-grid {
+  display: grid;
+  grid-template-columns: minmax(250px, 320px) minmax(0, 1fr);
+  align-items: start;
+  gap: 18px;
+  min-width: 0;
+}
+
+/* The list stays in view while the detail column scrolls on wide screens. */
+.staff-roster-grid > .staff-roster-list {
+  position: sticky;
+  top: 96px;
+}
+
+@media (max-width: 900px) {
+  .staff-roster-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .staff-roster-grid > .staff-roster-list {
+    position: static;
+  }
+
+  .staff-roster.is-detail-open .staff-roster-list {
+    display: none;
+  }
+
+  .staff-roster:not(.is-detail-open) .staff-roster-detail {
+    display: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .staff-roster-search {
+    padding: 12px;
+  }
+}

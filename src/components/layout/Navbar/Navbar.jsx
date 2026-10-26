@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 
 import { useAuth } from "../../../auth/useAuth";
+import { staffData } from "../../../data/staffData";
 import { navigationLinks, site } from "../../../data/site";
 import useEscapeKey from "../../../hooks/useEscapeKey";
 import { useRevealGroup } from "../../../hooks/useReveal";
@@ -54,10 +55,24 @@ export default function Navbar() {
       return baseLinks;
     }
     if (user.role === "Judge") {
-      return [...baseLinks, { id: "judge", label: "Judge Dashboard", href: "/judge" }];
+      return [
+        ...baseLinks,
+        { id: "judge", label: "Judge Dashboard", href: "/judge" },
+        {
+          id: "staff",
+          label: staffData.roles.staff,
+          href: "/staff",
+        },
+      ];
     }
     if (user.role === "Participant") {
       return [...baseLinks, { id: "participant", label: "My Team", href: "/participant/dashboard" }];
+    }
+    if (user.role === "Admin" || user.role === "CoreTeam") {
+      return [
+        ...baseLinks,
+        { id: "staff", label: staffData.roles.staff, href: "/staff" },
+      ];
     }
     return baseLinks;
   })();

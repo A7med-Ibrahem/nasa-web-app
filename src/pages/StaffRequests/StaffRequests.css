@@ -1,0 +1,78 @@
+/* ==========================================================================
+   Staff requests page
+   ========================================================================== */
+
+.staff-requests {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+.staff-live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border: 1px solid rgba(140, 180, 255, 0.24);
+  border-radius: var(--radius-pill);
+  background-color: rgba(3, 20, 38, 0.6);
+  color: var(--muted-on-dark);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.staff-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--accent-amber);
+}
+
+.staff-live-pill.is-live {
+  border-color: rgba(61, 220, 151, 0.4);
+  color: #a7f3d0;
+}
+
+.staff-live-pill.is-live .staff-live-dot {
+  background-color: var(--accent-green);
+}
+
+.staff-filter-card,
+.staff-list-card {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-lg);
+  background-color: rgba(11, 37, 64, 0.5);
+}
+
+.staff-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.staff-requests-summary {
+  margin-top: 0;
+}
+
+.staff-request-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 760px) {
+  .staff-filter-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 620px) {
+  .staff-filter-card,
+  .staff-list-card {
+    padding: 12px;
+  }
+}

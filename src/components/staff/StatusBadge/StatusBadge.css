@@ -1,0 +1,54 @@
+/* ==========================================================================
+   Status badge
+   ========================================================================== */
+
+.staff-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border: 1px solid rgba(140, 180, 255, 0.24);
+  border-radius: var(--radius-pill);
+  background-color: rgba(140, 180, 255, 0.1);
+  color: #dfe7f5;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.staff-status--pending {
+  border-color: rgba(251, 191, 36, 0.4);
+  background-color: rgba(251, 191, 36, 0.12);
+  color: #fde68a;
+}
+
+.staff-status--progress {
+  border-color: rgba(74, 158, 255, 0.45);
+  background-color: rgba(74, 158, 255, 0.14);
+  color: #bcd8ff;
+}
+
+.staff-status--resolved,
+.staff-status--present,
+.staff-status--active {
+  border-color: rgba(61, 220, 151, 0.4);
+  background-color: rgba(61, 220, 151, 0.12);
+  color: #a7f3d0;
+}
+
+.staff-status--rejected,
+.staff-status--absent {
+  border-color: rgba(248, 113, 113, 0.4);
+  background-color: rgba(248, 113, 113, 0.12);
+  color: #fecaca;
+}
+
+.staff-status--late {
+  border-color: rgba(251, 191, 36, 0.4);
+  background-color: rgba(251, 191, 36, 0.12);
+  color: #fde68a;
+}
+
+.staff-status--neutral {
+  color: var(--muted-on-dark);
+}

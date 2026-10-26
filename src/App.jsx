@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 
 import MainLayout from "./layouts/MainLayout/MainLayout";
 import ParticipantLayout from "./layouts/ParticipantLayout/ParticipantLayout";
+import StaffLayout from "./layouts/StaffLayout/StaffLayout";
 import RequireAuth from "./auth/RequireAuth";
 import ChallengeDetails from "./pages/ChallengeDetails/ChallengeDetails";
 import Challenges from "./pages/Challenges/Challenges";
@@ -16,6 +17,10 @@ import ParticipantGame from "./pages/ParticipantGame/ParticipantGame";
 import ParticipantRequests from "./pages/ParticipantRequests/ParticipantRequests";
 import SeasonMedia from "./pages/SeasonMedia/SeasonMedia";
 import Sponsors from "./pages/Sponsors/Sponsors";
+import StaffAttendanceCheckIn from "./pages/StaffAttendanceCheckIn/StaffAttendanceCheckIn";
+import StaffAttendanceRecords from "./pages/StaffAttendanceRecords/StaffAttendanceRecords";
+import StaffRequests from "./pages/StaffRequests/StaffRequests";
+import StaffTeams from "./pages/StaffTeams/StaffTeams";
 import TeamDetails from "./pages/TeamDetails/TeamDetails";
 import Teams from "./pages/Teams/Teams";
 
@@ -69,6 +74,28 @@ function App() {
             </RequireAuth>
           }
         />
+
+        <Route
+          path="staff"
+          element={
+            <RequireAuth requiredRole={["Admin", "CoreTeam", "Judge"]}>
+              <StaffLayout />
+            </RequireAuth>
+          }
+        >
+          <Route index element={<Navigate to="requests" replace />} />
+          <Route path="requests" element={<StaffRequests />} />
+          <Route path="attendance" element={<StaffAttendanceRecords />} />
+          <Route
+            path="attendance/check-in"
+            element={
+              <RequireAuth requiredRole="CoreTeam">
+                <StaffAttendanceCheckIn />
+              </RequireAuth>
+            }
+          />
+          <Route path="teams" element={<StaffTeams />} />
+        </Route>
 
         <Route
           path="participant"

@@ -1,0 +1,136 @@
+/* ==========================================================================
+   Attendance records table / cards
+   ========================================================================== */
+
+.staff-attendance-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-md);
+}
+
+.staff-attendance-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.staff-attendance-table th,
+.staff-attendance-table td {
+  padding: 11px 13px;
+  border-bottom: 1px solid rgba(140, 180, 255, 0.1);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.staff-attendance-table thead th {
+  background-color: rgba(3, 20, 38, 0.72);
+  color: var(--muted-on-dark-alt);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.staff-attendance-table tbody tr:last-child th,
+.staff-attendance-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.staff-attendance-table tbody tr:hover {
+  background-color: rgba(74, 158, 255, 0.06);
+}
+
+.staff-attendance-table tbody th {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.staff-attendance-table tbody td {
+  color: var(--muted-on-dark);
+  overflow-wrap: anywhere;
+}
+
+.staff-attendance-cards {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.staff-attendance-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-md);
+  background-color: rgba(3, 20, 38, 0.44);
+  overflow-wrap: anywhere;
+}
+
+.staff-attendance-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+
+.staff-attendance-card-name {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.staff-attendance-card-team {
+  margin-top: 2px;
+  color: var(--blue-strong);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.staff-attendance-card-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 14px;
+  margin: 0;
+}
+
+.staff-attendance-card-facts div {
+  min-width: 0;
+}
+
+.staff-attendance-card-facts div:last-child {
+  grid-column: 1 / -1;
+}
+
+.staff-attendance-card-facts dt {
+  color: var(--muted-on-dark-alt);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.staff-attendance-card-facts dd {
+  margin: 2px 0 0;
+  color: var(--muted-on-dark);
+  font-size: 12.5px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 760px) {
+  .staff-attendance-table-wrap {
+    display: none;
+  }
+
+  .staff-attendance-cards {
+    display: flex;
+  }
+}
