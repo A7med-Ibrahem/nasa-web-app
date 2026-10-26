@@ -1,0 +1,217 @@
+/* ==========================================================================
+   Admin judging criteria
+   --------------------------------------------------------------------------
+   Challenge filter, summary line and criterion cells for /admin/criteria.
+   ResourceTable owns the table/card breakpoint; the dialog and question
+   repeater own their internals.
+   ========================================================================== */
+
+.admin-criteria {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+/* ---------- Filter ---------- */
+
+.admin-criteria-filter {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-lg);
+  background-color: rgba(11, 37, 64, 0.5);
+}
+
+.admin-criteria-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 340px;
+  min-width: 0;
+}
+
+.admin-criteria-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  margin: 10px 0 0;
+  color: var(--muted-on-dark-alt);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.admin-criteria-note--error {
+  color: #fecaca;
+}
+
+.admin-criteria-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--blue-strong);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.admin-criteria-link:hover {
+  color: #ffffff;
+}
+
+.admin-criteria-link:focus-visible {
+  outline: 2px solid var(--blue-strong);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.admin-criteria-hint {
+  margin: 10px 0 0;
+  color: var(--muted-on-dark-alt);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ---------- Summary ---------- */
+
+.admin-criteria-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid rgba(140, 180, 255, 0.18);
+  border-left: 3px solid var(--blue-strong);
+  border-radius: var(--radius-sm);
+  background-color: rgba(74, 158, 255, 0.07);
+  color: var(--muted-on-dark);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+/* ---------- Criteria cells ---------- */
+
+.admin-criteria-name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.admin-criteria-name {
+  color: #ffffff;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.admin-criteria-description {
+  max-width: 440px;
+  color: var(--muted-on-dark-alt);
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.admin-criteria-number {
+  color: #dfe7f5;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ---------- Row actions ---------- */
+
+.admin-criteria-action {
+  padding: 5px 10px;
+  border: 1px solid rgba(140, 180, 255, 0.3);
+  border-radius: var(--radius-sm);
+  background-color: rgba(3, 20, 38, 0.5);
+  color: #dfe7f5;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: background-color var(--ease), border-color var(--ease), color var(--ease);
+}
+
+.admin-criteria-action:hover:not(:disabled) {
+  border-color: rgba(140, 180, 255, 0.6);
+  background-color: rgba(74, 158, 255, 0.18);
+  color: #ffffff;
+}
+
+.admin-criteria-action:focus-visible {
+  outline: 2px solid var(--blue-strong);
+  outline-offset: 2px;
+}
+
+.admin-criteria-action--danger {
+  border-color: rgba(248, 113, 113, 0.42);
+  color: #fecaca;
+}
+
+.admin-criteria-action--danger:hover:not(:disabled) {
+  border-color: rgba(248, 113, 113, 0.72);
+  background-color: rgba(248, 113, 113, 0.16);
+}
+
+/* ---------- Dialog ---------- */
+
+.admin-criteria-warning {
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border: 1px solid rgba(251, 191, 36, 0.32);
+  border-left: 3px solid var(--accent-amber);
+  border-radius: var(--radius-sm);
+  background-color: rgba(251, 191, 36, 0.08);
+  color: #fde68a;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.admin-criteria-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 760px) {
+  .admin-criteria-filter-field {
+    max-width: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .admin-criteria-filter {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 420px) {
+  .admin-criteria {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 360px) {
+  .admin-criteria-filter {
+    padding: 10px;
+  }
+
+  .admin-criteria-action {
+    padding: 5px 8px;
+    font-size: 11.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-criteria-action {
+    transition: none;
+  }
+}

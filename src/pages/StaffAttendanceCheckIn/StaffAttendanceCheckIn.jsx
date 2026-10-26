@@ -315,6 +315,8 @@ export default function StaffAttendanceCheckIn() {
     setReloadToken((current) => current + 1);
   }
 
+  /* eventDate is a plain calendar date: both the GET query parameter and the
+     POST body carry it exactly as "YYYY-MM-DD", never an ISO timestamp. */
   async function handleSave() {
     if (saving || dirtyEntries.length === 0) {
       return;
@@ -326,7 +328,7 @@ export default function StaffAttendanceCheckIn() {
 
     try {
       const result = await saveAttendance({
-        eventDate: `${eventDate}T00:00:00Z`,
+        eventDate,
         entries: dirtyEntries,
       });
 

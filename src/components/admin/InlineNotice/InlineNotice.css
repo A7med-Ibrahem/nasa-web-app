@@ -1,0 +1,53 @@
+/* ==========================================================================
+   Inline notice
+   ========================================================================== */
+
+.admin-notice {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 11px 14px;
+  border: 1px solid rgba(140, 180, 255, 0.28);
+  border-radius: var(--radius-sm);
+  background-color: rgba(74, 158, 255, 0.1);
+  color: #dfe7f5;
+  font-size: 13px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.admin-notice--success {
+  border-color: rgba(61, 220, 151, 0.42);
+  background-color: rgba(61, 220, 151, 0.1);
+  color: #b8f5d8;
+}
+
+.admin-notice--error {
+  border-color: rgba(248, 113, 113, 0.48);
+  background-color: rgba(248, 113, 113, 0.11);
+  color: #fecaca;
+}
+
+.admin-notice-text {
+  min-width: 0;
+}
+
+.admin-notice-dismiss {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: inherit;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.admin-notice-dismiss:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}

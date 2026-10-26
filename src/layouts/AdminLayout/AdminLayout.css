@@ -1,0 +1,95 @@
+/* ==========================================================================
+   Admin area layout
+   --------------------------------------------------------------------------
+   Same visual language as the staff area: a compact header with pill tabs,
+   then page content inside the shared container.
+   ========================================================================== */
+
+.admin-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - var(--navbar-height));
+}
+
+.admin-layout-header {
+  border-bottom: 1px solid rgba(140, 180, 255, 0.18);
+  background: radial-gradient(circle at top, rgba(237, 28, 36, 0.12), transparent 68%),
+    linear-gradient(180deg, rgba(9, 31, 55, 0.9), rgba(6, 26, 47, 0.98));
+}
+
+.admin-layout-header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: clamp(20px, 4vw, 36px);
+  padding-bottom: clamp(16px, 3vw, 24px);
+}
+
+.admin-layout-title {
+  margin-top: 6px;
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-width: 0;
+}
+
+.admin-tab {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(140, 180, 255, 0.24);
+  color: #dfe7f5;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.admin-tab:hover {
+  color: #ffffff;
+}
+
+.admin-tab.is-active {
+  color: #ffffff;
+  border-color: rgba(140, 180, 255, 0.6);
+  background: linear-gradient(90deg, rgba(74, 158, 255, 0.9), rgba(46, 125, 210, 0.9));
+  box-shadow: 0 12px 30px rgba(46, 125, 210, 0.25);
+}
+
+.admin-layout-main {
+  flex: 1;
+  padding-top: clamp(20px, 4vw, 36px);
+  padding-bottom: clamp(40px, 8vw, 72px);
+}
+
+@media (max-width: 620px) {
+  .admin-tabs {
+    gap: 8px;
+  }
+
+  .admin-tab {
+    padding: 7px 13px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 360px) {
+  .admin-layout-header-inner {
+    padding-top: 18px;
+  }
+
+  .admin-tab {
+    padding: 7px 11px;
+    font-size: 12.5px;
+  }
+}

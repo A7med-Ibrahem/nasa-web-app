@@ -68,7 +68,14 @@ export default function Navbar() {
     if (user.role === "Participant") {
       return [...baseLinks, { id: "participant", label: "My Team", href: "/participant/dashboard" }];
     }
-    if (user.role === "Admin" || user.role === "CoreTeam") {
+    if (user.role === "Admin") {
+      return [
+        ...baseLinks,
+        { id: "admin", label: "Admin", href: "/admin" },
+        { id: "staff", label: staffData.roles.staff, href: "/staff" },
+      ];
+    }
+    if (user.role === "CoreTeam") {
       return [
         ...baseLinks,
         { id: "staff", label: staffData.roles.staff, href: "/staff" },

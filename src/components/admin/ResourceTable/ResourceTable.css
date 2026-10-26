@@ -1,0 +1,159 @@
+/* ==========================================================================
+   Admin resource table
+   --------------------------------------------------------------------------
+   Desktop: a real table inside a scrolling surface. <= 720px: each row becomes
+   a card and each cell prints its column name from data-label.
+   ========================================================================== */
+
+.admin-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-lg);
+  background-color: var(--card-navy);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-on-dark);
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.admin-table thead th {
+  color: var(--muted-on-dark-alt);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  line-height: 1.35;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.admin-table tbody tr:hover {
+  background-color: rgba(74, 158, 255, 0.05);
+}
+
+.admin-table td {
+  color: #dfe7f5;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.admin-table--sticky thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: var(--navy-900);
+}
+
+.admin-table-actions {
+  white-space: nowrap;
+}
+
+.admin-table-actions .admin-row-actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* ---------- Stacked cards ---------- */
+
+@media (max-width: 720px) {
+  .admin-table-wrap {
+    overflow: visible;
+    border: 0;
+    background: transparent;
+  }
+
+  .admin-table,
+  .admin-table tbody,
+  .admin-table tr,
+  .admin-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .admin-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .admin-table tbody {
+    display: grid;
+    gap: 12px;
+  }
+
+  .admin-table tbody tr {
+    padding: 6px 14px;
+    border: 1px solid var(--border-on-dark);
+    border-radius: var(--radius-md);
+    background-color: var(--card-navy);
+  }
+
+  .admin-table tbody tr:hover {
+    background-color: var(--card-navy);
+  }
+
+  .admin-table td {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(140, 180, 255, 0.1);
+    text-align: right;
+  }
+
+  .admin-table td:last-child {
+    border-bottom: 0;
+  }
+
+  .admin-table td::before {
+    content: attr(data-label);
+    flex: none;
+    max-width: 48%;
+    color: var(--muted-on-dark-alt);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    line-height: 1.5;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  .admin-table td > * {
+    min-width: 0;
+  }
+
+  .admin-table .admin-table-actions {
+    justify-content: flex-end;
+    white-space: normal;
+  }
+}
+
+@media (max-width: 380px) {
+  .admin-table td {
+    gap: 10px;
+  }
+}

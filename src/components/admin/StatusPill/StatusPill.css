@@ -1,0 +1,35 @@
+/* ==========================================================================
+   Admin status pill
+   ========================================================================== */
+
+.admin-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border: 1px solid rgba(140, 180, 255, 0.26);
+  border-radius: var(--radius-pill);
+  background-color: rgba(140, 180, 255, 0.08);
+  color: #dfe7f5;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.admin-status-pill--on {
+  border-color: rgba(61, 220, 151, 0.4);
+  background-color: rgba(61, 220, 151, 0.12);
+  color: #a7f3d0;
+}
+
+.admin-status-pill--off {
+  border-color: rgba(174, 185, 203, 0.32);
+  background-color: rgba(174, 185, 203, 0.1);
+  color: var(--muted-on-dark-alt);
+}
+
+.admin-status-pill--warn {
+  border-color: rgba(251, 191, 36, 0.4);
+  background-color: rgba(251, 191, 36, 0.12);
+  color: #fde68a;
+}

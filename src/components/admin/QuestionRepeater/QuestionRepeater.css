@@ -1,0 +1,224 @@
+/* ==========================================================================
+   Criterion question repeater
+   --------------------------------------------------------------------------
+   One row per prompt: number badge, textarea, then reorder/remove actions.
+   The controls stay real buttons so the keyboard order matches the visual
+   order and no drag-and-drop alternative is needed.
+   ========================================================================== */
+
+.admin-question-repeater {
+  min-width: 0;
+}
+
+.admin-question-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.admin-question-empty {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px dashed rgba(140, 180, 255, 0.26);
+  border-radius: var(--radius-sm);
+  color: var(--muted-on-dark-alt);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.admin-question-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(140, 180, 255, 0.18);
+  border-radius: var(--radius-md);
+  background-color: rgba(3, 20, 38, 0.36);
+}
+
+.admin-question-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  margin-top: 20px;
+  border: 1px solid rgba(140, 180, 255, 0.32);
+  border-radius: 50%;
+  background-color: rgba(74, 158, 255, 0.14);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.admin-question-main {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.admin-question-label {
+  color: var(--muted-on-dark-alt);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.admin-question-input {
+  min-height: 58px;
+  resize: vertical;
+}
+
+.admin-question-error {
+  color: #fecaca;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.admin-question-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  flex: none;
+  max-width: 148px;
+  padding-top: 20px;
+}
+
+.admin-question-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 8px;
+  border: 1px solid rgba(140, 180, 255, 0.3);
+  border-radius: var(--radius-sm);
+  background-color: rgba(3, 20, 38, 0.5);
+  color: #dfe7f5;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: background-color var(--ease), border-color var(--ease), color var(--ease);
+}
+
+.admin-question-action:hover:not(:disabled) {
+  border-color: rgba(140, 180, 255, 0.6);
+  background-color: rgba(74, 158, 255, 0.18);
+  color: #ffffff;
+}
+
+.admin-question-action:focus-visible {
+  outline: 2px solid var(--blue-strong);
+  outline-offset: 2px;
+}
+
+.admin-question-action--danger {
+  border-color: rgba(248, 113, 113, 0.42);
+  color: #fecaca;
+}
+
+.admin-question-action--danger:hover:not(:disabled) {
+  border-color: rgba(248, 113, 113, 0.72);
+  background-color: rgba(248, 113, 113, 0.16);
+}
+
+.admin-question-action:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.admin-question-summary-error {
+  margin-top: 10px;
+  padding: 9px 11px;
+  border: 1px solid rgba(248, 113, 113, 0.48);
+  border-radius: var(--radius-sm);
+  background-color: rgba(248, 113, 113, 0.11);
+  color: #fecaca;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.admin-question-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin-top: 12px;
+}
+
+.admin-question-add.btn {
+  flex: none;
+  padding: 8px 14px;
+  font-size: 12.5px;
+}
+
+.admin-question-hint {
+  flex: 1 1 220px;
+  margin: 0;
+  color: var(--muted-on-dark-alt);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+@media (max-width: 620px) {
+  .admin-question-row {
+    flex-wrap: wrap;
+  }
+
+  .admin-question-number {
+    margin-top: 0;
+  }
+
+  .admin-question-main {
+    flex-basis: calc(100% - 36px);
+  }
+
+  .admin-question-actions {
+    max-width: none;
+    padding-top: 0;
+    margin-left: 36px;
+  }
+
+  .admin-question-action-text {
+    display: none;
+  }
+}
+
+@media (max-width: 380px) {
+  .admin-question-row {
+    padding: 8px;
+  }
+
+  .admin-question-number {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+
+  .admin-question-main {
+    flex-basis: calc(100% - 32px);
+  }
+
+  .admin-question-actions {
+    margin-left: 32px;
+  }
+
+  .admin-question-add.btn {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-question-action {
+    transition: none;
+  }
+}

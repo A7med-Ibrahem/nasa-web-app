@@ -5,7 +5,10 @@ export function homeForRole(role) {
   if (role === "Participant") {
     return "/participant/dashboard";
   }
-  if (role === "Admin" || role === "CoreTeam") {
+  if (role === "Admin") {
+    return "/admin";
+  }
+  if (role === "CoreTeam") {
     return "/staff/requests";
   }
   return "/";

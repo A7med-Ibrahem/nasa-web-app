@@ -1,0 +1,270 @@
+/* ==========================================================================
+   Admin sponsors and tiers
+   --------------------------------------------------------------------------
+   Two stacked panels on /admin/sponsors. ResourceTable owns the table/card
+   breakpoint; this file owns the panel chrome and the sponsor cells.
+   ========================================================================== */
+
+.admin-sponsors {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+/* ---------- Panels ---------- */
+
+.admin-panel {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-lg);
+  background-color: rgba(11, 37, 64, 0.5);
+}
+
+.admin-panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.admin-panel-heading {
+  min-width: 0;
+  max-width: 620px;
+}
+
+.admin-panel-title {
+  color: #ffffff;
+  font-size: clamp(18px, 2.4vw, 22px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.admin-panel-copy {
+  margin-top: 6px;
+  color: var(--muted-on-dark-alt);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.admin-panel-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 14px;
+  min-width: 0;
+}
+
+.admin-tier-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 0 1 200px;
+  min-width: 150px;
+}
+
+.admin-tier-filter .admin-input {
+  min-width: 0;
+}
+
+.admin-panel-action.btn {
+  padding: 9px 16px;
+  font-size: 13px;
+}
+
+/* ---------- Sponsor cells ---------- */
+
+.admin-sponsor-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 64px;
+  height: 44px;
+  padding: 5px;
+  overflow: hidden;
+  border: 1px solid rgba(140, 180, 255, 0.24);
+  border-radius: var(--radius-sm);
+  background-color: rgba(255, 255, 255, 0.94);
+}
+
+.admin-sponsor-logo img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 32px;
+  object-fit: contain;
+}
+
+.admin-sponsor-wordmark {
+  display: inline-flex;
+  align-items: center;
+  max-width: 180px;
+  color: #dfe7f5;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  text-transform: uppercase;
+}
+
+.admin-sponsor-name {
+  color: #ffffff;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.admin-sponsor-link {
+  color: var(--blue-strong);
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.admin-sponsor-link:hover {
+  color: #ffffff;
+}
+
+.admin-sponsor-link:focus-visible {
+  outline: 2px solid var(--blue-strong);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.admin-sponsor-flag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border: 1px solid rgba(140, 180, 255, 0.26);
+  border-radius: var(--radius-pill);
+  background-color: rgba(140, 180, 255, 0.08);
+  color: #dfe7f5;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.admin-sponsor-flag--on {
+  border-color: rgba(61, 220, 151, 0.4);
+  background-color: rgba(61, 220, 151, 0.12);
+  color: #a7f3d0;
+}
+
+.admin-sponsor-flag--off {
+  border-color: rgba(174, 185, 203, 0.32);
+  background-color: rgba(174, 185, 203, 0.1);
+  color: var(--muted-on-dark-alt);
+}
+
+.admin-sponsor-number {
+  color: #dfe7f5;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.admin-tier-name {
+  color: #ffffff;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Row actions ---------- */
+
+.admin-sponsor-action {
+  padding: 5px 10px;
+  border: 1px solid rgba(140, 180, 255, 0.3);
+  border-radius: var(--radius-sm);
+  background-color: rgba(3, 20, 38, 0.5);
+  color: #dfe7f5;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: background-color var(--ease), border-color var(--ease), color var(--ease);
+}
+
+.admin-sponsor-action:hover:not(:disabled) {
+  border-color: rgba(140, 180, 255, 0.6);
+  background-color: rgba(74, 158, 255, 0.18);
+  color: #ffffff;
+}
+
+.admin-sponsor-action:focus-visible {
+  outline: 2px solid var(--blue-strong);
+  outline-offset: 2px;
+}
+
+.admin-sponsor-action--danger {
+  border-color: rgba(248, 113, 113, 0.42);
+  color: #fecaca;
+}
+
+.admin-sponsor-action--danger:hover:not(:disabled) {
+  border-color: rgba(248, 113, 113, 0.72);
+  background-color: rgba(248, 113, 113, 0.16);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 760px) {
+  .admin-panel-head {
+    align-items: flex-start;
+  }
+
+  .admin-panel-tools {
+    width: 100%;
+  }
+
+  .admin-tier-filter {
+    flex: 1 1 180px;
+  }
+}
+
+@media (max-width: 620px) {
+  .admin-panel {
+    padding: 12px;
+  }
+
+  .admin-panel-action.btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .admin-sponsors {
+    gap: 14px;
+  }
+
+  .admin-panel-tools {
+    gap: 10px;
+  }
+
+  .admin-tier-filter {
+    flex-basis: 100%;
+  }
+}
+
+@media (max-width: 360px) {
+  .admin-panel {
+    padding: 10px;
+  }
+
+  .admin-sponsor-action {
+    padding: 5px 8px;
+    font-size: 11.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-sponsor-action {
+    transition: none;
+  }
+}

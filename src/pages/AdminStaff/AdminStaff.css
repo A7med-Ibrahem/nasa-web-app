@@ -1,0 +1,294 @@
+/* ==========================================================================
+   Admin staff management
+   --------------------------------------------------------------------------
+   Filters, table cells and row actions for /admin/staff. Structure and the
+   stacked-card breakpoint live in ResourceTable; this file owns the page
+   surface and the staff-specific cell treatments.
+   ========================================================================== */
+
+.admin-staff {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+.admin-session-note {
+  margin: 0;
+  padding: 11px 14px;
+  border: 1px solid rgba(140, 180, 255, 0.2);
+  border-left: 3px solid var(--accent-amber);
+  border-radius: var(--radius-sm);
+  background-color: rgba(251, 191, 36, 0.07);
+  color: var(--muted-on-dark);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+/* ---------- Filters ---------- */
+
+.admin-filter-card {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-lg);
+  background-color: rgba(11, 37, 64, 0.5);
+}
+
+.admin-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.admin-filter-hint {
+  margin: 10px 0 0;
+  color: var(--muted-on-dark-alt);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.admin-inline-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  margin: 10px 0 0;
+  color: var(--muted-on-dark-alt);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.admin-inline-note--error {
+  color: #fecaca;
+}
+
+.admin-link-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--blue-strong);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.admin-link-button:hover {
+  color: #ffffff;
+}
+
+.admin-link-button:focus-visible {
+  outline: 2px solid var(--blue-strong);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------- Table cells ---------- */
+
+.admin-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  overflow: hidden;
+  border: 1px solid rgba(140, 180, 255, 0.28);
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(74, 158, 255, 0.36), rgba(6, 26, 47, 0.9));
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.admin-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-staff-name {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-weight: 600;
+}
+
+.admin-self-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border: 1px solid rgba(140, 180, 255, 0.4);
+  border-radius: var(--radius-pill);
+  background-color: rgba(74, 158, 255, 0.16);
+  color: #bfdbfe;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.admin-role,
+.admin-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border: 1px solid rgba(140, 180, 255, 0.26);
+  border-radius: var(--radius-pill);
+  background-color: rgba(140, 180, 255, 0.08);
+  color: #dfe7f5;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.admin-role--admin {
+  border-color: rgba(248, 113, 113, 0.4);
+  background-color: rgba(248, 113, 113, 0.12);
+  color: #fecaca;
+}
+
+.admin-role--coreteam {
+  border-color: rgba(74, 158, 255, 0.4);
+  background-color: rgba(74, 158, 255, 0.14);
+  color: #bfdbfe;
+}
+
+.admin-role--judge {
+  border-color: rgba(251, 191, 36, 0.4);
+  background-color: rgba(251, 191, 36, 0.12);
+  color: #fde68a;
+}
+
+.admin-status--active {
+  border-color: rgba(61, 220, 151, 0.4);
+  background-color: rgba(61, 220, 151, 0.12);
+  color: #a7f3d0;
+}
+
+.admin-status--inactive {
+  border-color: rgba(174, 185, 203, 0.32);
+  background-color: rgba(174, 185, 203, 0.1);
+  color: var(--muted-on-dark-alt);
+}
+
+.admin-date {
+  color: var(--muted-on-dark);
+  white-space: nowrap;
+}
+
+.admin-text-link {
+  color: var(--blue-strong);
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.admin-text-link:hover {
+  color: #ffffff;
+}
+
+.admin-text-link:focus-visible {
+  outline: 2px solid var(--blue-strong);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ---------- Row actions ---------- */
+
+.admin-row-action {
+  padding: 5px 10px;
+  border: 1px solid rgba(140, 180, 255, 0.3);
+  border-radius: var(--radius-sm);
+  background-color: rgba(3, 20, 38, 0.5);
+  color: #dfe7f5;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: background-color var(--ease), border-color var(--ease), color var(--ease);
+}
+
+.admin-row-action:hover:not(:disabled) {
+  border-color: rgba(140, 180, 255, 0.6);
+  background-color: rgba(74, 158, 255, 0.18);
+  color: #ffffff;
+}
+
+.admin-row-action:focus-visible {
+  outline: 2px solid var(--blue-strong);
+  outline-offset: 2px;
+}
+
+.admin-row-action--danger {
+  border-color: rgba(248, 113, 113, 0.42);
+  color: #fecaca;
+}
+
+.admin-row-action--danger:hover:not(:disabled) {
+  border-color: rgba(248, 113, 113, 0.72);
+  background-color: rgba(248, 113, 113, 0.16);
+}
+
+.admin-row-action:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 760px) {
+  .admin-filter-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 620px) {
+  .admin-filter-card {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 420px) {
+  .admin-staff {
+    gap: 14px;
+  }
+
+  .admin-session-note {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .admin-filter-card {
+    padding: 10px;
+  }
+
+  .admin-row-action {
+    padding: 5px 8px;
+    font-size: 11.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-row-action {
+    transition: none;
+  }
+}

@@ -34,7 +34,11 @@ export default function ParticipantRequests() {
   const [formError, setFormError] = useState("");
   const [creating, setCreating] = useState(false);
   const [deleting, setDeleting] = useState({});
-  const [hubStatus, setHubStatus] = useState("off");
+  /* "Live" is only true after this connection actually delivered a hub event.
+     Connecting successfully is not enough: in Task 5 the socket started but
+     never sent a payload, so the indicator must stay on "Auto-refreshing"
+     (polling) until the first real RequestCreated/Updated/Deleted event. */
+  const [hubPushedEvent, setHubPushedEvent] = useState(false);
 
   const messageMax = 500;
 
@@ -135,37 +139,46 @@ export default function ParticipantRequests() {
     let connection;
     let mounted = true;
     let debounceTimer;
+
+    function handlePushedEvent() {
+      if (!mounted) {
+        return;
+      }
+      setHubPushedEvent(true);
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
+      debounceTimer = setTimeout(() => load(), 300);
+    }
+
     const start = async () => {
       try {
         connection = createHub("/hubs/requests");
-        connection.on("RequestCreated", () => {
-          if (debounceTimer) {
-            clearTimeout(debounceTimer);
+        connection.on("RequestCreated", handlePushedEvent);
+        connection.on("RequestUpdated", handlePushedEvent);
+        connection.on("RequestDeleted", handlePushedEvent);
+
+        connection.onreconnecting(() => {
+          if (mounted) {
+            setHubPushedEvent(false);
           }
-          debounceTimer = setTimeout(() => load(), 300);
         });
-        connection.on("RequestUpdated", () => {
-          if (debounceTimer) {
-            clearTimeout(debounceTimer);
+        connection.onreconnected(() => {
+          if (mounted) {
+            setHubPushedEvent(false);
           }
-          debounceTimer = setTimeout(() => load(), 300);
         });
-        connection.on("RequestDeleted", () => {
-          if (debounceTimer) {
-            clearTimeout(debounceTimer);
+        connection.onclose(() => {
+          if (mounted) {
+            setHubPushedEvent(false);
           }
-          debounceTimer = setTimeout(() => load(), 300);
         });
+
         await connection.start();
-        if (mounted) {
-          setHubStatus("live");
-        }
       } catch {
-        if (!mounted) {
-          return;
+        if (mounted) {
+          setHubPushedEvent(false);
         }
-        // Ignore stopped during negotiation in strict mode
-        setHubStatus("off");
       }
     };
 
@@ -270,7 +283,9 @@ export default function ParticipantRequests() {
         </div>
         <div className="participant-requests-header-actions">
           <span className="participant-hub-indicator">
-            {hubStatus === "live" ? participantData.requests.realtime.indicatorLive : participantData.requests.realtime.indicatorAuto}
+            {hubPushedEvent
+              ? participantData.requests.realtime.indicatorLive
+              : participantData.requests.realtime.indicatorAuto}
           </span>
           <button
             type="button"

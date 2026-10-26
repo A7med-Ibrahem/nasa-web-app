@@ -1,0 +1,144 @@
+/* ==========================================================================
+   Native confirmation dialog
+   ========================================================================== */
+
+.admin-confirm {
+  width: min(480px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
+  margin: auto;
+  padding: 0;
+  border: 1px solid rgba(140, 180, 255, 0.26);
+  border-radius: var(--radius-lg);
+  background-color: var(--navy-900);
+  color: var(--text-on-dark);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+.admin-confirm::backdrop {
+  background-color: rgba(3, 14, 26, 0.74);
+}
+
+.admin-confirm-shell {
+  padding: clamp(20px, 5vw, 28px);
+}
+
+.admin-confirm-title {
+  color: #ffffff;
+  font-size: clamp(19px, 2.6vw, 22px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.admin-confirm-message {
+  margin-top: 10px;
+  color: var(--muted-on-dark);
+  font-size: 13.5px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.admin-confirm-children {
+  margin-top: 16px;
+}
+
+.admin-confirm-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted-on-dark-alt);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.admin-confirm-input {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 1px solid rgba(140, 180, 255, 0.26);
+  border-radius: var(--radius-sm);
+  background-color: rgba(3, 20, 38, 0.72);
+  color: #ffffff;
+  font: inherit;
+  font-size: 14px;
+}
+
+.admin-confirm-input:focus-visible {
+  outline: 2px solid var(--blue-strong);
+  outline-offset: 2px;
+  border-color: rgba(140, 180, 255, 0.6);
+}
+
+.admin-confirm-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admin-confirm-input-hint {
+  margin-top: 6px;
+  color: var(--muted-on-dark-alt);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.admin-confirm-error {
+  margin-top: 12px;
+  padding: 9px 11px;
+  border: 1px solid rgba(248, 113, 113, 0.48);
+  border-radius: var(--radius-sm);
+  background-color: rgba(248, 113, 113, 0.11);
+  color: #fecaca;
+  font-size: 12.5px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.admin-confirm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.admin-confirm-button.btn {
+  min-width: 108px;
+  padding: 10px 18px;
+  font-size: 13px;
+}
+
+.admin-confirm-button.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admin-confirm-button--danger.btn {
+  border-color: var(--nasa-red);
+  background-color: var(--nasa-red);
+  color: #ffffff;
+}
+
+.admin-confirm-button--danger.btn:hover {
+  border-color: #c8161d;
+  background-color: #c8161d;
+}
+
+@media (max-width: 420px) {
+  .admin-confirm {
+    width: calc(100vw - 16px);
+    max-width: calc(100vw - 16px);
+  }
+
+  .admin-confirm-actions {
+    flex-direction: column-reverse;
+  }
+
+  .admin-confirm-button.btn {
+    width: 100%;
+  }
+}
