@@ -42,10 +42,10 @@ export const loginPage = {
     subtitle: "Sign in to access your event dashboard",
   },
 
-  /* Form labels, placeholders, messages. `identifier` accepts either an email
-     or a username, so validation only checks presence — never an email
-     pattern. The shape of the submitted values ({ identifier, password,
-     rememberMe }) mirrors what a future POST /auth/login body will carry. */
+   /* Form labels, placeholders, messages. `identifier` accepts either an email
+      or a username, so validation only checks presence — never an email
+      pattern. The submitted values ({ identifier, password, rememberMe }) are
+      posted unchanged to POST /api/v1/auth/login/staff. */
   form: {
     identifierLabel: "Email or Username",
     identifierPlaceholder: "your.email@domain.com",
@@ -59,11 +59,16 @@ export const loginPage = {
     forgotPassword: "Forgot password?",
     forgotPasswordNote: "Password reset is coming soon",
     submit: "Sign In",
+    submitting: "Signing in…",
+    /* Fallbacks for the rare case the server fails without its own message;
+       invalid credentials normally arrive as the backend's wording:
+       "Invalid email/username or password." */
+    invalidCredentials: "Invalid email/username or password.",
+    forbidden: "This account is not permitted to sign in here.",
+    networkError:
+      "Could not reach the server. Check your connection and try again.",
+    genericError: "Sign-in failed. Please try again.",
     or: "OR",
     back: { label: "Back to Event", href: "/" },
-    /* Shown after a locally valid submit. Deliberately states that nothing
-       has been authenticated yet — there is no backend in this project. */
-    readyMessage:
-      "Details checked locally. Sign-in will activate once the authentication service is connected.",
   },
 };

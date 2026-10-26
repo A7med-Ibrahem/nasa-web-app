@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 
+import { useAuth } from "../../../auth/useAuth";
 import { navigationLinks, site } from "../../../data/site";
 import useEscapeKey from "../../../hooks/useEscapeKey";
 import { useRevealGroup } from "../../../hooks/useReveal";
@@ -36,9 +37,32 @@ export default function Navbar() {
   const menuButtonRef = useRef(null);
   const innerRef = useRef(null);
 
+  const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  /* Signed-out visitors get exactly the navigation that has always been here.
+     A signed-in session swaps the Login entry for the area that account can
+     actually use — the Judge Dashboard for the Judge role, nothing extra for
+     other staff roles — plus a sign-out action. The role itself comes from
+     the backend session, never from anything typed into this app. */
+  const baseLinks = isAuthenticated
+    ? navigationLinks.filter((link) => link.id !== "login")
+    : navigationLinks;
+
+  const visibleLinks =
+    isAuthenticated && user?.role === "Judge"
+      ? [...baseLinks, { id: "judge", label: "Judge Dashboard", href: "/judge" }]
+      : baseLinks;
+
   function closeMenu() {
     setIsMenuOpen(false);
     menuButtonRef.current?.focus();
+  }
+
+  function handleSignOut() {
+    logout();
+    setIsMenuOpen(false);
+    navigate("/login", { replace: true });
   }
 
   useEscapeKey(isMenuOpen, closeMenu);
@@ -54,7 +78,7 @@ export default function Navbar() {
         </Link>
 
         <ul className="navbar-links" data-reveal-item>
-          {navigationLinks.map((link) => (
+          {visibleLinks.map((link) => (
             <li key={link.id}>
               <NavItem link={link} className="navbar-link" />
             </li>
@@ -66,6 +90,12 @@ export default function Navbar() {
             <span className="navbar-pill-dot" aria-hidden="true" />
             Live Standings
           </Link>
+
+          {isAuthenticated && (
+            <button type="button" className="navbar-signout" onClick={handleSignOut}>
+              Sign out
+            </button>
+          )}
 
           <button
             ref={menuButtonRef}
@@ -90,7 +120,7 @@ export default function Navbar() {
         hidden={!isMenuOpen}
       >
         <ul className="navbar-mobile-links">
-          {navigationLinks.map((link) => (
+          {visibleLinks.map((link) => (
             <li key={link.id}>
               <NavItem
                 link={link}
@@ -109,6 +139,17 @@ export default function Navbar() {
               Live Standings
             </Link>
           </li>
+          {isAuthenticated && (
+            <li>
+              <button
+                type="button"
+                className="navbar-mobile-link navbar-mobile-signout"
+                onClick={handleSignOut}
+              >
+                Sign out
+              </button>
+            </li>
+          )}
         </ul>
       </div>
     </header>

@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./LoginForm.css";
 
 import {
@@ -11,6 +11,8 @@ import {
   MailIcon,
   UsersIcon,
 } from "../../common/Icons/Icons";
+import { ApiError } from "../../../api/client";
+import { useAuth } from "../../../auth/useAuth";
 import { loginPage } from "../../../data/loginData";
 import { site } from "../../../data/site";
 
@@ -18,11 +20,18 @@ import { site } from "../../../data/site";
  * Sign-in card for the Organizer & Judge portal (`/login`, right column).
  *
  * State is a single object shaped `{ identifier, password, rememberMe }` —
- * exactly the payload a future `POST /auth/login` will need. There is no
- * backend in this project: submit only runs client-side required-field
- * validation and, when both fields are filled, moves the form to a clearly
- * labelled "ready" state. No fetch, no fake session, no stored credentials,
- * no navigation to a dashboard that does not exist yet.
+ * exactly the `POST /api/v1/auth/login/staff` request body. The field names
+ * the backend expects and the names the form uses are identical, so no
+ * translation layer is needed.
+ *
+ * Behaviour:
+ *   - client-side required-field validation runs first, then one real request
+ *   - duplicate submits are blocked while a request is in flight
+ *   - failures (invalid credentials, 403, offline) render as an alert inside
+ *     the form; nothing is stored and no navigation happens
+ *   - only a server-issued access token creates a session, after which the
+ *     visitor is sent to the route they originally asked for (or the Judge
+ *     Dashboard for judges, the homepage otherwise)
  *
  * Validation messages are rendered inside the field's `aria-describedby`
  * chain with `role="alert"`, and the first invalid control receives focus.
@@ -34,13 +43,28 @@ export default function LoginForm() {
     rememberMe: false,
   });
   const [errors, setErrors] = useState({});
-  const [status, setStatus] = useState(null);
+  const [submitError, setSubmitError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const identifierRef = useRef(null);
   const passwordRef = useRef(null);
 
+  const { login, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const t = loginPage.form;
+  const redirectTo = location.state?.from?.pathname || null;
+
+  /* Already signed in (restored session or a fresh one): there is nothing to
+     fill in here, so go straight to the area the visitor asked for. */
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+    navigate(redirectTo ?? "/", { replace: true });
+  }, [isAuthenticated, navigate, redirectTo]);
 
   function updateField(field, value) {
     setForm((previous) => ({ ...previous, [field]: value }));
@@ -54,8 +78,14 @@ export default function LoginForm() {
     });
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
+
+    /* Duplicate-submit guard: the button is disabled too, but an Enter key
+       press can race the re-render. */
+    if (isSubmitting) {
+      return;
+    }
 
     const nextErrors = {};
     if (!form.identifier.trim()) {
@@ -66,9 +96,9 @@ export default function LoginForm() {
     }
 
     setErrors(nextErrors);
+    setSubmitError("");
 
     if (Object.keys(nextErrors).length > 0) {
-      setStatus(null);
       if (nextErrors.identifier) {
         identifierRef.current?.focus();
       } else {
@@ -77,10 +107,36 @@ export default function LoginForm() {
       return;
     }
 
-    /* Both fields are filled — as far as this project goes, that is the
-       whole sign-in. The message below says so plainly instead of pretending
-       anyone has been authenticated. */
-    setStatus("ready");
+    setIsSubmitting(true);
+
+    try {
+      const user = await login({
+        identifier: form.identifier.trim(),
+        password: form.password,
+        rememberMe: form.rememberMe,
+      });
+
+      /* Reached only after the server issued a token. */
+      const destination =
+        redirectTo ?? (user.role === "Judge" ? "/judge" : "/");
+      navigate(destination, { replace: true });
+    } catch (error) {
+      if (error instanceof ApiError && error.isUnauthorized) {
+        /* The backend's own wording ("Invalid email/username or password.")
+           is the clearest message available for this case. */
+        setSubmitError(error.message || t.invalidCredentials);
+      } else if (error instanceof ApiError && error.isForbidden) {
+        setSubmitError(error.message || t.forbidden);
+      } else if (error instanceof ApiError && error.isNetworkError) {
+        setSubmitError(error.message || t.networkError);
+      } else {
+        setSubmitError(
+          error instanceof ApiError && error.message ? error.message : t.genericError,
+        );
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   const identifierInvalid = Boolean(errors.identifier);
@@ -131,6 +187,7 @@ export default function LoginForm() {
               placeholder={t.identifierPlaceholder}
               value={form.identifier}
               onChange={(event) => updateField("identifier", event.target.value)}
+              disabled={isSubmitting}
               aria-invalid={identifierInvalid}
               aria-describedby={
                 identifierInvalid ? "login-identifier-error" : undefined
@@ -163,6 +220,7 @@ export default function LoginForm() {
               placeholder={t.passwordPlaceholder}
               value={form.password}
               onChange={(event) => updateField("password", event.target.value)}
+              disabled={isSubmitting}
               aria-invalid={passwordInvalid}
               aria-describedby={
                 passwordInvalid ? "login-password-error" : undefined
@@ -191,6 +249,7 @@ export default function LoginForm() {
               id="login-remember"
               type="checkbox"
               checked={form.rememberMe}
+              disabled={isSubmitting}
               onChange={(event) =>
                 updateField("rememberMe", event.target.checked)
               }
@@ -207,14 +266,19 @@ export default function LoginForm() {
         </div>
 
         {/* ---------- Sign in ---------- */}
-        <button type="submit" className="btn login-submit">
-          {t.submit}
-          <ArrowRightIcon size={17} />
+        <button
+          type="submit"
+          className="btn login-submit"
+          disabled={isSubmitting}
+          aria-busy={isSubmitting}
+        >
+          {isSubmitting ? t.submitting : t.submit}
+          {!isSubmitting && <ArrowRightIcon size={17} />}
         </button>
 
-        {status === "ready" && (
-          <p className="login-form-status" role="status">
-            {t.readyMessage}
+        {submitError && (
+          <p className="login-form-status login-form-status--error" role="alert">
+            {submitError}
           </p>
         )}
 

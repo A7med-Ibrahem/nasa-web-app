@@ -26,6 +26,10 @@
   padding: 20px;
 }
 
+.current-challenge-body--plain {
+  padding: 0;
+}
+
 .current-challenge-label {
   color: var(--blue-strong);
   font-size: 10px;

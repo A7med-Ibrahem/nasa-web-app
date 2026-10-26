@@ -1,0 +1,38 @@
+/* ==========================================================================
+   Judge Dashboard — explorer layout
+   --------------------------------------------------------------------------
+   Search card, then a two-column grid: results table (wide) beside the
+   selected team's details (narrow). `min-width: 0` on both columns is what
+   keeps the table's horizontal scroll inside its own card instead of widening
+   the page. Below 1040px the grid collapses and the details panel stacks
+   under the table, matching the reference's mobile composition.
+   ========================================================================== */
+
+.team-explorer {
+  background-color: var(--navy-950);
+}
+
+.team-explorer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+  align-items: start;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+/* The details column is sticky on wide screens so the judge can scan rows
+   without losing the currently selected team. */
+.team-explorer-grid > .team-details {
+  position: sticky;
+  top: 108px;
+}
+
+@media (max-width: 1040px) {
+  .team-explorer-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .team-explorer-grid > .team-details {
+    position: static;
+  }
+}

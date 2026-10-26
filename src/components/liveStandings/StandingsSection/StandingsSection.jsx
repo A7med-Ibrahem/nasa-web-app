@@ -17,7 +17,15 @@ import StandingsTable from "../StandingsTable/StandingsTable";
  * grid wider than the viewport; the table's own scroll container then handles any
  * remaining density itself.
  */
-export default function StandingsSection() {
+export default function StandingsSection({
+  standings,
+  phase,
+  error,
+  lastUpdated,
+  connectionState,
+  isRefreshing,
+  refresh,
+}) {
   const sectionRef = useRef(null);
 
   useRevealGroup(sectionRef, { stagger: 110 });
@@ -30,11 +38,21 @@ export default function StandingsSection() {
     >
       <div className="container standings-grid">
         <div className="standings-main">
-          <StandingsHeader />
-          <StandingsTable />
+          <StandingsHeader
+            lastUpdated={lastUpdated}
+            connectionState={connectionState}
+            isRefreshing={isRefreshing}
+            onRefresh={refresh}
+          />
+          <StandingsTable
+            standings={standings}
+            phase={phase}
+            error={error}
+            onRetry={refresh}
+          />
         </div>
 
-        <StandingsSidebar />
+        <StandingsSidebar standings={standings} />
       </div>
     </section>
   );

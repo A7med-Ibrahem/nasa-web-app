@@ -257,6 +257,18 @@
   border-color: var(--blue-strong);
 }
 
+/* In-flight submit: no hover lift, no pointer, and a calmer fill so the
+   loading label stays legible against the button. */
+.login-submit:disabled {
+  cursor: progress;
+  opacity: 0.78;
+}
+
+.login-submit:disabled:hover {
+  background-color: var(--blue);
+  border-color: var(--blue);
+}
+
 .login-form-status {
   padding: 11px 13px;
   border: 1px solid rgba(140, 180, 255, 0.28);
@@ -265,6 +277,14 @@
   color: #dfe7f5;
   font-size: 13px;
   line-height: 1.55;
+}
+
+/* Server-reported failure (invalid credentials, 403, offline). Coral rather
+   than --nasa-red for the same contrast reason as `.login-field-error`. */
+.login-form-status--error {
+  border-color: rgba(248, 113, 113, 0.42);
+  background-color: rgba(248, 113, 113, 0.12);
+  color: #ffd9d9;
 }
 
 /* ---------- OR divider ---------- */

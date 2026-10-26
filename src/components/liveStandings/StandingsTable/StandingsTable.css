@@ -79,7 +79,7 @@
  */
 @media (max-width: 860px) {
   .standings-table {
-    min-width: 540px;
+    min-width: 620px;
   }
 }
 
@@ -98,9 +98,9 @@
 }
 
 /*
- * Rank is the narrowest column, team is the widest, challenge is medium, score
- * and movement are narrow. Widths are on the header cells so the browser shares
- * one column model across `<thead>` and `<tbody>`.
+ * Rank is the narrowest column, team is the widest, and the three numeric
+ * columns are fixed. Widths are on the header cells so the browser shares one
+ * column model across `<thead>` and `<tbody>`.
  */
 .standings-table-col-rank {
   width: 78px;
@@ -110,17 +110,77 @@
   width: auto;
 }
 
-.standings-table-col-challenge {
-  width: 26%;
-  min-width: 150px;
-}
-
 .standings-table-col-score {
   width: 124px;
   text-align: right;
 }
 
-.standings-table-col-movement {
+.standings-table-col-percentage {
+  width: 124px;
+  text-align: right;
+}
+
+.standings-table-col-judges {
   width: 104px;
   text-align: right;
+}
+
+/* ---------- Loading / empty / error states ---------- */
+
+.standings-state {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  padding: clamp(28px, 5vw, 48px);
+}
+
+.standings-state-title {
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.standings-state-description {
+  max-width: 440px;
+  color: var(--muted-on-dark);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.standings-state-action {
+  margin-top: 8px;
+  padding: 9px 18px;
+  font-size: 13px;
+}
+
+/* ---------- Stale-data notice ---------- */
+
+.standings-table-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  border: 1px solid rgba(237, 28, 36, 0.26);
+  border-radius: var(--radius-sm);
+  background-color: var(--nasa-red-soft);
+  color: var(--muted-on-dark);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.standings-table-notice-action {
+  flex: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
 }

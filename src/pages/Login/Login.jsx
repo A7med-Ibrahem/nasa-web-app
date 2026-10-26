@@ -16,10 +16,11 @@ import { useRevealGroup } from "../../hooks/useReveal";
  * so the main Navbar and Footer do not appear here. Both "Back to Event"
  * actions return to the event homepage through React Router.
  *
- * The sign-in flow stops at client-side validation — the page prepares the
- * `{ identifier, password, rememberMe }` payload for a future auth endpoint
- * and explicitly does not authenticate, persist credentials or navigate to a
- * dashboard (none exists yet).
+ * Credentials are posted to `POST /api/v1/auth/login/staff` by LoginForm via
+ * the shared auth context: a session exists only after the server returns an
+ * access token, which is stored session-scoped or persistently according to
+ * the remember-me choice. Only then does the form navigate — to the route the
+ * visitor originally requested, to /judge for judges, or back home otherwise.
  *
  * One reveal cascade spans the intro and the card, so the staggered entrance
  * reads as a single composed page load.

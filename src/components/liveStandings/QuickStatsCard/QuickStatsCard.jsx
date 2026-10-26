@@ -32,7 +32,7 @@ function Stat({ value, label, icon, format, active }) {
   );
 }
 
-export default function QuickStatsCard() {
+export default function QuickStatsCard({ items = quickStats.items }) {
   const listRef = useRef(null);
   const inView = useInView(listRef);
 
@@ -41,7 +41,7 @@ export default function QuickStatsCard() {
       <h3 className="sidebar-card-title">{quickStats.title}</h3>
 
       <ul className="quick-stat-list" ref={listRef}>
-        {quickStats.items.map((stat) => (
+        {items.map((stat) => (
           <Stat key={stat.id} {...stat} active={inView} />
         ))}
       </ul>

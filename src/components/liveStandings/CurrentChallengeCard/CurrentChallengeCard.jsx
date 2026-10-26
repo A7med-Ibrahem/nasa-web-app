@@ -7,22 +7,32 @@ import { ArrowRightIcon } from "../../common/Icons/Icons";
 /**
  * Sidebar card: the challenge currently being judged.
  *
- * Reuses the `.btn` button primitive (and therefore its existing hover and
- * arrow-shift behaviour) rather than introducing a second button style.
+ * The live standings payload does not identify a current challenge, so this
+ * card shows an explicit unavailable state and links to the challenges page
+ * rather than presenting fixture content as live data.
  */
 export default function CurrentChallengeCard() {
-  return (
-    <article className="sidebar-card sidebar-card--flush current-challenge" data-reveal-item>
-      <div className="current-challenge-media">
-        <img
-          src={currentChallenge.image.src}
-          alt={currentChallenge.image.alt}
-          loading="lazy"
-          decoding="async"
-        />
-      </div>
+  const hasImage = Boolean(currentChallenge.image);
 
-      <div className="current-challenge-body">
+  return (
+    <article
+      className={`sidebar-card current-challenge${hasImage ? " sidebar-card--flush" : ""}`}
+      data-reveal-item
+    >
+      {hasImage ? (
+        <div className="current-challenge-media">
+          <img
+            src={currentChallenge.image.src}
+            alt={currentChallenge.image.alt}
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      ) : null}
+
+      <div
+        className={`current-challenge-body${hasImage ? "" : " current-challenge-body--plain"}`}
+      >
         <p className="current-challenge-label">{currentChallenge.label}</p>
 
         <h3 className="current-challenge-title">{currentChallenge.title}</h3>

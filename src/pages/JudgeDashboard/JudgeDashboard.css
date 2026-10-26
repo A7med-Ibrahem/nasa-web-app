@@ -1,0 +1,20 @@
+/* ==========================================================================
+   Judge Dashboard page wrapper
+   --------------------------------------------------------------------------
+   The page adds almost nothing of its own: hero and explorer sections own
+   their backgrounds, and MainLayout already supplies <main>, Navbar and
+   Footer. Only the document-level surface and the vertical rhythm between
+   sections live here, plus one guard against horizontal bleed.
+   ========================================================================== */
+
+.judge-dashboard {
+  /* Belt-and-braces against document-level horizontal scrolling: every inner
+     element either fits or scrolls inside its own box. */
+  overflow-x: clip;
+  background-color: var(--navy-950);
+  color: var(--text-on-dark);
+}
+
+.judge-dashboard .judge-section {
+  padding-block: clamp(36px, 5vw, 64px);
+}

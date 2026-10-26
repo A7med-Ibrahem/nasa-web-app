@@ -88,6 +88,26 @@
   color: var(--nasa-red);
 }
 
+.standing-tie {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding-inline: 4px;
+  border-radius: var(--radius-pill);
+  background-color: rgba(93, 156, 255, 0.16);
+  color: var(--blue-strong);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.standing-row[data-standing-unranked="true"] .standing-rank {
+  color: var(--muted-on-dark-alt);
+}
+
 /* ---------- Team identity ---------- */
 
 .standing-team {
@@ -152,44 +172,36 @@
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.01em;
   text-align: right;
+  white-space: nowrap;
 }
 
-/* ---------- Movement ---------- */
-
-.standing-movement {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 3px;
-  min-width: 40px;
-  font-size: 12px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-.standing-movement svg {
-  flex: none;
-}
-
-.standing-movement-value {
-  font-variant-numeric: tabular-nums;
-}
-
-/*
- * Direction is carried by the arrow glyph first; colour only reinforces it, and
- * both states come from the locked palette (blue accent vs muted red, the same
- * red the live indicators and the brand rule already use).
- */
-.standing-movement--up {
-  color: var(--blue-strong);
-}
-
-.standing-movement--down {
-  color: var(--nasa-red);
-}
-
-.standing-movement--none {
+.standing-score-total {
   color: var(--muted-on-dark-alt);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ---------- Percentage ---------- */
+
+.standing-percentage {
+  display: block;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ---------- Judges ---------- */
+
+.standing-judges {
+  display: block;
+  color: var(--muted-on-dark);
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
 }
 
 /* ---------- Responsive ---------- */
@@ -221,8 +233,10 @@
     font-size: 17px;
   }
 
-  .standing-movement {
-    min-width: 32px;
+  .standing-score-total,
+  .standing-percentage,
+  .standing-judges {
+    font-size: 12px;
   }
 }
 

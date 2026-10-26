@@ -2,6 +2,12 @@
    Standings by challenge — sidebar card
    ========================================================================== */
 
+.challenge-stat-empty {
+  color: var(--muted-on-dark);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
 .challenge-stat-list {
   display: grid;
   gap: 14px;

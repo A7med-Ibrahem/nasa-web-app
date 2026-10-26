@@ -1,0 +1,294 @@
+/* ==========================================================================
+   Judge Dashboard — team results table
+   --------------------------------------------------------------------------
+   Card surface and scroll container are separate boxes, exactly as the Live
+   Standings table does it: the surface owns border/radius/background, the
+   wrapper owns `overflow-x` alone so a dense table scrolls inside its card
+   instead of stretching the document.
+   ========================================================================== */
+
+.team-table-card {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-lg);
+  background-color: var(--card-navy);
+  transition: border-color var(--ease);
+}
+
+.team-table-card:hover {
+  border-color: rgba(140, 180, 255, 0.22);
+}
+
+/* ---------- Scroll container ---------- */
+
+.team-table-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  border-radius: calc(var(--radius-lg) - 6px);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 165, 235, 0.45) transparent;
+}
+
+.team-table-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.team-table-wrapper::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-pill);
+  background-color: rgba(120, 165, 235, 0.4);
+}
+
+.team-table-wrapper:focus-visible {
+  outline: 2px solid var(--blue-strong);
+  outline-offset: 2px;
+}
+
+/* ---------- Table ---------- */
+
+.team-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+@media (max-width: 860px) {
+  .team-table {
+    min-width: 640px;
+  }
+}
+
+.team-table thead th {
+  padding: 14px 14px;
+  border-bottom: 1px solid var(--border-on-dark);
+  color: var(--muted-on-dark-alt);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.team-table-col-index {
+  width: 52px;
+}
+
+.team-table-col-team {
+  width: auto;
+}
+
+.team-table-col-id {
+  width: 96px;
+}
+
+.team-table-col-username {
+  width: 26%;
+  min-width: 130px;
+}
+
+.team-table-col-status {
+  width: 130px;
+}
+
+.team-table-col-action {
+  width: 118px;
+  text-align: right;
+}
+
+/* ---------- Rows ---------- */
+
+.team-table-row {
+  transition: background-color var(--ease);
+}
+
+.team-table-row:hover {
+  background-color: rgba(74, 158, 255, 0.06);
+}
+
+.team-table-row--selected {
+  background-color: rgba(74, 158, 255, 0.12);
+  box-shadow: inset 2px 0 0 var(--blue);
+}
+
+.team-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(140, 180, 255, 0.08);
+  color: #dfe7f5;
+  font-size: 13.5px;
+  vertical-align: middle;
+}
+
+.team-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.team-table-cell-index {
+  color: var(--muted-on-dark-alt);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Team cell ---------- */
+
+.team-table-team {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+/* Initials avatar: derived from the returned team name, never an invented
+   image or external URL. */
+.team-table-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(140, 180, 255, 0.28);
+  border-radius: 50%;
+  background-color: rgba(74, 158, 255, 0.14);
+  color: var(--blue-strong);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.team-table-team-name {
+  color: #ffffff;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.team-table-cell-id {
+  color: var(--muted-on-dark);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.team-table-cell-username {
+  color: var(--muted-on-dark);
+  overflow-wrap: anywhere;
+}
+
+/* Status is rendered verbatim from the API (e.g. "Active") — no invented
+   judging states. */
+.team-table-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 11px;
+  border: 1px solid rgba(61, 220, 151, 0.3);
+  border-radius: var(--radius-pill);
+  background-color: rgba(61, 220, 151, 0.12);
+  color: #b6f2d6;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ---------- Row action ---------- */
+
+.team-table-cell-action {
+  text-align: right;
+}
+
+.team-table-view {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border: 1px solid rgba(140, 180, 255, 0.34);
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--blue-strong);
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--ease), border-color var(--ease),
+    color var(--ease);
+}
+
+.team-table-view svg {
+  flex: none;
+  transition: transform var(--ease);
+}
+
+.team-table-view:hover {
+  background-color: rgba(74, 158, 255, 0.16);
+  border-color: rgba(140, 180, 255, 0.6);
+  color: #ffffff;
+}
+
+.team-table-view:hover svg {
+  transform: translateX(3px);
+}
+
+.team-table-view[aria-pressed="true"] {
+  background-color: var(--blue);
+  border-color: var(--blue);
+  color: var(--navy-950);
+}
+
+.team-table-view:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ---------- Loading / empty / error states ---------- */
+
+.team-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 220px;
+  padding: 32px 20px;
+  text-align: center;
+}
+
+.team-state-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(140, 180, 255, 0.22);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: team-state-spin 0.9s linear infinite;
+}
+
+@keyframes team-state-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.team-state-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(140, 180, 255, 0.28);
+  border-radius: 50%;
+  background-color: rgba(74, 158, 255, 0.12);
+  color: var(--blue-strong);
+}
+
+.team-state-title {
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.team-state-text {
+  color: var(--muted-on-dark);
+  font-size: 13.5px;
+  line-height: 1.6;
+  max-width: 380px;
+}
+
+.team-state--error .team-state-title {
+  color: #ffd9d9;
+}

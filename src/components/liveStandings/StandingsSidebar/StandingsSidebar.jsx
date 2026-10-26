@@ -4,6 +4,35 @@ import ChallengeStatsCard from "../ChallengeStatsCard/ChallengeStatsCard";
 import CurrentChallengeCard from "../CurrentChallengeCard/CurrentChallengeCard";
 import QuickStatsCard from "../QuickStatsCard/QuickStatsCard";
 
+function buildQuickStatItems(standings) {
+  const ranked = standings.filter((entry) => Number.isFinite(entry.rank)).length;
+  const total = standings.length;
+
+  return [
+    {
+      id: "teams",
+      value: String(total),
+      label: "Total Teams",
+      icon: "team",
+      format: "count",
+    },
+    {
+      id: "ranked",
+      value: String(ranked),
+      label: "Ranked Teams",
+      icon: "chart",
+      format: "count",
+    },
+    {
+      id: "unranked",
+      value: String(total - ranked),
+      label: "Unranked Teams",
+      icon: "users",
+      format: "count",
+    },
+  ];
+}
+
 /**
  * Right-hand sidebar for the standings dashboard.
  *
@@ -11,14 +40,15 @@ import QuickStatsCard from "../QuickStatsCard/QuickStatsCard";
  * three cards present the same object. Each card keeps its own stylesheet for
  * its own internals, so this file is layout plus surface and nothing else.
  *
- * Its top aligns with the "Overall Standings" heading in the main column, so the
- * sidebar is marked `align-self: stretch`-free and the grid's `align-items: start`
- * keeps it top-aligned with the header rather than centred against the table.
- *
- * Below 768px the grid collapses to a single column and this stack simply follows
- * the table — the cards stay in the document, in reading order.
+ * Only the quick stats are derived from the live feed (team and rank counts).
+ * Challenge cards deliberately stay unavailable because the endpoint provides no
+ * challenge association.
  */
-export default function StandingsSidebar() {
+export default function StandingsSidebar({ standings }) {
+  const quickStatItems = Array.isArray(standings)
+    ? buildQuickStatItems(standings)
+    : undefined;
+
   return (
     <aside
       className="standings-sidebar"
@@ -27,7 +57,7 @@ export default function StandingsSidebar() {
       data-reveal-variant="right"
     >
       <CurrentChallengeCard />
-      <QuickStatsCard />
+      <QuickStatsCard items={quickStatItems} />
       <ChallengeStatsCard />
     </aside>
   );

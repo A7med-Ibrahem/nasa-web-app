@@ -394,3 +394,11 @@ export function YouTubeIcon({ size = 18 }) {
     </svg>
   );
 }
+/* Confirmation glyph for the judge score-submission success banner. */
+export function CheckIcon({ size = 18 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <path d="M4.5 12.5l5 5 10-11" />
+    </svg>
+  );
+}

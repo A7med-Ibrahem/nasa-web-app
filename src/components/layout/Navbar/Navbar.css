@@ -153,6 +153,28 @@
   background-color: var(--nasa-red);
 }
 
+/* ---------- Sign out (only rendered while a session exists) ---------- */
+
+.navbar-signout {
+  padding: 8px 16px;
+  border: 1px solid rgba(140, 180, 255, 0.34);
+  border-radius: var(--radius-pill);
+  background-color: rgba(74, 158, 255, 0.12);
+  color: #dfe7f5;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--ease), border-color var(--ease),
+    color var(--ease);
+}
+
+.navbar-signout:hover {
+  background-color: rgba(74, 158, 255, 0.22);
+  border-color: rgba(140, 180, 255, 0.55);
+  color: #ffffff;
+}
+
 /* ---------- Mobile toggle ---------- */
 
 .navbar-toggle {
@@ -221,6 +243,16 @@
   border-radius: var(--radius-pill);
 }
 
+/* Sign-out inside the mobile panel: a button, not a link, but visually one
+   more row of the same menu. */
+.navbar-mobile-signout {
+  width: 100%;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 900px) {
@@ -234,6 +266,11 @@
   }
 
   .navbar-pill {
+    display: none;
+  }
+
+  /* The desktop sign-out moves into the mobile panel below. */
+  .navbar-signout {
     display: none;
   }
 

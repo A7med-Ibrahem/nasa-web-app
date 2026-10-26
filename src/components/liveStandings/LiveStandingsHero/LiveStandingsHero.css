@@ -122,10 +122,21 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--nasa-red);
+  background-color: var(--blue-strong);
 
-  /* The same live-dot treatment the navbar Live Standings pill already uses. */
+  /* The same live-dot treatment the navbar Live Standings pill already uses,
+     but only while the judging hub is actually connected. */
+  animation: none;
+}
+
+.standings-hero-badge[data-state="connected"] .standings-hero-badge-dot {
+  background-color: var(--nasa-red);
   animation: live-dot-pulse 2.4s var(--ease-motion) infinite;
+}
+
+.standings-hero-badge[data-state="disconnected"] .standings-hero-badge-dot {
+  background-color: var(--muted-on-dark-alt);
+  opacity: 0.65;
 }
 
 .standings-hero-badge-rule {

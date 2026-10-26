@@ -13,8 +13,11 @@ import usePointerParallax from "../../../hooks/usePointerParallax";
  * `--mx` / `--my` parallax hook — so the two pages share one visual language
  * without a second animation system.
  */
-export default function LiveStandingsHero() {
+export default function LiveStandingsHero({ connectionState = "connecting" }) {
   const sectionRef = useRef(null);
+  const badge =
+    liveStandingsHero.badge.states[connectionState] ??
+    liveStandingsHero.badge.states.connecting;
 
   // Badge -> heading -> description -> Earth. The Earth is last, which is why
   // it needs an explicit index: it is absolutely positioned and comes first in
@@ -48,15 +51,15 @@ export default function LiveStandingsHero() {
 
       <div className="container standings-hero-inner">
         <div className="standings-hero-content">
-          <p className="standings-hero-badge" data-reveal-item>
+          <p
+            className="standings-hero-badge"
+            data-reveal-item
+            data-state={connectionState}
+          >
             <span className="standings-hero-badge-dot" aria-hidden="true" />
-            <span className="standings-hero-badge-label">
-              {liveStandingsHero.badge.label}
-            </span>
+            <span className="standings-hero-badge-label">{badge.label}</span>
             <span className="standings-hero-badge-rule" aria-hidden="true" />
-            <span className="standings-hero-badge-detail">
-              {liveStandingsHero.badge.detail}
-            </span>
+            <span className="standings-hero-badge-detail">{badge.detail}</span>
           </p>
 
           <h1 id="live-standings-title" className="standings-hero-title" data-reveal-item>
