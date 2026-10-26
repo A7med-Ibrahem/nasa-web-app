@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import "./ParticipantGame.css";
 
 import { ApiError } from "../../api/client";
@@ -266,6 +267,9 @@ export default function ParticipantGame() {
       <section className="participant-card" data-reveal-item>
         <header className="participant-card-header">
           <h3 className="participant-card-title">{participantData.game.standing.title}</h3>
+          <Link to="/leaderboard/game" className="participant-leaderboard-link">
+            {participantData.game.fullLeaderboard}
+          </Link>
         </header>
         {standing ? (
           <div className="participant-standing">

@@ -1,0 +1,81 @@
+/* ==========================================================================
+   Season media page — filter chips and per-season galleries
+   ========================================================================== */
+
+.season-media-page {
+  background-color: var(--navy-950);
+}
+
+.season-media-section {
+  background-color: var(--surface-light);
+}
+
+.season-media-header {
+  max-width: 620px;
+  margin-bottom: clamp(22px, 3vw, 30px);
+}
+
+.season-media-description {
+  max-width: 54ch;
+}
+
+/* ---------- Season filter ---------- */
+
+.season-filter-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  margin-bottom: clamp(24px, 3.5vw, 34px);
+  padding: 4px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.season-filter-chip {
+  flex: none;
+  height: 40px;
+  padding-inline: 16px;
+  border: 1px solid var(--border-on-light);
+  border-radius: var(--radius-pill);
+  background-color: var(--surface-white);
+  color: var(--muted-on-light);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--ease), border-color var(--ease),
+    color var(--ease);
+}
+
+.season-filter-chip:hover {
+  border-color: rgba(47, 111, 228, 0.4);
+  color: var(--text-on-light);
+}
+
+.season-filter-chip[aria-pressed="true"] {
+  border-color: var(--blue-ink);
+  background-color: var(--blue-ink);
+  color: #ffffff;
+}
+
+/* ---------- Groups ---------- */
+
+.season-groups {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(30px, 4vw, 44px);
+}
+
+.season-group-title {
+  margin-bottom: 16px;
+  color: var(--text-on-light);
+  font-size: clamp(20px, 2.4vw, 26px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  overflow-wrap: break-word;
+}

@@ -1,0 +1,151 @@
+/* ==========================================================================
+   Sponsor tiers — grouped logo marks
+   --------------------------------------------------------------------------
+   Shared by the homepage Sponsors band and the full /sponsors page. The
+   surrounding section owns its own layout; this file only paints the tiers and
+   the light-surface marks.
+   ========================================================================== */
+
+/* ---------- Tiers ---------- */
+
+.sponsors-tiers {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 3vw, 28px);
+}
+
+.sponsor-tier-title {
+  margin-bottom: 12px;
+  color: #5b6784;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+  text-transform: uppercase;
+}
+
+.sponsor-tier-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* A banner tier is the headline placement, so its marks get more room. */
+.sponsor-tier--banner .sponsor-tier-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* ---------- Marks ---------- */
+
+.sponsor-mark {
+  display: flex;
+  min-width: 0;
+  min-height: 92px;
+  border: 1px solid var(--border-on-light);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-white);
+  transition: border-color var(--ease), transform var(--ease),
+    background-color var(--ease);
+}
+
+.sponsor-tier--banner .sponsor-mark {
+  min-height: 120px;
+}
+
+.sponsor-mark:hover,
+.sponsor-mark:focus-within {
+  transform: translateY(-2px);
+  border-color: rgba(47, 111, 228, 0.3);
+  background-color: #ffffff;
+}
+
+.sponsor-mark-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  padding: 16px;
+  border-radius: inherit;
+  color: inherit;
+  text-decoration: none;
+}
+
+.sponsor-logo {
+  width: auto;
+  max-width: 100%;
+  height: 40px;
+  object-fit: contain;
+  filter: grayscale(100%);
+  opacity: 0.72;
+  transition: filter var(--ease), opacity var(--ease);
+}
+
+.sponsor-tier--banner .sponsor-logo {
+  height: 56px;
+}
+
+.sponsor-mark:hover .sponsor-logo,
+.sponsor-mark:focus-within .sponsor-logo {
+  filter: none;
+  opacity: 1;
+}
+
+.sponsor-wordmark {
+  color: #5b6784;
+  font-size: clamp(15px, 1.9vw, 19px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  text-align: center;
+  text-transform: uppercase;
+  transition: color var(--ease);
+}
+
+.sponsor-tier--banner .sponsor-wordmark {
+  font-size: clamp(17px, 2.2vw, 23px);
+}
+
+.sponsor-mark:hover .sponsor-wordmark,
+.sponsor-mark:focus-within .sponsor-wordmark {
+  color: var(--text-on-light);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 480px) {
+  .sponsor-tier-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .sponsor-tier--banner .sponsor-tier-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sponsor-mark {
+    min-height: 76px;
+  }
+
+  .sponsor-tier--banner .sponsor-mark {
+    min-height: 112px;
+  }
+
+  .sponsor-mark-body {
+    padding: 12px;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .sponsor-mark:hover,
+  .sponsor-mark:focus-within {
+    transform: none;
+  }
+}

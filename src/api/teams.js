@@ -11,6 +11,21 @@
 
 import { request } from "./client";
 
+/** Coerces a route/API value to a positive integer team id, or null. */
+export function parseTeamId(value) {
+  if (typeof value !== "string" && typeof value !== "number") {
+    return null;
+  }
+
+  const text = String(value).trim();
+  if (!/^[1-9]\d*$/.test(text)) {
+    return null;
+  }
+
+  const numeric = Number(text);
+  return Number.isSafeInteger(numeric) && numeric > 0 ? numeric : null;
+}
+
 function toChallengeId(value) {
   if (value === null || value === undefined || value === "") {
     return null;

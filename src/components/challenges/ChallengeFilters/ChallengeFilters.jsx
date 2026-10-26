@@ -1,67 +1,63 @@
 import "./ChallengeFilters.css";
 
-import { challengeCategories, challengesPage } from "../../../data/challengesData";
-import { challengeIcons } from "../../common/Icons/iconRegistry";
+import { challengesPage } from "../../../data/challengesData";
+import { SearchIcon } from "../../common/Icons/Icons";
 
 /**
- * Category pills + search field for the Challenges page.
+ * Search + source filters for the Challenges page.
  *
- * Presentational and fully controlled: the page owns `selectedCategory` and
- * `searchQuery`, so the two controls compose the same way a future API-driven
- * version would — this component never filters anything itself, it only
- * reports what the visitor chose. Static content (the category list, the
- * search copy) comes from data/challengesData.js, exactly like every other
- * section in the project.
- *
- * Both controls are real form controls: pills are `<button>`s with
- * `aria-pressed` reflecting the active category, and the search is a labelled
- * `<input type="search">`, so everything is keyboard reachable.
+ * Fully controlled and presentational: the page derives the source list from
+ * the loaded API records and owns both values. The source row is only rendered
+ * when there are at least two distinct non-empty sources.
  */
 export default function ChallengeFilters({
-  selectedCategory,
-  onCategoryChange,
   searchQuery,
   onSearchChange,
+  sources,
+  selectedSource,
+  onSourceChange,
+  shownCount,
+  totalCount,
 }) {
-  const SearchIcon = challengeIcons.search;
-  const { label: searchLabel, placeholder: searchPlaceholder } = challengesPage.search;
+  const { search, sourceFilter, results } = challengesPage;
+  const showSourceFilter = Array.isArray(sources) && sources.length >= 2;
 
   return (
-    <section className="challenge-filters" aria-label="Challenge filters">
+    <section className="challenge-filters" aria-label={challengesPage.filtersLabel}>
       <div className="container">
         <div className="challenge-filters-row">
-          {/*
-            Dedicated horizontal scroll container for narrow screens: the pills
-            that exceed its width scroll *inside* it, so the document width is
-            never affected. On desktop every pill fits and nothing scrolls.
-          */}
-          <div
-            className="challenge-filter-list"
-            role="group"
-            aria-label="Filter challenges by category"
-          >
-            {challengeCategories.map((category) => {
-              const Icon = challengeIcons[category.icon];
-              const isActive = category.id === selectedCategory;
+          {showSourceFilter ? (
+            <div
+              className="challenge-filter-list"
+              role="group"
+              aria-label={sourceFilter.ariaLabel}
+            >
+              <button
+                type="button"
+                className="challenge-filter-pill"
+                aria-pressed={selectedSource === "all"}
+                onClick={() => onSourceChange("all")}
+              >
+                <span>{sourceFilter.all}</span>
+              </button>
 
-              return (
+              {sources.map((source) => (
                 <button
-                  key={category.id}
+                  key={source}
                   type="button"
                   className="challenge-filter-pill"
-                  aria-pressed={isActive}
-                  onClick={() => onCategoryChange(category.id)}
+                  aria-pressed={selectedSource === source}
+                  onClick={() => onSourceChange(source)}
                 >
-                  {Icon ? <Icon size={15} /> : null}
-                  <span>{category.label}</span>
+                  <span>{source}</span>
                 </button>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          ) : null}
 
           <div className="challenge-search">
             <label className="visually-hidden" htmlFor="challenge-search-input">
-              {searchLabel}
+              {search.label}
             </label>
             <span className="challenge-search-icon" aria-hidden="true">
               <SearchIcon size={16} />
@@ -70,13 +66,17 @@ export default function ChallengeFilters({
               id="challenge-search-input"
               type="search"
               className="challenge-search-input"
-              placeholder={searchPlaceholder}
+              placeholder={search.placeholder}
               value={searchQuery}
               onChange={(event) => onSearchChange(event.target.value)}
               autoComplete="off"
             />
           </div>
         </div>
+
+        <p className="challenge-filter-count" role="status">
+          {results.label}: {shownCount} {results.of} {totalCount} {results.noun}
+        </p>
       </div>
     </section>
   );

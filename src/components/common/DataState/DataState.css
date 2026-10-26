@@ -1,0 +1,81 @@
+/* ==========================================================================
+   Shared API state block — loading / error / empty
+   ========================================================================== */
+
+.data-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: clamp(40px, 7vw, 72px) 20px;
+  text-align: center;
+}
+
+.data-state--compact {
+  padding: clamp(24px, 4vw, 36px) 18px;
+  border: 1px dashed var(--border-on-dark);
+  border-radius: var(--radius-md);
+  background-color: rgba(11, 37, 64, 0.45);
+}
+
+.data-state--light.data-state--compact {
+  border-color: var(--border-on-light);
+  background-color: var(--surface-white);
+}
+
+.data-state--error.data-state--compact {
+  border-color: rgba(237, 28, 36, 0.35);
+}
+
+.data-state-title {
+  color: var(--text-on-dark);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.data-state-text {
+  max-width: 52ch;
+  color: var(--muted-on-dark);
+  font-size: 14px;
+  line-height: 1.65;
+  overflow-wrap: break-word;
+}
+
+.data-state--light .data-state-title {
+  color: var(--text-on-light);
+}
+
+.data-state--light .data-state-text {
+  color: var(--muted-on-light);
+}
+
+.data-state .btn {
+  margin-top: 6px;
+}
+
+.data-state-spinner {
+  width: 28px;
+  height: 28px;
+  border: 2px solid rgba(140, 180, 255, 0.22);
+  border-top-color: var(--blue-strong);
+  border-radius: 50%;
+  animation: data-state-spin 800ms linear infinite;
+}
+
+.data-state--light .data-state-spinner {
+  border-color: rgba(6, 26, 47, 0.14);
+  border-top-color: var(--blue-ink);
+}
+
+@keyframes data-state-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .data-state-spinner {
+    animation: none;
+  }
+}

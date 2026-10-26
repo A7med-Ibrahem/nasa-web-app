@@ -36,9 +36,14 @@
 }
 
 .challenge-empty-description {
+  max-width: 46ch;
   color: var(--muted-on-dark);
   font-size: 14px;
   line-height: 1.6;
+}
+
+.challenge-empty-action {
+  margin-top: 12px;
 }
 
 /* ---------- Responsive ---------- */

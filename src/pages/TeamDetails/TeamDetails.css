@@ -1,0 +1,383 @@
+/* ==========================================================================
+   Team details page — header, challenge, project, members
+   ========================================================================== */
+
+.team-details-page {
+  min-height: 60vh;
+  padding-block: clamp(32px, 5vw, 56px) var(--section-pad);
+  background-color: var(--navy-950);
+}
+
+.team-details-shell {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(24px, 4vw, 38px);
+}
+
+/* ---------- Header ---------- */
+
+.team-details-header {
+  display: flex;
+  align-items: center;
+  gap: clamp(18px, 3vw, 28px);
+  padding: clamp(22px, 3.5vw, 32px);
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-lg);
+  background-color: var(--card-navy);
+}
+
+.team-details-logo-frame {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: clamp(88px, 12vw, 116px);
+  height: clamp(88px, 12vw, 116px);
+  overflow: hidden;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-md);
+  background-color: var(--navy-900);
+}
+
+.team-details-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.team-details-initials {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: var(--blue-strong);
+  font-size: clamp(24px, 4vw, 34px);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.team-details-heading-group {
+  min-width: 0;
+}
+
+.team-details-eyebrow {
+  margin-bottom: 8px;
+}
+
+.team-details-title {
+  color: #ffffff;
+  font-size: clamp(30px, 4.4vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  overflow-wrap: break-word;
+}
+
+.team-details-status {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 4px 10px;
+  border: 1px solid rgba(237, 28, 36, 0.35);
+  border-radius: var(--radius-pill);
+  background-color: var(--nasa-red-soft);
+  color: #ffb3b6;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+/* ---------- Layout ---------- */
+
+.team-details-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(260px, 0.8fr);
+  align-items: start;
+  gap: clamp(22px, 3vw, 32px);
+}
+
+.team-details-layout--single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.team-details-main {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(22px, 3vw, 32px);
+  min-width: 0;
+}
+
+.team-details-aside {
+  min-width: 0;
+}
+
+/* ---------- Shared block surface ---------- */
+
+.team-details-block {
+  padding: clamp(20px, 3vw, 28px);
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-lg);
+  background-color: var(--card-navy);
+}
+
+.team-details-block-title {
+  margin-bottom: 16px;
+  color: var(--blue-strong);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.team-details-prose {
+  max-width: 70ch;
+  margin-top: 12px;
+}
+
+.team-details-prose p {
+  color: var(--muted-on-dark);
+  font-size: 15px;
+  line-height: 1.7;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+}
+
+.team-details-prose p + p {
+  margin-top: 10px;
+}
+
+/* ---------- Challenge ---------- */
+
+.team-challenge-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  align-items: start;
+  gap: clamp(18px, 3vw, 28px);
+}
+
+.team-challenge-media {
+  height: clamp(170px, 22vw, 230px);
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background-color: var(--navy-900);
+}
+
+.team-challenge-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.team-challenge-placeholder {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: rgba(140, 180, 255, 0.5);
+  background-image: radial-gradient(
+    ellipse 70% 70% at 50% 40%,
+    rgba(74, 158, 255, 0.16),
+    transparent 70%
+  );
+}
+
+.team-challenge-body {
+  min-width: 0;
+}
+
+.team-challenge-title {
+  color: #ffffff;
+  font-size: clamp(20px, 2.6vw, 24px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  overflow-wrap: break-word;
+}
+
+.team-details-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin: 18px 0 0;
+}
+
+.team-details-meta-item {
+  min-width: 0;
+}
+
+.team-details-meta dt {
+  color: var(--muted-on-dark-alt);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.team-details-meta dd {
+  margin: 3px 0 0;
+  color: #dfe7f5;
+  font-size: 14px;
+  line-height: 1.45;
+  overflow-wrap: break-word;
+}
+
+/* ---------- Project ---------- */
+
+.team-project-title {
+  color: #ffffff;
+  font-size: clamp(20px, 2.6vw, 24px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  overflow-wrap: break-word;
+}
+
+.team-project-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+/* ---------- Members ---------- */
+
+.team-members-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.team-member {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-md);
+  background-color: rgba(9, 31, 55, 0.55);
+}
+
+.team-member-avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: rgba(74, 158, 255, 0.1);
+  color: var(--blue-strong);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.team-member-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.team-member-name {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  overflow-wrap: break-word;
+}
+
+.team-member-status {
+  align-self: flex-start;
+  padding: 2px 8px;
+  border: 1px solid rgba(237, 28, 36, 0.3);
+  border-radius: var(--radius-pill);
+  background-color: var(--nasa-red-soft);
+  color: #ffb3b6;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+/* ---------- Loading / error ---------- */
+
+.team-details-state {
+  padding-block: clamp(40px, 8vw, 80px);
+}
+
+/* ---------- Not found ---------- */
+
+.team-details-notfound {
+  display: grid;
+  place-items: center;
+  min-height: 58vh;
+  padding-block: var(--section-pad);
+}
+
+.team-details-notfound-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 620px;
+  text-align: center;
+}
+
+.team-details-notfound-title {
+  color: #ffffff;
+  font-size: clamp(30px, 4.6vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.team-details-notfound-description {
+  max-width: 48ch;
+  color: var(--muted-on-dark);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.team-details-notfound-inner .btn {
+  margin-top: 8px;
+}
+
+.team-details-notfound-inner .btn:hover svg {
+  transform: translateX(-3px);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  .team-details-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .team-challenge-inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .team-challenge-media {
+    height: clamp(180px, 38vw, 240px);
+  }
+}
+
+@media (max-width: 560px) {
+  .team-details-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .team-details-logo-frame {
+    width: 84px;
+    height: 84px;
+  }
+
+  .team-project-links .btn {
+    width: 100%;
+  }
+}

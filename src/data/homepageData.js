@@ -1,22 +1,23 @@
 /* ==========================================================================
    Homepage content — single source of truth for the marketing homepage.
    --------------------------------------------------------------------------
-   Scoped to the Home page only. Content shared by every page (brand, primary
-   navigation, footer) lives in site.js instead, so future pages never have to
-   import homepage-only data.
+   Hero, About and Current Event are static copy: the public API exposes no
+   endpoint for them. Top Challenges, Previous Events and Sponsors are rendered
+   from the API and keep only their headings/state copy here — never fixture
+   records.
 
-   This module is intentionally plain static data so that, once a backend
-   exists, each export can be swapped for an API response with an identical
-   shape. Components only consume these objects; none of them build content
-   inline.
+   Core Team members are not available publicly, so the section is guarded off
+   by SHOW_CORE_TEAM. The component and its fixture are kept for when the
+   backend can supply real people.
    ========================================================================== */
 
 import { site } from "./site";
-import { staticChallenges } from "./challengesData";
 import heroEarthImage from "../assets/images/hero-earth.jpeg";
-import spaceExplorationImage from "../assets/images/space-exploration.jpeg";
-import technologyImage from "../assets/images/technology.jpeg";
 import aboutImage from "../assets/images/about-space.jpeg";
+
+/* No public core-team endpoint exists. Never render placeholder names on the
+   real site; flip this only when real member data is available. */
+export const SHOW_CORE_TEAM = false;
 
 /* --------------------------------------------------------------------------
    Hero
@@ -111,26 +112,8 @@ export const currentEvent = {
 };
 
 /* --------------------------------------------------------------------------
-   Top challenges
-   --------------------------------------------------------------------------
-
-   The cards are NOT duplicated here: they are a thin projection of the
-   official challenges from the shared source of truth
-   (data/challengesData.js), reshaped into the field names the homepage card
-   reads. Adding or re-ordering challenges updates both routes in one place,
-   and the homepage can never drift out of sync with /challenges.
+   Top challenges (GET /challenges)
    -------------------------------------------------------------------------- */
-
-const featuredChallenges = staticChallenges.map((challenge) => ({
-  id: challenge.id,
-  slug: challenge.slug,
-  category: challenge.categoryLabel,
-  title: challenge.title,
-  description: challenge.shortDescription,
-  domains: challenge.domains,
-  image: challenge.image,
-  imageAlt: challenge.imageAlt,
-}));
 
 export const challenges = {
   eyebrow: "TOP CHALLENGES",
@@ -138,49 +121,41 @@ export const challenges = {
   description:
     "Discover real-world problems and use the power of space data to create innovative solutions.",
   action: { label: "View All Challenges", href: "/challenges", icon: "arrow" },
-  items: featuredChallenges,
+  cardAction: "Explore Challenge",
+  excerptLength: 160,
+  states: {
+    loading: "Loading challenges...",
+    errorTitle: "Couldn't load challenges",
+    retry: "Retry",
+    emptyTitle: "No challenges yet",
+    emptyDescription: "Published challenges will appear here.",
+  },
 };
 
 /* --------------------------------------------------------------------------
-   Previous events
+   Previous events (GET /seasonmedia)
    -------------------------------------------------------------------------- */
 
 export const previousEvents = {
   eyebrow: "PREVIOUS EVENTS",
-  title: "Highlights from 2024 & 2025",
+  title: "Highlights from previous editions",
   description:
     "Take a look at some of the amazing projects, teams, and moments from our past editions.",
-  action: { label: "View Gallery", href: "/events", icon: "arrow" },
-  items: [
-    {
-      id: "nasa-space-apps-hurghada-2025",
-      year: "2025",
-      title: "NASA Space Apps Hurghada 2025",
-      description:
-        "Teams tackled real NASA challenges and shipped working prototypes in a weekend.",
-      /* Placeholder art from existing project assets — replace with real
-         event photography once available. */
-      image: technologyImage,
-      imageAlt: "NASA Space Apps Hurghada 2025 event highlights",
-      slug: "nasa-space-apps-hurghada-2025",
-    },
-    {
-      id: "nasa-space-apps-hurghada-2024",
-      year: "2024",
-      title: "NASA Space Apps Hurghada 2024",
-      description:
-        "Our first Hurghada edition brought together students, mentors, and first-time builders.",
-      /* Placeholder art from existing project assets — replace with real
-         event photography once available. */
-      image: spaceExplorationImage,
-      imageAlt: "NASA Space Apps Hurghada 2024 event highlights",
-      slug: "nasa-space-apps-hurghada-2024",
-    },
-  ],
+  action: { label: "View all season media", href: "/season-media" },
+  linkLabel: "View event",
+  newTabHint: "(opens in a new tab)",
+  states: {
+    loading: "Loading previous events...",
+    errorTitle: "Couldn't load previous events",
+    retry: "Retry",
+  },
 };
 
 /* --------------------------------------------------------------------------
    Core team
+   --------------------------------------------------------------------------
+   Fixture retained for the component; not rendered while SHOW_CORE_TEAM is
+   false because the public API exposes no core-team data.
    -------------------------------------------------------------------------- */
 
 export const coreTeam = {
@@ -223,7 +198,7 @@ export const coreTeam = {
 };
 
 /* --------------------------------------------------------------------------
-   Sponsors
+   Sponsors (GET /sponsors?includeInactive=false)
    -------------------------------------------------------------------------- */
 
 export const sponsors = {
@@ -231,16 +206,11 @@ export const sponsors = {
   title: "With thanks to our sponsors",
   description:
     "We're grateful to our partners and supporters who make this event possible.",
-  action: { label: "View All Sponsors", href: "/sponsors", icon: "arrow" },
-  /* `logo` is `null` until official brand assets are supplied under
-     src/assets/images/sponsors/. No <img> is rendered for null logos, so the
-     page never issues a request for a file that does not exist. */
-  items: [
-    { id: "nasa", name: "NASA", logo: null },
-    { id: "microsoft", name: "Microsoft", logo: null },
-    { id: "google", name: "Google", logo: null },
-    { id: "intel", name: "Intel", logo: null },
-    { id: "aws", name: "AWS", logo: null },
-    { id: "esri", name: "Esri", logo: null },
-  ],
+  action: { label: "View all sponsors", href: "/sponsors" },
+  newTabHint: "(opens in a new tab)",
+  states: {
+    loading: "Loading sponsors...",
+    errorTitle: "Couldn't load sponsors",
+    retry: "Retry",
+  },
 };

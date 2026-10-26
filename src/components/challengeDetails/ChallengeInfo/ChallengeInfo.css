@@ -65,12 +65,3 @@
   line-height: 1.4;
   overflow-wrap: break-word;
 }
-
-/* ---------- Primary CTA ---------- */
-
-/* Full width inside the card: on a summary panel the action is the payoff,
-   and a half-width button reads as an afterthought. */
-.challenge-info-cta {
-  width: 100%;
-  margin-top: 22px;
-}

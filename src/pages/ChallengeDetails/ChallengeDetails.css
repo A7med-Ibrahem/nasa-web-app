@@ -18,6 +18,22 @@
 }
 
 /* --------------------------------------------------------------------------
+   Loading / error state
+   --------------------------------------------------------------------------
+   The record is the page here, so while it is unavailable the shell is just
+   the navy canvas and the shared state block. The not-found state keeps its
+   own full-height composition below.
+   -------------------------------------------------------------------------- */
+
+.challenge-details-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(320px, 48vh, 480px);
+  padding-block: clamp(48px, 8vw, 96px);
+}
+
+/* --------------------------------------------------------------------------
    Layout
    -------------------------------------------------------------------------- */
 
@@ -29,6 +45,10 @@
      sidebar below. */
   align-items: start;
   padding-block: clamp(32px, 4vw, 48px) var(--section-pad);
+}
+
+.challenge-details-layout--single {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .challenge-details-main {
@@ -65,8 +85,9 @@
 /* --------------------------------------------------------------------------
    Not-found state
    --------------------------------------------------------------------------
-   Unknown slug: a real page, not a redirect and not a crash. Centred, one h1
-   (the hero does not render on this path), one action back to the listing.
+   Unknown or non-numeric id: a real page, not a redirect and not a crash.
+   Centred, one h1 (the hero does not render on this path), one action back to
+   the listing.
    -------------------------------------------------------------------------- */
 
 .challenge-details-notfound {

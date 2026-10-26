@@ -81,7 +81,8 @@
     background-color var(--ease);
 }
 
-.challenge-card:hover {
+.challenge-card:hover,
+.challenge-card:focus-within {
   transform: translateY(-3px);
   border-color: rgba(140, 180, 255, 0.28);
   background-color: var(--card-navy-strong);
@@ -104,19 +105,34 @@
 }
 
 .challenge-media {
+  position: relative;
   height: 168px;
   overflow: hidden;
+  background-color: var(--navy-900);
 }
 
-.challenge-media img {
+.challenge-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 320ms ease;
 }
 
-.challenge-card:hover .challenge-media img {
+.challenge-card:hover .challenge-image {
   transform: scale(1.04);
+}
+
+.challenge-media-placeholder {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: rgba(140, 180, 255, 0.5);
+  background-image: radial-gradient(
+    ellipse 70% 70% at 50% 40%,
+    rgba(74, 158, 255, 0.16),
+    transparent 70%
+  );
 }
 
 .challenge-body {
@@ -126,50 +142,49 @@
   padding: 20px;
 }
 
-.challenge-category {
-  color: var(--blue-strong);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  line-height: 1.3;
-  text-transform: uppercase;
-}
-
 .challenge-title {
-  margin-top: 9px;
   color: #ffffff;
   font-size: 17px;
   font-weight: 700;
   letter-spacing: -0.01em;
   line-height: 1.3;
+  overflow-wrap: break-word;
 }
 
 .challenge-description {
   margin-top: 9px;
-  margin-bottom: 16px;
   color: var(--muted-on-dark);
   font-size: 13px;
   line-height: 1.6;
+  overflow-wrap: break-word;
 }
 
-.challenge-tags {
+/* ---------- Source / season badges ---------- */
+
+.challenge-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin: 0 0 20px;
+  margin: 14px 0 20px;
   padding: 0;
   list-style: none;
 }
 
-.challenge-tag {
+.challenge-badge {
+  max-width: 100%;
   padding: 5px 10px;
   border: 1px solid var(--border-on-dark);
   border-radius: var(--radius-pill);
   background-color: rgba(120, 165, 235, 0.08);
-  color: var(--muted-on-dark);
+  color: #dfe7f5;
   font-size: 11px;
   font-weight: 600;
   line-height: 1.2;
+  overflow-wrap: break-word;
+}
+
+.challenge-badge--season {
+  color: var(--muted-on-dark);
 }
 
 .challenge-arrow {
@@ -229,5 +244,24 @@
 
   .challenge-media {
     height: 150px;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .challenge-card:hover,
+  .challenge-card:focus-within {
+    transform: none;
+  }
+
+  .challenge-card:hover .challenge-image {
+    transform: none;
+  }
+
+  .challenge-arrow svg,
+  .challenge-card:hover .challenge-arrow svg,
+  .challenge-card:focus-within .challenge-arrow svg {
+    transform: none;
   }
 }

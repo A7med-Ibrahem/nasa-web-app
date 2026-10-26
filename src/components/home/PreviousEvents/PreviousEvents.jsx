@@ -1,33 +1,28 @@
 import { useRef } from "react";
+import { Link } from "react-router-dom";
 import "./PreviousEvents.css";
 
 import { previousEvents } from "../../../data/homepageData";
-import { actionIcons } from "../../common/Icons/iconRegistry";
+import DataState from "../../common/DataState/DataState";
+import { ArrowRightIcon } from "../../common/Icons/Icons";
+import SeasonMediaGallery from "../../seasonMedia/SeasonMediaGallery/SeasonMediaGallery";
 import { useRevealGroup } from "../../../hooks/useReveal";
 
-const ActionIcon = actionIcons[previousEvents.action.icon];
-
-function EventImage({ event }) {
-  return (
-    <li className="event-media" data-reveal-item>
-      <a className="event-media-link" href={`/events/${event.slug}`}>
-        <img
-          className="event-image"
-          src={event.image}
-          alt={event.imageAlt}
-          loading="lazy"
-          decoding="async"
-        />
-        <span className="event-year-badge">{event.year}</span>
-      </a>
-    </li>
-  );
-}
-
-export default function PreviousEvents() {
+/**
+ * Previous events section (GET /seasonmedia?includeInactive=false).
+ *
+ * The page orders records by season (newest first) then displayOrder; this
+ * section only paints through the shared SeasonMediaGallery. A ready-but-empty
+ * response hides the whole section, including its "View all" link.
+ */
+export default function PreviousEvents({ status, events, error, onRetry }) {
   const sectionRef = useRef(null);
 
   useRevealGroup(sectionRef, { stagger: 100 });
+
+  if (status === "ready" && events.length === 0) {
+    return null;
+  }
 
   return (
     <section
@@ -45,20 +40,48 @@ export default function PreviousEvents() {
 
           <p className="section-desc">{previousEvents.description}</p>
 
-          <a
-            href={previousEvents.action.href}
-            className="arrow-link arrow-link--on-light previous-events-action"
-          >
-            {previousEvents.action.label}
-            <ActionIcon size={16} />
-          </a>
+          {status === "ready" && events.length > 0 ? (
+            <Link
+              to={previousEvents.action.href}
+              className="arrow-link arrow-link--on-light previous-events-action"
+            >
+              {previousEvents.action.label}
+              <ArrowRightIcon size={16} />
+            </Link>
+          ) : null}
         </div>
 
-        <ul className="events-gallery">
-          {previousEvents.items.map((event) => (
-            <EventImage key={event.id} event={event} />
-          ))}
-        </ul>
+        <div className="previous-events-content">
+          {status === "loading" ? (
+            <DataState
+              status="loading"
+              title={previousEvents.states.loading}
+              tone="light"
+              compact
+            />
+          ) : null}
+
+          {status === "error" ? (
+            <DataState
+              status="error"
+              title={previousEvents.states.errorTitle}
+              message={error?.message}
+              retryLabel={previousEvents.states.retry}
+              onRetry={onRetry}
+              tone="light"
+              compact
+            />
+          ) : null}
+
+          {status === "ready" && events.length > 0 ? (
+            <SeasonMediaGallery
+              items={events}
+              linkLabel={previousEvents.linkLabel}
+              newTabHint={previousEvents.newTabHint}
+              className="events-gallery"
+            />
+          ) : null}
+        </div>
       </div>
     </section>
   );

@@ -1,0 +1,24 @@
+/* ==========================================================================
+   Sponsors page — light content band below the shared hero
+   ========================================================================== */
+
+.sponsors-page {
+  background-color: var(--navy-950);
+}
+
+.sponsors-page-section {
+  background-color: var(--surface-light-alt);
+}
+
+.sponsors-page-header {
+  max-width: 620px;
+  margin-bottom: clamp(28px, 4vw, 42px);
+}
+
+.sponsors-page-description {
+  max-width: 52ch;
+}
+
+.sponsors-page-content {
+  min-width: 0;
+}

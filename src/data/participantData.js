@@ -87,6 +87,7 @@ export const participantData = {
       notListed: "No points yet",
     },
     leaderboardTop: "Top 5",
+    fullLeaderboard: "View full leaderboard",
     question: {
       points: "Points",
       submit: "Submit Answer",

@@ -9,22 +9,15 @@
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
-  BarsIcon,
   ChartIcon,
   CrownIcon,
   ExternalLinkIcon,
-  GearIcon,
   GlobeIcon,
-  GridIcon,
-  HeartIcon,
   InstagramIcon,
-  LeafIcon,
   LightbulbIcon,
   LinkedInIcon,
-  PlanetIcon,
   RocketIcon,
   ScaleIcon,
-  SearchIcon,
   SignalIcon,
   TeamIcon,
   TrendDownIcon,
@@ -39,18 +32,6 @@ export const actionIcons = {
   arrowLeft: ArrowLeftIcon,
   external: ExternalLinkIcon,
   signal: SignalIcon,
-};
-
-/* Category icons, difficulty indicator and the search glyph, keyed by the
-   string `icon` / `categoryIcon` values in data/challengesData.js. */
-export const challengeIcons = {
-  grid: GridIcon,
-  leaf: LeafIcon,
-  planet: PlanetIcon,
-  gear: GearIcon,
-  heart: HeartIcon,
-  search: SearchIcon,
-  bars: BarsIcon,
 };
 
 export const statisticIcons = {

@@ -1,5 +1,7 @@
+import { Link } from "react-router-dom";
 import "./StandingRow.css";
 
+import { parseTeamId } from "../../../api/teams";
 import { standingsIcons } from "../../common/Icons/iconRegistry";
 
 const CrownIcon = standingsIcons.crown;
@@ -50,6 +52,7 @@ function getInitials(name) {
 export default function StandingRow({ entry }) {
   const hasRank = Number.isFinite(entry.rank);
   const isLeader = entry.rank === 1;
+  const teamId = parseTeamId(entry.teamId);
 
   return (
     <tr
@@ -84,9 +87,19 @@ export default function StandingRow({ entry }) {
           </span>
 
           <span className="standing-team-text">
-            <span className="standing-team-name" title={entry.teamName}>
-              {entry.teamName}
-            </span>
+            {teamId !== null ? (
+              <Link
+                className="standing-team-name standing-team-link"
+                to={`/teams/${teamId}`}
+                title={entry.teamName}
+              >
+                {entry.teamName}
+              </Link>
+            ) : (
+              <span className="standing-team-name" title={entry.teamName}>
+                {entry.teamName}
+              </span>
+            )}
           </span>
         </span>
       </td>

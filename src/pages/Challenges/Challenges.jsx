@@ -1,95 +1,149 @@
 import { useEffect, useMemo, useState } from "react";
 import "./Challenges.css";
 
+import { fetchChallenges } from "../../api/challenges";
 import ChallengeFilters from "../../components/challenges/ChallengeFilters/ChallengeFilters";
 import ChallengeGrid from "../../components/challenges/ChallengeGrid/ChallengeGrid";
 import ChallengesHero from "../../components/challenges/ChallengesHero/ChallengesHero";
-import { challengesPage, staticChallenges } from "../../data/challengesData";
+import DataState from "../../components/common/DataState/DataState";
+import { challengesPage } from "../../data/challengesData";
 import { site } from "../../data/site";
+import useApiResource from "../../hooks/useApiResource";
+
+function distinctSources(challenges) {
+  const seen = new Map();
+
+  challenges.forEach((challenge) => {
+    const source =
+      typeof challenge?.source === "string" ? challenge.source.trim() : "";
+
+    if (source) {
+      const key = source.toLowerCase();
+      if (!seen.has(key)) {
+        seen.set(key, source);
+      }
+    }
+  });
+
+  return Array.from(seen.values()).sort((a, b) =>
+    a.localeCompare(b, undefined, { sensitivity: "base" }),
+  );
+}
 
 /**
  * Challenges page (`/challenges`).
  *
- * Composition only, exactly like pages/Home/Home.jsx and
- * pages/LiveStandings/LiveStandings.jsx: this file decides which blocks
- * appear and in which order, every block owns its own markup and styling, and
- * all content comes from data/challengesData.js. It renders no Navbar or
- * Footer — those come from MainLayout, so Challenges inherits the same shared
- * chrome and the same active-link treatment as every other route.
- *
- * Page state is deliberately minimal: the selected category and the search
- * query. The visible list is never stored — `filteredChallenges` is derived
- * from `staticChallenges` on every render, so state and data cannot drift
- * apart. No state library, no URL query parameters: category ids and slugs
- * are stable values, so URL synchronisation can be added later without
- * renaming anything.
- *
- * Backend boundary: when an API exists, `staticChallenges` is replaced by the
- * fetched collection (or the filter moves server-side) and the components
- * below are unchanged — they only ever receive data through props.
+ * GET /challenges is the only data source. Search and the optional source
+ * filter are derived from the loaded list on every render — no filtered copy
+ * is stored, so the UI cannot drift from the response.
  */
 export default function Challenges() {
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedSource, setSelectedSource] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    document.title = `${challengesPage.hero.title} — ${site.name}`;
-  }, []);
+  const { status, data, error, retry } = useApiResource(fetchChallenges);
 
-  /*
-   * Category and search compose: a challenge must match the selected
-   * category (or "all") AND contain the query — case-insensitively — in its
-   * title, short description, category fields or domains.
-   */
+  const challenges = useMemo(
+    () => (Array.isArray(data) ? data : []),
+    [data],
+  );
+  const sources = useMemo(() => distinctSources(challenges), [challenges]);
+
+  /* A reload can remove the selected source; fall back to "all" instead of
+     filtering the whole grid away. */
+  const activeSource = sources.includes(selectedSource)
+    ? selectedSource
+    : "all";
+
   const filteredChallenges = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
+    const source = activeSource.toLowerCase();
 
-    return staticChallenges.filter((challenge) => {
-      const inCategory =
-        selectedCategory === "all" || challenge.category === selectedCategory;
-
-      if (!inCategory) {
-        return false;
+    return challenges.filter((challenge) => {
+      if (source !== "all") {
+        const itemSource =
+          typeof challenge?.source === "string"
+            ? challenge.source.trim().toLowerCase()
+            : "";
+        if (itemSource !== source) {
+          return false;
+        }
       }
 
       if (!query) {
         return true;
       }
 
-      const haystack = [
-        challenge.title,
-        challenge.shortDescription,
-        challenge.mainObjective,
-        challenge.businessObjectives,
-        challenge.targetAudience,
-        challenge.keyInsights,
-        challenge.mainChallenges,
-        challenge.recommendations,
-        challenge.actionMarketingPlan,
-        challenge.category,
-        challenge.categoryLabel,
-        ...(Array.isArray(challenge.domains) ? challenge.domains : []),
-        ...(Array.isArray(challenge.kpis) ? challenge.kpis : []),
-      ];
-
-      return haystack.some(
-        (field) => field && field.toLowerCase().includes(query),
-      );
+      return [challenge?.title, challenge?.description, challenge?.source, challenge?.season]
+        .some(
+          (value) =>
+            typeof value === "string" && value.toLowerCase().includes(query),
+        );
     });
-  }, [selectedCategory, searchQuery]);
+  }, [challenges, searchQuery, activeSource]);
+
+  const isFiltered = searchQuery.trim() !== "" || activeSource !== "all";
+
+  useEffect(() => {
+    document.title = `${challengesPage.hero.title} — ${site.name}`;
+  }, []);
+
+  function resetFilters() {
+    setSearchQuery("");
+    setSelectedSource("all");
+  }
 
   return (
     <div className="challenges-page">
       <ChallengesHero />
 
-      <ChallengeFilters
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-      />
+      {status === "loading" ? (
+        <div className="container">
+          <DataState status="loading" title={challengesPage.states.loading} />
+        </div>
+      ) : null}
 
-      <ChallengeGrid challenges={filteredChallenges} />
+      {status === "error" ? (
+        <div className="container">
+          <DataState
+            status="error"
+            title={challengesPage.states.errorTitle}
+            message={error?.message}
+            retryLabel={challengesPage.states.retry}
+            onRetry={retry}
+          />
+        </div>
+      ) : null}
+
+      {status === "ready" && challenges.length === 0 ? (
+        <div className="container">
+          <DataState
+            status="empty"
+            title={challengesPage.emptyState.title}
+            message={challengesPage.emptyState.description}
+          />
+        </div>
+      ) : null}
+
+      {status === "ready" && challenges.length > 0 ? (
+        <>
+          <ChallengeFilters
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            sources={sources}
+            selectedSource={activeSource}
+            onSourceChange={setSelectedSource}
+            shownCount={filteredChallenges.length}
+            totalCount={challenges.length}
+          />
+
+          <ChallengeGrid
+            challenges={filteredChallenges}
+            isFiltered={isFiltered}
+            onReset={resetFilters}
+          />
+        </>
+      ) : null}
     </div>
   );
 }

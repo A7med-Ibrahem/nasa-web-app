@@ -151,6 +151,18 @@
   white-space: nowrap;
 }
 
+/* The team name links to its public profile when the standings row carries a
+   usable team id; the fallback stays a plain span. */
+.standing-team-link {
+  text-decoration: none;
+  transition: color var(--ease);
+}
+
+.standing-team-link:hover {
+  color: var(--blue-strong);
+  text-decoration: underline;
+}
+
 /* ---------- Challenge ---------- */
 
 .standing-challenge {

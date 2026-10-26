@@ -1,0 +1,134 @@
+/* ==========================================================================
+   Season media gallery — image cards
+   --------------------------------------------------------------------------
+   Shared by the homepage Previous Events band and the full Season Media page.
+   The grid's default is an auto-fitting card grid; the homepage overrides the
+   column count in its own stylesheet so its look is unchanged.
+   ========================================================================== */
+
+.season-media-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.event-media {
+  display: flex;
+  min-width: 0;
+}
+
+.event-card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border-on-light);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-white);
+}
+
+.event-media-frame {
+  position: relative;
+  height: clamp(180px, 22vw, 240px);
+  overflow: hidden;
+  background-color: var(--surface-light-alt);
+}
+
+.event-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.event-media-placeholder {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: rgba(47, 111, 228, 0.45);
+  background-image: radial-gradient(
+    ellipse 70% 70% at 50% 40%,
+    rgba(47, 111, 228, 0.12),
+    transparent 70%
+  );
+}
+
+.event-year-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  max-width: calc(100% - 24px);
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+  background-color: var(--blue-ink);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  overflow-wrap: break-word;
+}
+
+.event-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 16px 18px 18px;
+}
+
+.event-type {
+  margin-bottom: 6px;
+  color: #5b6784;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+  text-transform: uppercase;
+}
+
+.event-title {
+  color: var(--text-on-light);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+}
+
+.event-description {
+  margin-top: 8px;
+  color: var(--muted-on-light);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.event-description p {
+  white-space: pre-line;
+  overflow-wrap: break-word;
+}
+
+.event-description p + p {
+  margin-top: 8px;
+}
+
+.event-link {
+  align-self: flex-start;
+  margin-top: 16px;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 520px) {
+  .season-media-gallery {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .event-media-frame {
+    height: 200px;
+  }
+}

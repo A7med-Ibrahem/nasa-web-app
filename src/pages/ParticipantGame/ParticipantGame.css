@@ -57,6 +57,27 @@
   font-size: 13px;
 }
 
+.participant-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+
+.participant-leaderboard-link {
+  color: var(--blue-strong);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.participant-leaderboard-link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
 .participant-top {
   margin-top: 16px;
   display: flex;

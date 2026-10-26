@@ -4,30 +4,33 @@ import { challengesPage } from "../../../data/challengesData";
 import ChallengeCard from "../ChallengeCard/ChallengeCard";
 
 /**
- * The challenge results: a responsive card grid with a centred empty state.
+ * The challenge results: a responsive card grid with two distinct empty states
+ * — "no challenges published yet" and "no results for these filters".
  *
- * Presentational — it renders exactly the collection it is handed, which the
- * page derives from `staticChallenges` by applying the category filter and
- * the search query. When a future API supplies the collection, the filtering
- * (or server-side paging) changes and this component does not.
- *
- * The grid is a real `<ul>` of ChallengeCard list items: 3 columns on
- * desktop, 2 on tablet, 1 on phone, all inside the shared page container, so
- * no breakpoint can introduce horizontal page scrolling.
+ * Presentational; the page owns the fetched collection and the filtering.
  */
-export default function ChallengeGrid({ challenges }) {
+export default function ChallengeGrid({ challenges, isFiltered = false, onReset }) {
   if (challenges.length === 0) {
+    const state = isFiltered
+      ? challengesPage.noResults
+      : challengesPage.emptyState;
+
     return (
       <section className="challenge-grid-section">
         <div className="container">
-          {/* role="status" announces the outcome when a filter or search
-              query empties the grid, instead of leaving the region silently
-              blank. Muted typography, not an error style. */}
           <div className="challenge-empty" role="status">
-            <h2 className="challenge-empty-title">{challengesPage.emptyState.title}</h2>
-            <p className="challenge-empty-description">
-              {challengesPage.emptyState.description}
-            </p>
+            <h2 className="challenge-empty-title">{state.title}</h2>
+            <p className="challenge-empty-description">{state.description}</p>
+
+            {isFiltered && onReset ? (
+              <button
+                type="button"
+                className="btn btn--ghost-dark challenge-empty-action"
+                onClick={onReset}
+              >
+                {challengesPage.noResults.resetLabel}
+              </button>
+            ) : null}
           </div>
         </div>
       </section>
@@ -37,13 +40,11 @@ export default function ChallengeGrid({ challenges }) {
   return (
     <section className="challenge-grid-section">
       <div className="container">
-        {/* Keeps the heading outline contiguous: h1 (hero) -> h2 -> h3
-            (cards), without adding visible chrome to the page. */}
-        <h2 className="visually-hidden">Challenge results</h2>
+        <h2 className="visually-hidden">{challengesPage.results.heading}</h2>
 
         <ul className="challenge-grid">
           {challenges.map((challenge) => (
-            <ChallengeCard key={challenge.id} challenge={challenge} />
+            <ChallengeCard key={challenge.challengeId} challenge={challenge} />
           ))}
         </ul>
       </div>

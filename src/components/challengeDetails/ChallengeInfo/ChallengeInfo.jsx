@@ -1,54 +1,42 @@
 import "./ChallengeInfo.css";
 
 import { challengeDetailsPage } from "../../../data/challengesData";
-import { ArrowRightIcon, CalendarIcon, UsersIcon } from "../../common/Icons/Icons";
-import { challengeIcons } from "../../common/Icons/iconRegistry";
+import { CalendarIcon, GlobeIcon } from "../../common/Icons/Icons";
 
 /**
- * "Challenge Info" sidebar card: a labelled-value summary of the record plus
- * the page's primary CTA.
+ * "Challenge Info" sidebar card: the record's source and season.
  *
- * The rows are fixed content (the spec of this card), but every *value*
- * comes from the challenge record and every string comes from
- * challengeDetailsPage — so an API response with the same shape fills the card
- * untouched. Values degrade to an em dash instead of rendering `undefined`.
- *
- * The CTA is a plain anchor driven by `join.href` in the data: with no
- * registration backend, it points at the official Space Apps site, and
- * swapping in the local form is a one-field change. External destinations get
- * the project's standard new-tab treatment (see Footer) plus a screen-reader
- * note, because new-tab behaviour alone is invisible.
+ * Values come straight from the API and a missing value simply removes its
+ * row. If the record has neither, the card renders nothing rather than an
+ * empty shell.
  */
 export default function ChallengeInfo({ challenge }) {
-  const { info, join } = challengeDetailsPage;
-  const { categoryLabel, categoryIcon, season, organizer } = challenge;
+  const { info } = challengeDetailsPage;
+  const { source, season } = challenge;
 
-  const CategoryIcon = challengeIcons[categoryIcon];
+  const rows = [];
 
-  /* Presentation only: which glyph sits beside each label. The label and the
-     value themselves are data. */
-  const rows = [
-    {
-      id: "category",
-      icon: CategoryIcon ? <CategoryIcon size={16} /> : null,
-      label: info.labels.category,
-      value: categoryLabel,
-    },
-    {
+  if (source) {
+    rows.push({
+      id: "source",
+      icon: <GlobeIcon size={16} />,
+      label: info.labels.source,
+      value: source,
+    });
+  }
+
+  if (season) {
+    rows.push({
       id: "season",
       icon: <CalendarIcon size={16} />,
       label: info.labels.season,
       value: season,
-    },
-    {
-      id: "organizer",
-      icon: <UsersIcon size={16} />,
-      label: info.labels.organizer,
-      value: organizer,
-    },
-  ];
+    });
+  }
 
-  const isExternal = /^https?:\/\//.test(join.href);
+  if (rows.length === 0) {
+    return null;
+  }
 
   return (
     <section className="challenge-info" aria-labelledby="challenge-info-title">
@@ -65,25 +53,10 @@ export default function ChallengeInfo({ challenge }) {
               </span>
               <span>{row.label}</span>
             </dt>
-            <dd className="challenge-info-value">{row.value ?? "—"}</dd>
+            <dd className="challenge-info-value">{row.value}</dd>
           </div>
         ))}
       </dl>
-
-      <a
-        className="btn btn--primary challenge-info-cta"
-        href={join.href}
-        target={isExternal ? "_blank" : undefined}
-        rel={isExternal ? "noopener noreferrer" : undefined}
-      >
-        {join.label}
-        <ArrowRightIcon size={16} />
-        {isExternal ? (
-          <span className="visually-hidden">
-            {challengeDetailsPage.newTabHint}
-          </span>
-        ) : null}
-      </a>
     </section>
   );
 }

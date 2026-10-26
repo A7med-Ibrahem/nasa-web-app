@@ -5,6 +5,7 @@ import ParticipantLayout from "./layouts/ParticipantLayout/ParticipantLayout";
 import RequireAuth from "./auth/RequireAuth";
 import ChallengeDetails from "./pages/ChallengeDetails/ChallengeDetails";
 import Challenges from "./pages/Challenges/Challenges";
+import GameLeaderboard from "./pages/GameLeaderboard/GameLeaderboard";
 import Home from "./pages/Home/Home";
 import JudgeDashboard from "./pages/JudgeDashboard/JudgeDashboard";
 import JudgeEvaluation from "./pages/JudgeEvaluation/JudgeEvaluation";
@@ -13,6 +14,10 @@ import Login from "./pages/Login/Login";
 import ParticipantDashboard from "./pages/ParticipantDashboard/ParticipantDashboard";
 import ParticipantGame from "./pages/ParticipantGame/ParticipantGame";
 import ParticipantRequests from "./pages/ParticipantRequests/ParticipantRequests";
+import SeasonMedia from "./pages/SeasonMedia/SeasonMedia";
+import Sponsors from "./pages/Sponsors/Sponsors";
+import TeamDetails from "./pages/TeamDetails/TeamDetails";
+import Teams from "./pages/Teams/Teams";
 
 /**
  * Application composition point.
@@ -37,10 +42,15 @@ function App() {
       <Route element={<MainLayout />}>
         <Route index element={<Home />} />
         {/* Static listing and dynamic details are sibling routes: the
-            literal path wins for /challenges, :slug catches everything
+            literal path wins for /challenges, :challengeId catches everything
             below it, and neither shadows the other. */}
         <Route path="challenges" element={<Challenges />} />
-        <Route path="challenges/:slug" element={<ChallengeDetails />} />
+        <Route path="challenges/:challengeId" element={<ChallengeDetails />} />
+        <Route path="teams" element={<Teams />} />
+        <Route path="teams/:teamId" element={<TeamDetails />} />
+        <Route path="sponsors" element={<Sponsors />} />
+        <Route path="season-media" element={<SeasonMedia />} />
+        <Route path="leaderboard/game" element={<GameLeaderboard />} />
         <Route path="live-standings" element={<LiveStandings />} />
 
         <Route

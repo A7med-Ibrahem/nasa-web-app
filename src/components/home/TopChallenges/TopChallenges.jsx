@@ -1,54 +1,79 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import "./TopChallenges.css";
 
 import { challenges } from "../../../data/homepageData";
-import { ArrowRightIcon } from "../../common/Icons/Icons";
+import DataState from "../../common/DataState/DataState";
+import { ArrowRightIcon, PlanetIcon } from "../../common/Icons/Icons";
 import { actionIcons } from "../../common/Icons/iconRegistry";
 import { useRevealGroup } from "../../../hooks/useReveal";
+import { toExcerpt } from "../../../utils/apiContent";
+import { toImageSrc } from "../../../utils/image";
 
 const HeaderActionIcon = actionIcons[challenges.action.icon];
 
-/* How many domain tags a card shows before it would grow too tall; the full
-   list is always available on the challenge details page. */
-const CARD_TAG_LIMIT = 3;
-
+/**
+ * One challenge in the homepage rail.
+ *
+ * Presentational: every value comes from the API record, and nothing is filled
+ * from a fixture when a field is missing.
+ */
 function ChallengeCard({ challenge }) {
-  const { id, slug, category, title, description, domains, image, imageAlt } =
-    challenge;
-  const tags = Array.isArray(domains) ? domains.slice(0, CARD_TAG_LIMIT) : [];
+  const { challengeId, title, description, source, season, image } = challenge;
+  const [imageFailed, setImageFailed] = useState(false);
+
+  const imageSrc = toImageSrc(image);
+  const excerpt = toExcerpt(description, challenges.excerptLength);
+  const hasMeta = Boolean(source) || Boolean(season);
+  const headingId = challengeId ? `home-challenge-title-${challengeId}` : undefined;
+  const href = challengeId ? `/challenges/${challengeId}` : "/challenges";
 
   return (
     <li className="challenge-card" data-reveal-item>
-      {/* The whole card is the link to its details route, so click, keyboard
-          and touch all lead to the same /challenges/:slug page. */}
-      <Link className="challenge-card-link" to={`/challenges/${slug}`}>
-        <article aria-labelledby={`challenge-${id}`}>
+      {/* The whole card is the link to its details route. */}
+      <Link className="challenge-card-link" to={href}>
+        <article aria-labelledby={headingId}>
           <div className="challenge-media">
-            <img src={image} alt={imageAlt} loading="lazy" decoding="async" />
+            {imageSrc && !imageFailed ? (
+              <img
+                className="challenge-image"
+                src={imageSrc}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                onError={() => setImageFailed(true)}
+              />
+            ) : (
+              <div className="challenge-media-placeholder" aria-hidden="true">
+                <PlanetIcon size={34} />
+              </div>
+            )}
           </div>
 
           <div className="challenge-body">
-            <p className="challenge-category">{category}</p>
-
-            <h3 className="challenge-title" id={`challenge-${id}`}>
+            <h3 className="challenge-title" id={headingId}>
               {title}
             </h3>
 
-            <p className="challenge-description">{description}</p>
+            {excerpt ? (
+              <p className="challenge-description">{excerpt}</p>
+            ) : null}
 
-            {tags.length > 0 ? (
-              <ul className="challenge-tags">
-                {tags.map((tag) => (
-                  <li className="challenge-tag" key={tag}>
-                    {tag}
+            {hasMeta ? (
+              <ul className="challenge-meta">
+                {source ? (
+                  <li className="challenge-badge">{source}</li>
+                ) : null}
+                {season ? (
+                  <li className="challenge-badge challenge-badge--season">
+                    {season}
                   </li>
-                ))}
+                ) : null}
               </ul>
             ) : null}
 
             <span className="challenge-arrow">
-              <span>Explore Challenge</span>
+              <span>{challenges.cardAction}</span>
               <ArrowRightIcon size={16} />
             </span>
           </div>
@@ -58,7 +83,19 @@ function ChallengeCard({ challenge }) {
   );
 }
 
-export default function TopChallenges() {
+/**
+ * Top challenges section (GET /challenges).
+ *
+ * The header is always present; the state block replaces the rail while the
+ * request is in flight or failed, and an empty collection gets its own message
+ * rather than a blank band.
+ */
+export default function TopChallenges({
+  status,
+  challenges: items,
+  error,
+  onRetry,
+}) {
   const sectionRef = useRef(null);
 
   useRevealGroup(sectionRef, { stagger: 110 });
@@ -87,17 +124,50 @@ export default function TopChallenges() {
           </Link>
         </header>
 
-        {/*
-          Dedicated horizontal scroll container.
-          `overflow-x: auto` on a block-level box gives the list its own
-          scrolling viewport; the cards that exceed it scroll *inside* it, so
-          the document width is never affected.
-        */}
-        <ul className="challenge-list" tabIndex={0} aria-label="Featured challenges">
-          {challenges.items.map((challenge) => (
-            <ChallengeCard key={challenge.id} challenge={challenge} />
-          ))}
-        </ul>
+        {status === "loading" ? (
+          <DataState
+            status="loading"
+            title={challenges.states.loading}
+            compact
+          />
+        ) : null}
+
+        {status === "error" ? (
+          <DataState
+            status="error"
+            title={challenges.states.errorTitle}
+            message={error?.message}
+            retryLabel={challenges.states.retry}
+            onRetry={onRetry}
+            compact
+          />
+        ) : null}
+
+        {status === "ready" && items.length === 0 ? (
+          <DataState
+            status="empty"
+            title={challenges.states.emptyTitle}
+            message={challenges.states.emptyDescription}
+            compact
+          />
+        ) : null}
+
+        {status === "ready" && items.length > 0 ? (
+          /*
+            Dedicated horizontal scroll container.
+            `overflow-x: auto` on a block-level box gives the list its own
+            scrolling viewport; the cards that exceed it scroll *inside* it, so
+            the document width is never affected.
+          */
+          <ul className="challenge-list" tabIndex={0}>
+            {items.map((challenge, index) => (
+              <ChallengeCard
+                key={challenge.challengeId ?? `challenge-${index}`}
+                challenge={challenge}
+              />
+            ))}
+          </ul>
+        ) : null}
       </div>
     </section>
   );

@@ -1,33 +1,30 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import "./ChallengeDetails.css";
 
+import { fetchChallenge, parseChallengeId } from "../../api/challenges";
 import ChallengeCTA from "../../components/challengeDetails/ChallengeCTA/ChallengeCTA";
 import ChallengeContent from "../../components/challengeDetails/ChallengeContent/ChallengeContent";
 import ChallengeHero from "../../components/challengeDetails/ChallengeHero/ChallengeHero";
 import ChallengeInfo from "../../components/challengeDetails/ChallengeInfo/ChallengeInfo";
-import ChallengeNav from "../../components/challengeDetails/ChallengeNav/ChallengeNav";
+import DataState from "../../components/common/DataState/DataState";
 import { ArrowLeftIcon } from "../../components/common/Icons/Icons";
-import { challengeDetailsPage, staticChallenges } from "../../data/challengesData";
+import { challengeDetailsPage } from "../../data/challengesData";
 import { site } from "../../data/site";
+import useApiResource from "../../hooks/useApiResource";
 
 /**
- * Challenge details page (`/challenges/:slug`).
+ * Challenge details page (`/challenges/:challengeId`).
  *
- * One reusable page for every challenge — never one page per challenge. The
- * slug comes from React Router, is resolved against the challenge collection
- * exactly the way a future `GET /api/challenges/:slug` would be, and the whole
- * record is passed down through props. When a backend exists, the lookup
- * becomes an await and nothing below this line changes.
+ * GET /challenges/{challengeId} is the only data source. The route value is
+ * validated locally before any request, so a non-numeric id never reaches the
+ * network and renders the same not-found state as a real 404. Other failures
+ * keep the page shell and offer a retry instead of pretending the record does
+ * not exist.
  *
- * The record's index in the shared list also yields its previous and next
- * challenges, so the page can offer sequential navigation without a second
- * data source. Composition only, like every other page: no Navbar, no Footer
- * (MainLayout owns both — the Challenges nav item stays active because
- * `/challenges` is a prefix of every slug route).
- *
- * An unknown slug renders a proper not-found state instead of crashing or
- * redirecting silently; the document title follows whichever state renders.
+ * Composition only: no Navbar, no Footer (MainLayout owns both — the
+ * Challenges nav item stays active because `/challenges` is a prefix of every
+ * details route).
  */
 function ChallengeNotFound() {
   const { title, description, action } = challengeDetailsPage.notFound;
@@ -48,51 +45,114 @@ function ChallengeNotFound() {
   );
 }
 
+/** A renderable record needs an id and a title; everything else is optional. */
+function isChallengeRecord(value) {
+  return (
+    value !== null &&
+    typeof value === "object" &&
+    !Array.isArray(value) &&
+    typeof value.title === "string" &&
+    value.title.trim() !== ""
+  );
+}
+
 export default function ChallengeDetails() {
-  const { slug } = useParams();
+  const { challengeId } = useParams();
+  const parsedId = parseChallengeId(challengeId);
 
-  const { challenge, previous, next } = useMemo(() => {
-    const index = staticChallenges.findIndex((item) => item.slug === slug);
+  const loadChallenge = useCallback(
+    (options = {}) => fetchChallenge(parsedId, options),
+    [parsedId],
+  );
 
-    return {
-      challenge: index >= 0 ? staticChallenges[index] : null,
-      previous: index > 0 ? staticChallenges[index - 1] : null,
-      next:
-        index >= 0 && index < staticChallenges.length - 1
-          ? staticChallenges[index + 1]
-          : null,
-    };
-  }, [slug]);
+  const { status, data, error, retry } = useApiResource(loadChallenge, {
+    enabled: parsedId !== null,
+  });
+
+  const record = status === "ready" && isChallengeRecord(data) ? data : null;
+  const recordId = record ? parseChallengeId(record.challengeId) : null;
+  const challenge = recordId !== null && recordId === parsedId ? record : null;
+
+  const notFound =
+    parsedId === null ||
+    (status === "error" && error?.status === 404) ||
+    (status === "ready" && (record === null || recordId === null));
+
+  let documentName = "";
+  if (challenge) {
+    documentName = challenge.title;
+  } else if (notFound) {
+    documentName = challengeDetailsPage.notFound.title;
+  } else if (status === "error") {
+    documentName = challengeDetailsPage.states.errorTitle;
+  }
 
   useEffect(() => {
-    document.title = challenge
-      ? `${challenge.title} — ${site.name}`
-      : `${challengeDetailsPage.notFound.title} — ${site.name}`;
-  }, [challenge]);
+    document.title = documentName ? `${documentName} — ${site.name}` : site.name;
+  }, [documentName]);
 
-  if (!challenge) {
+  if (notFound) {
     return <ChallengeNotFound />;
   }
 
+  if (status === "error") {
+    return (
+      <div className="challenge-details-page">
+        <div className="container challenge-details-state">
+          <DataState
+            status="error"
+            title={challengeDetailsPage.states.errorTitle}
+            message={error?.message}
+            retryLabel={challengeDetailsPage.states.retry}
+            onRetry={retry}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (!challenge) {
+    return (
+      <div className="challenge-details-page">
+        <div className="container challenge-details-state">
+          <DataState
+            status="loading"
+            title={challengeDetailsPage.states.loading}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  const hasDescription =
+    typeof challenge.description === "string" &&
+    challenge.description.trim() !== "";
+  const hasInfo = Boolean(challenge.source) || Boolean(challenge.season);
+
   return (
-    <div className="challenge-details-page">
+    <div className="challenge-details-page" key={challenge.challengeId}>
       <ChallengeHero challenge={challenge} />
 
-      <div className="container challenge-details-layout">
-        {/* DOM order is also the mobile stack order: main content first,
-            Challenge Info card after it. */}
-        <div className="challenge-details-main">
-          <ChallengeContent challenge={challenge} />
-          <ChallengeNav previous={previous} next={next} />
-        </div>
-
-        <aside
-          className="challenge-details-aside"
-          aria-label={challengeDetailsPage.info.title}
+      {hasDescription || hasInfo ? (
+        <div
+          className={`container challenge-details-layout${
+            hasInfo ? "" : " challenge-details-layout--single"
+          }`}
         >
-          <ChallengeInfo challenge={challenge} />
-        </aside>
-      </div>
+          <div className="challenge-details-main">
+            {hasDescription ? <ChallengeContent challenge={challenge} /> : null}
+          </div>
+
+          {hasInfo ? (
+            <aside
+              className="challenge-details-aside"
+              aria-label={challengeDetailsPage.info.title}
+            >
+              <ChallengeInfo challenge={challenge} />
+            </aside>
+          ) : null}
+        </div>
+      ) : null}
 
       <ChallengeCTA />
     </div>

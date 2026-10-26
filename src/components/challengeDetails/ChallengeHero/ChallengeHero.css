@@ -8,8 +8,8 @@
     (border + radius, rounded like the cards) instead of a bleeding
     background — no decorative Earth, no scrim, no extra palette.
 
-    Every colour resolves through variables.css; the per-category accents
-    mirror the identification scheme the card badge already uses.
+    Every colour resolves through variables.css; the source badge mirrors the
+    identification treatment the challenge cards already use.
     ========================================================================== */
 
 .challenge-hero {
@@ -80,51 +80,31 @@
   margin-bottom: 14px;
 }
 
-/* ---------- Category badge ---------- */
+/* ---------- Source badge ---------- */
 
-/*
- * The card badge's identification scheme at hero scale: accent-coloured
- * border and glyph on a dark fill, uppercase label. Values resolve through
- * `--badge-accent`, declared once per category — one rule per category, no
- * duplicated backgrounds. Colour is reinforcement only; the category name is
- * always spelled out beside it.
- */
+/* The record's source at identification scale: accent border and glyph on a
+   dark fill, uppercase label. Colour is reinforcement only; the source name is
+   always spelled out. */
 .challenge-hero-badge {
   display: inline-flex;
   align-items: center;
   gap: 7px;
   max-width: 100%;
   padding: 6px 12px;
-  border: 1px solid var(--badge-accent, var(--blue));
+  border: 1px solid var(--blue);
   border-radius: var(--radius-pill);
   background-color: rgba(3, 20, 38, 0.6);
-  color: var(--badge-accent, var(--blue));
+  color: var(--blue);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
   line-height: 1.2;
+  overflow-wrap: break-word;
   text-transform: uppercase;
-  white-space: nowrap;
 }
 
 .challenge-hero-badge > svg {
   flex: none;
-}
-
-.challenge-hero-badge--earth-climate {
-  --badge-accent: var(--accent-green);
-}
-
-.challenge-hero-badge--space-exploration {
-  --badge-accent: var(--accent-purple);
-}
-
-.challenge-hero-badge--technology {
-  --badge-accent: var(--blue);
-}
-
-.challenge-hero-badge--health-humanity {
-  --badge-accent: var(--accent-pink);
 }
 
 /* ---------- Title + description ---------- */
@@ -158,9 +138,7 @@
 }
 
 /*
- * Difficulty keeps its text label and icon alongside the accent colour, so
- * the level is never signalled by colour alone. The season pill stays
- * neutral — it carries no state to identify.
+ * The season pill stays neutral — it carries no state to identify.
  */
 .challenge-hero-pill {
   display: inline-flex;
@@ -181,39 +159,7 @@
   flex: none;
 }
 
-.challenge-hero-pill--easy {
-  color: var(--accent-green);
-}
-
-.challenge-hero-pill--medium {
-  color: var(--accent-amber);
-}
-
-.challenge-hero-pill--hard {
-  color: var(--accent-coral);
-}
-
-/* ---------- Domain tags + back action ---------- */
-
-.challenge-hero-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 20px;
-  padding: 0;
-  list-style: none;
-}
-
-.challenge-hero-tag {
-  padding: 6px 12px;
-  border: 1px solid var(--border-on-dark);
-  border-radius: var(--radius-pill);
-  background-color: var(--card-navy);
-  color: var(--muted-on-dark);
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.2;
-}
+/* ---------- Back action ---------- */
 
 .challenge-hero-back {
   margin-top: 26px;
@@ -243,13 +189,18 @@
   object-fit: cover;
 }
 
-/* No-image fallback: the frame stays, quietly holding the category glyph. */
+/* No-image fallback: the frame stays, quietly holding the planet mark. */
 .challenge-hero-media-fallback {
   display: grid;
   place-items: center;
   width: 100%;
   height: 100%;
-  color: var(--muted-on-dark-alt);
+  color: rgba(140, 180, 255, 0.5);
+  background-image: radial-gradient(
+    ellipse 70% 70% at 50% 40%,
+    rgba(74, 158, 255, 0.16),
+    transparent 70%
+  );
 }
 
 /* ---------- Responsive ---------- */

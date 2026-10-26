@@ -31,6 +31,7 @@ export const site = {
 export const navigationLinks = [
   { id: "home", label: "Home", href: "/" },
   { id: "challenges", label: "Challenges", href: "/challenges" },
+  { id: "teams", label: "Teams", href: "/teams" },
   { id: "standings", label: "Live Standings", href: "/live-standings" },
   { id: "login", label: "Login", href: "/login" },
 ];
@@ -50,7 +51,14 @@ export const footer = {
     { id: "home", label: "Home", href: "/" },
     { id: "challenges", label: "Challenges", href: "/challenges" },
     { id: "standings", label: "Live Standings", href: "/live-standings" },
-    { id: "about", label: "About", href: "/about" },
+    { id: "teams", label: "Teams", href: "/teams" },
+    { id: "sponsors", label: "Sponsors", href: "/sponsors" },
+    { id: "season-media", label: "Season Media", href: "/season-media" },
+    {
+      id: "game-leaderboard",
+      label: "Game Leaderboard",
+      href: "/leaderboard/game",
+    },
   ],
   socials: [
     {
