@@ -49,10 +49,18 @@ export default function Navbar() {
     ? navigationLinks.filter((link) => link.id !== "login")
     : navigationLinks;
 
-  const visibleLinks =
-    isAuthenticated && user?.role === "Judge"
-      ? [...baseLinks, { id: "judge", label: "Judge Dashboard", href: "/judge" }]
-      : baseLinks;
+  const visibleLinks = (() => {
+    if (!isAuthenticated || !user?.role) {
+      return baseLinks;
+    }
+    if (user.role === "Judge") {
+      return [...baseLinks, { id: "judge", label: "Judge Dashboard", href: "/judge" }];
+    }
+    if (user.role === "Participant") {
+      return [...baseLinks, { id: "participant", label: "My Team", href: "/participant/dashboard" }];
+    }
+    return baseLinks;
+  })();
 
   function closeMenu() {
     setIsMenuOpen(false);

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Organizer & Judge Login page content
+   Login page content
    --------------------------------------------------------------------------
    Copy for the `/login` screen: compact header, portal introduction, feature
    list and the sign-in card. Every string lives here so the components stay
@@ -26,9 +26,9 @@ export const loginPage = {
   /* Left-hand introduction. */
   hero: {
     eyebrow: "NASA SPACE APPS HURGHADA",
-    titleLines: ["Organizer &", "Judge Portal"],
+    titleLines: ["Event", "Portal"],
     description:
-      "Sign in to manage and evaluate submissions, and help build a better tomorrow.",
+      "Sign in to manage and evaluate submissions, or access your team dashboard.",
     features: [
       { id: "review", icon: "scale", lines: ["Review", "Submissions"] },
       { id: "evaluate", icon: "bulb", lines: ["Evaluate", "Solutions"] },
@@ -38,8 +38,8 @@ export const loginPage = {
 
   /* Sign-in card. */
   card: {
-    title: "Organizer & Judge Portal",
-    subtitle: "Sign in to access your event dashboard",
+    title: "Event Portal",
+    subtitle: "Sign in to access your dashboard",
   },
 
    /* Form labels, placeholders, messages. `identifier` accepts either an email

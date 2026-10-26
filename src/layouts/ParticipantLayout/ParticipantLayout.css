@@ -1,0 +1,64 @@
+.participant-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - var(--navbar-height));
+}
+
+.participant-layout-header {
+  border-bottom: 1px solid rgba(140, 180, 255, 0.18);
+  background: radial-gradient(circle at top, rgba(74, 158, 255, 0.16), transparent 70%),
+    linear-gradient(180deg, rgba(9, 31, 55, 0.9), rgba(6, 26, 47, 0.98));
+}
+
+.participant-layout-header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: clamp(20px, 4vw, 36px);
+  padding-bottom: clamp(16px, 3vw, 24px);
+}
+
+.participant-layout-title {
+  margin-top: 6px;
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.participant-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.participant-tab {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(140, 180, 255, 0.24);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.participant-tab:hover {
+  color: #ffffff;
+}
+
+.participant-tab.is-active {
+  color: #ffffff;
+  border-color: rgba(140, 180, 255, 0.6);
+  background: linear-gradient(90deg, rgba(74, 158, 255, 0.9), rgba(46, 125, 210, 0.9));
+  box-shadow: 0 12px 30px rgba(46, 125, 210, 0.25);
+}
+
+.participant-layout-main {
+  flex: 1;
+  padding-top: clamp(20px, 4vw, 36px);
+  padding-bottom: clamp(40px, 8vw, 72px);
+}

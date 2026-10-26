@@ -30,7 +30,7 @@ import {
   useState,
 } from "react";
 
-import { fetchCurrentUser, loginStaff } from "../api/auth";
+import { fetchCurrentUser, loginParticipant, loginStaff } from "../api/auth";
 import { ApiError, UNAUTHORIZED_EVENT } from "../api/client";
 import { clearStoredToken, getStoredToken, storeToken } from "./tokenStorage";
 import { AuthContext } from "./useAuth";
@@ -41,15 +41,33 @@ function normaliseUser(payload) {
     return null;
   }
 
-  return {
-    role: payload.role ?? null,
+  const role = payload.role ?? null;
+
+  const base = {
+    role,
     name: payload.name || payload.fullName || "",
     username: payload.username ?? "",
     email: payload.email ?? "",
     staffId: payload.staffId ?? null,
     judgeId: payload.judgeId ?? null,
   };
+
+  if (role === "Participant") {
+    base.teamId = payload.teamId ?? null;
+    base.team =
+      payload.team && typeof payload.team === "object" ? payload.team : null;
+    base.challenge =
+      payload.challenge && typeof payload.challenge === "object"
+        ? payload.challenge
+        : null;
+    base.students = Array.isArray(payload.students) ? payload.students : [];
+  }
+
+  return base;
 }
+
+// eslint-disable-next-line react-refresh/only-export-components
+export { homeForRole } from "./authHome";
 
 export function AuthProvider({ children }) {  const [status, setStatus] = useState(() =>
     getStoredToken() ? "restoring" : "anonymous",
@@ -138,8 +156,29 @@ export function AuthProvider({ children }) {  const [status, setStatus] = useSta
   }, []);
 
   const login = useCallback(
-    async ({ identifier, password, rememberMe }) => {
-      const response = await loginStaff({ identifier, password, rememberMe });
+    async (args = {}) => {
+      const {
+        mode = "staff",
+        identifier,
+        username,
+        password,
+        rememberMe = false,
+      } = args;
+
+      let response;
+      if (mode === "participant") {
+        response = await loginParticipant({
+          username,
+          password,
+          rememberMe: Boolean(rememberMe),
+        });
+      } else {
+        response = await loginStaff({
+          identifier,
+          password,
+          rememberMe: Boolean(rememberMe),
+        });
+      }
 
       const token =
         response && typeof response === "object" ? response.accessToken : null;
@@ -154,7 +193,7 @@ export function AuthProvider({ children }) {  const [status, setStatus] = useSta
       }
 
       const nextUser = normaliseUser(response);
-      if (!nextUser) {
+      if (!nextUser || !nextUser.role) {
         throw new ApiError("The server returned an incomplete account.", {
           status: 502,
           code: "auth.incomplete_profile",

@@ -84,6 +84,49 @@
   text-align: center;
 }
 
+/* ---------- Segment ---------- */
+
+.login-segment {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 18px;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(140, 180, 255, 0.22);
+  background: rgba(9, 31, 55, 0.8);
+}
+
+.login-segment-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 10px;
+  border-radius: calc(var(--radius-md) - 4px);
+  border: none;
+  background: transparent;
+  color: var(--muted-on-dark);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.login-segment-btn:hover:not(:disabled) {
+  color: #ffffff;
+}
+
+.login-segment-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-segment-btn.is-active {
+  background: linear-gradient(90deg, rgba(74, 158, 255, 0.9), rgba(46, 125, 210, 0.9));
+  color: #ffffff;
+  box-shadow: 0 10px 30px rgba(46, 125, 210, 0.25);
+}
+
 /* ---------- Form ---------- */
 
 .login-form {

@@ -1,0 +1,147 @@
+.participant-requests {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 4vw, 28px);
+}
+
+.participant-requests-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.participant-requests-title {
+  margin-top: 6px;
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.participant-requests-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.participant-hub-indicator {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(140, 180, 255, 0.24);
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.participant-request-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.participant-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.participant-form-label {
+  font-weight: 600;
+}
+
+.participant-select {
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(140, 180, 255, 0.24);
+  background: rgba(9, 31, 55, 0.8);
+  color: #ffffff;
+}
+
+.participant-form-hint {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.participant-request-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.participant-request-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: clamp(14px, 3vw, 18px);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(140, 180, 255, 0.18);
+  background: rgba(9, 31, 55, 0.7);
+}
+
+.participant-request-item-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.participant-request-type {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.participant-request-meta {
+  margin-top: 4px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.participant-request-status {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(140, 180, 255, 0.28);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.status-pending {
+  border-color: rgba(255, 200, 120, 0.6);
+}
+
+.status-progress {
+  border-color: rgba(140, 200, 255, 0.6);
+}
+
+.status-resolved {
+  border-color: rgba(120, 255, 190, 0.6);
+}
+
+.status-rejected {
+  border-color: rgba(255, 120, 120, 0.6);
+}
+
+.status-unknown {
+  border-color: rgba(140, 180, 255, 0.28);
+}
+
+.participant-request-message {
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.participant-request-actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.participant-delete {
+  background: transparent;
+  border: none;
+  color: #ff8b8b;
+  cursor: pointer;
+  font-weight: 600;
+}

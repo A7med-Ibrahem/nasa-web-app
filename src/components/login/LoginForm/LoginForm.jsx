@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import "./LoginForm.css";
 
 import {
@@ -12,33 +12,23 @@ import {
   UsersIcon,
 } from "../../common/Icons/Icons";
 import { ApiError } from "../../../api/client";
-import { useAuth } from "../../../auth/useAuth";
+import { homeForRole, useAuth } from "../../../auth/useAuth";
 import { loginPage } from "../../../data/loginData";
+import { participantData } from "../../../data/participantData";
 import { site } from "../../../data/site";
 
 /**
- * Sign-in card for the Organizer & Judge portal (`/login`, right column).
- *
- * State is a single object shaped `{ identifier, password, rememberMe }` —
- * exactly the `POST /api/v1/auth/login/staff` request body. The field names
- * the backend expects and the names the form uses are identical, so no
- * translation layer is needed.
- *
- * Behaviour:
- *   - client-side required-field validation runs first, then one real request
- *   - duplicate submits are blocked while a request is in flight
- *   - failures (invalid credentials, 403, offline) render as an alert inside
- *     the form; nothing is stored and no navigation happens
- *   - only a server-issued access token creates a session, after which the
- *     visitor is sent to the route they originally asked for (or the Judge
- *     Dashboard for judges, the homepage otherwise)
- *
- * Validation messages are rendered inside the field's `aria-describedby`
- * chain with `role="alert"`, and the first invalid control receives focus.
+ * Sign-in card for the portal (`/login`).
  */
 export default function LoginForm() {
+  const [searchParams] = useSearchParams();
+  const initialMode =
+    searchParams.get("as") === "participant" ? "participant" : "staff";
+
+  const [mode, setMode] = useState(initialMode);
   const [form, setForm] = useState({
     identifier: "",
+    username: "",
     password: "",
     rememberMe: false,
   });
@@ -48,23 +38,29 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   const identifierRef = useRef(null);
+  const usernameRef = useRef(null);
   const passwordRef = useRef(null);
 
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   const t = loginPage.form;
+  const pt = participantData.login.participantForm;
   const redirectTo = location.state?.from?.pathname || null;
 
   /* Already signed in (restored session or a fresh one): there is nothing to
      fill in here, so go straight to the area the visitor asked for. */
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !user) {
       return;
     }
-    navigate(redirectTo ?? "/", { replace: true });
-  }, [isAuthenticated, navigate, redirectTo]);
+    if (redirectTo) {
+      navigate(redirectTo, { replace: true });
+      return;
+    }
+    navigate(homeForRole(user.role), { replace: true });
+  }, [isAuthenticated, navigate, redirectTo, user]);
 
   function updateField(field, value) {
     setForm((previous) => ({ ...previous, [field]: value }));
@@ -88,8 +84,14 @@ export default function LoginForm() {
     }
 
     const nextErrors = {};
-    if (!form.identifier.trim()) {
-      nextErrors.identifier = t.identifierError;
+    if (mode === "staff") {
+      if (!form.identifier.trim()) {
+        nextErrors.identifier = t.identifierError;
+      }
+    } else {
+      if (!form.username.trim()) {
+        nextErrors.username = pt.usernameError;
+      }
     }
     if (!form.password) {
       nextErrors.password = t.passwordError;
@@ -99,8 +101,10 @@ export default function LoginForm() {
     setSubmitError("");
 
     if (Object.keys(nextErrors).length > 0) {
-      if (nextErrors.identifier) {
+      if (mode === "staff" && nextErrors.identifier) {
         identifierRef.current?.focus();
+      } else if (mode === "participant" && nextErrors.username) {
+        usernameRef.current?.focus();
       } else {
         passwordRef.current?.focus();
       }
@@ -110,28 +114,46 @@ export default function LoginForm() {
     setIsSubmitting(true);
 
     try {
-      const user = await login({
-        identifier: form.identifier.trim(),
-        password: form.password,
-        rememberMe: form.rememberMe,
-      });
+      const loggedInUser = await login(
+        mode === "participant"
+          ? {
+              mode: "participant",
+              username: form.username.trim(),
+              password: form.password,
+              rememberMe: form.rememberMe,
+            }
+          : {
+              mode: "staff",
+              identifier: form.identifier.trim(),
+              password: form.password,
+              rememberMe: form.rememberMe,
+            },
+      );
 
       /* Reached only after the server issued a token. */
-      const destination =
-        redirectTo ?? (user.role === "Judge" ? "/judge" : "/");
+      const destination = redirectTo ?? homeForRole(loggedInUser.role);
       navigate(destination, { replace: true });
     } catch (error) {
       if (error instanceof ApiError && error.isUnauthorized) {
-        /* The backend's own wording ("Invalid email/username or password.")
-           is the clearest message available for this case. */
-        setSubmitError(error.message || t.invalidCredentials);
+        /* The backend's own wording is the clearest message available for this case. */
+        setSubmitError(
+          error.message ||
+            (mode === "participant" ? pt.invalidCredentials : t.invalidCredentials),
+        );
       } else if (error instanceof ApiError && error.isForbidden) {
         setSubmitError(error.message || t.forbidden);
       } else if (error instanceof ApiError && error.isNetworkError) {
-        setSubmitError(error.message || t.networkError);
+        setSubmitError(
+          error.message ||
+            (mode === "participant" ? pt.networkError : t.networkError),
+        );
       } else {
         setSubmitError(
-          error instanceof ApiError && error.message ? error.message : t.genericError,
+          error instanceof ApiError && error.message
+            ? error.message
+            : mode === "participant"
+            ? pt.genericError
+            : t.genericError,
         );
       }
     } finally {
@@ -140,6 +162,7 @@ export default function LoginForm() {
   }
 
   const identifierInvalid = Boolean(errors.identifier);
+  const usernameInvalid = Boolean(errors.username);
   const passwordInvalid = Boolean(errors.password);
 
   return (
@@ -167,39 +190,109 @@ export default function LoginForm() {
       </h2>
       <p className="login-card-subtitle">{loginPage.card.subtitle}</p>
 
+      <div
+        className="login-segment"
+        role="tablist"
+        aria-label="Login type"
+      >
+        <button
+          type="button"
+          role="tab"
+          aria-selected={mode === "staff"}
+          className={mode === "staff" ? "login-segment-btn is-active" : "login-segment-btn"}
+          onClick={() => {
+            setMode("staff");
+            setErrors({});
+            setSubmitError("");
+          }}
+          disabled={isSubmitting}
+        >
+          {participantData.login.segment.staff}
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={mode === "participant"}
+          className={mode === "participant" ? "login-segment-btn is-active" : "login-segment-btn"}
+          onClick={() => {
+            setMode("participant");
+            setErrors({});
+            setSubmitError("");
+          }}
+          disabled={isSubmitting}
+        >
+          {participantData.login.segment.participant}
+        </button>
+      </div>
+
       <form className="login-form" onSubmit={handleSubmit} noValidate>
-        {/* ---------- Email or username ---------- */}
-        <div className="login-field">
-          <label className="login-field-label" htmlFor="login-identifier">
-            {t.identifierLabel}
-          </label>
-          <div className="login-field-control">
-            <span className="login-field-icon">
-              <MailIcon size={17} />
-            </span>
-            <input
-              id="login-identifier"
-              ref={identifierRef}
-              className="login-input"
-              type="text"
-              name="identifier"
-              autoComplete="username"
-              placeholder={t.identifierPlaceholder}
-              value={form.identifier}
-              onChange={(event) => updateField("identifier", event.target.value)}
-              disabled={isSubmitting}
-              aria-invalid={identifierInvalid}
-              aria-describedby={
-                identifierInvalid ? "login-identifier-error" : undefined
-              }
-            />
+        {mode === "staff" ? (
+          /* ---------- Email or username ---------- */
+          <div className="login-field">
+            <label className="login-field-label" htmlFor="login-identifier">
+              {t.identifierLabel}
+            </label>
+            <div className="login-field-control">
+              <span className="login-field-icon">
+                <MailIcon size={17} />
+              </span>
+              <input
+                id="login-identifier"
+                ref={identifierRef}
+                className="login-input"
+                type="text"
+                name="identifier"
+                autoComplete="username"
+                placeholder={t.identifierPlaceholder}
+                value={form.identifier}
+                onChange={(event) => updateField("identifier", event.target.value)}
+                disabled={isSubmitting}
+                aria-invalid={identifierInvalid}
+                aria-describedby={
+                  identifierInvalid ? "login-identifier-error" : undefined
+                }
+              />
+            </div>
+            {identifierInvalid && (
+              <p className="login-field-error" id="login-identifier-error" role="alert">
+                {errors.identifier}
+              </p>
+            )}
           </div>
-          {identifierInvalid && (
-            <p className="login-field-error" id="login-identifier-error" role="alert">
-              {errors.identifier}
-            </p>
-          )}
-        </div>
+        ) : (
+          /* ---------- Team username ---------- */
+          <div className="login-field">
+            <label className="login-field-label" htmlFor="login-username">
+              {pt.usernameLabel}
+            </label>
+            <div className="login-field-control">
+              <span className="login-field-icon">
+                <UsersIcon size={17} />
+              </span>
+              <input
+                id="login-username"
+                ref={usernameRef}
+                className="login-input"
+                type="text"
+                name="username"
+                autoComplete="username"
+                placeholder={pt.usernamePlaceholder}
+                value={form.username}
+                onChange={(event) => updateField("username", event.target.value)}
+                disabled={isSubmitting}
+                aria-invalid={usernameInvalid}
+                aria-describedby={
+                  usernameInvalid ? "login-username-error" : undefined
+                }
+              />
+            </div>
+            {usernameInvalid && (
+              <p className="login-field-error" id="login-username-error" role="alert">
+                {errors.username}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* ---------- Password ---------- */}
         <div className="login-field">

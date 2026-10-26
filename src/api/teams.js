@@ -66,6 +66,10 @@ export function fetchTeam(teamId, { signal } = {}) {
   return request(`/teams/${teamId}`, { signal, auth: true });
 }
 
+export function fetchTeamPublic(teamId, { signal } = {}) {
+  return request(`/teams/${teamId}`, { signal });
+}
+
 export function fetchTeamStudents(teamId, { signal } = {}) {
   return request(`/teams/${teamId}/students`, { signal, auth: true });
 }

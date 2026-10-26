@@ -60,23 +60,29 @@ export default function RequireAuth({ children, requiredRole }) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (requiredRole && user.role !== requiredRole) {
-    return (
-      <div className="auth-gate auth-gate--panel" role="alert">
-        <span className="auth-gate-icon" aria-hidden="true">
-          <LockIcon size={22} />
-        </span>
-        <h2 className="auth-gate-title">You do not have access to this page</h2>
-        <p className="auth-gate-text">
-          This area is limited to the <strong>{requiredRole}</strong> role. Your
-          account is signed in as <strong>{user.role || "staff"}</strong>.
-        </p>
-        <Link className="btn auth-gate-action" to="/">
-          <ArrowLeftIcon size={16} />
-          Back to homepage
-        </Link>
-      </div>
-    );
+  if (requiredRole) {
+    const allowed = Array.isArray(requiredRole)
+      ? requiredRole
+      : [requiredRole];
+    if (!allowed.includes(user.role)) {
+      return (
+        <div className="auth-gate auth-gate--panel" role="alert">
+          <span className="auth-gate-icon" aria-hidden="true">
+            <LockIcon size={22} />
+          </span>
+          <h2 className="auth-gate-title">You do not have access to this page</h2>
+          <p className="auth-gate-text">
+            This area is limited to the <strong>{allowed.join(" or ")}</strong>{" "}
+            role. Your account is signed in as{" "}
+            <strong>{user.role || "unknown"}</strong>.
+          </p>
+          <Link className="btn auth-gate-action" to="/">
+            <ArrowLeftIcon size={16} />
+            Back to homepage
+          </Link>
+        </div>
+      );
+    }
   }
 
   return children;

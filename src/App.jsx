@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import MainLayout from "./layouts/MainLayout/MainLayout";
+import ParticipantLayout from "./layouts/ParticipantLayout/ParticipantLayout";
 import RequireAuth from "./auth/RequireAuth";
 import ChallengeDetails from "./pages/ChallengeDetails/ChallengeDetails";
 import Challenges from "./pages/Challenges/Challenges";
@@ -9,6 +10,9 @@ import JudgeDashboard from "./pages/JudgeDashboard/JudgeDashboard";
 import JudgeEvaluation from "./pages/JudgeEvaluation/JudgeEvaluation";
 import LiveStandings from "./pages/LiveStandings/LiveStandings";
 import Login from "./pages/Login/Login";
+import ParticipantDashboard from "./pages/ParticipantDashboard/ParticipantDashboard";
+import ParticipantGame from "./pages/ParticipantGame/ParticipantGame";
+import ParticipantRequests from "./pages/ParticipantRequests/ParticipantRequests";
 
 /**
  * Application composition point.
@@ -55,6 +59,20 @@ function App() {
             </RequireAuth>
           }
         />
+
+        <Route
+          path="participant"
+          element={
+            <RequireAuth requiredRole="Participant">
+              <ParticipantLayout />
+            </RequireAuth>
+          }
+        >
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<ParticipantDashboard />} />
+          <Route path="game" element={<ParticipantGame />} />
+          <Route path="requests" element={<ParticipantRequests />} />
+        </Route>
 
         {/* Pages still to be built keep the shell and land on Home for now,
             rather than 404ing on a link that is already in the chrome. */}

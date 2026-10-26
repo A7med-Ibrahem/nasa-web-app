@@ -11,6 +11,8 @@ import { createContext, useContext } from "react";
 
 export const AuthContext = createContext(null);
 
+export { homeForRole } from "./authHome";
+
 /** Reads the shared authentication state; must be inside <AuthProvider>. */
 export function useAuth() {
   const context = useContext(AuthContext);
