@@ -1,0 +1,108 @@
+/* ==========================================================================
+   Admin overview
+   ========================================================================== */
+
+.admin-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+.admin-overview-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.admin-overview-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.admin-overview-lastupdated {
+  color: var(--muted-on-dark-alt);
+  font-size: 12px;
+}
+
+.admin-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.admin-overview-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-lg);
+  background-color: rgba(11, 37, 64, 0.5);
+}
+
+.admin-overview-card-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.admin-overview-card-title {
+  margin: 0;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.admin-overview-card-link {
+  color: var(--blue-strong);
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.admin-overview-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--muted-on-dark);
+  font-size: 13px;
+}
+
+.admin-overview-card-error {
+  color: #fecaca;
+}
+
+.admin-overview-card-retry {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--blue-strong);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+@media (max-width: 420px) {
+  .admin-overview-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .admin-overview-actions {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 360px) {
+  .admin-overview-grid {
+    grid-template-columns: 1fr;
+  }
+  .admin-overview-card {
+    padding: 12px;
+  }
+}

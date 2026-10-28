@@ -88,6 +88,19 @@ function criterionErrorState(cause, { deleting = false } = {}) {
   }
 }
 
+function normalizeQuestionsForCompare(questions) {
+  if (!Array.isArray(questions)) {
+    return [];
+  }
+  return [...questions]
+    .sort(
+      (first, second) =>
+        (toFiniteNumber(first?.displayOrder) ?? 0) -
+        (toFiniteNumber(second?.displayOrder) ?? 0),
+    )
+    .map((question) => String(question?.text ?? "").trim());
+}
+
 function CriterionFormDialog({
   mode,
   row,
@@ -126,8 +139,36 @@ function CriterionFormDialog({
     [defaultChallengeId, mode, row],
   );
 
+  const initialQuestionTexts = useMemo(
+    () => normalizeQuestionsForCompare(row?.questions),
+    [row],
+  );
+
   const [values, setValues] = useState(initial);
   const [clientErrors, setClientErrors] = useState({});
+
+  const currentQuestionTexts = useMemo(
+    () =>
+      values.questions.map((question) =>
+        String(question?.text ?? "").trim(),
+      ),
+    [values.questions],
+  );
+
+  const questionsChanged = useMemo(() => {
+    if (!isEdit) {
+      return true;
+    }
+    if (currentQuestionTexts.length !== initialQuestionTexts.length) {
+      return true;
+    }
+    for (let index = 0; index < currentQuestionTexts.length; index += 1) {
+      if (currentQuestionTexts[index] !== initialQuestionTexts[index]) {
+        return true;
+      }
+    }
+    return false;
+  }, [currentQuestionTexts, initialQuestionTexts, isEdit]);
 
   const dirty = useMemo(
     () => JSON.stringify(values) !== JSON.stringify(initial),
@@ -198,18 +239,30 @@ function CriterionFormDialog({
       return;
     }
 
-    onSubmit({
+    const payload = {
       name: values.name.trim(),
       description: values.description.trim() || null,
       maxScore: parseDecimalInput(values.maxScore),
       weight: parseDecimalInput(values.weight),
       challengeId:
         values.challengeId === "" ? null : Number(values.challengeId),
-      questions: values.questions.map((question, index) => ({
+    };
+
+    if (isEdit) {
+      if (questionsChanged) {
+        payload.questions = values.questions.map((question, index) => ({
+          text: question.text.trim(),
+          displayOrder: index + 1,
+        }));
+      }
+    } else {
+      payload.questions = values.questions.map((question, index) => ({
         text: question.text.trim(),
         displayOrder: index + 1,
-      })),
-    });
+      }));
+    }
+
+    onSubmit(payload);
   }
 
   const errors = { ...fieldErrors, ...clientErrors };
@@ -229,7 +282,14 @@ function CriterionFormDialog({
     >
       {formError ? <InlineNotice tone="error" message={formError} /> : null}
       {isEdit ? (
-        <p className="admin-criteria-warning">{copy.editWarning}</p>
+        <>
+          <p className="admin-criteria-warning">{copy.editWarning}</p>
+          {questionsChanged ? (
+            <p className="admin-criteria-warning">
+              Changing questions regenerates their ids; editing questions that already have scores may fail on the server.
+            </p>
+          ) : null}
+        </>
       ) : null}
 
       <div className="admin-form-grid">

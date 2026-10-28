@@ -1,0 +1,41 @@
+/* ==========================================================================
+   Admin challenges
+   ========================================================================== */
+
+.admin-challenges {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+.admin-challenges-note {
+  color: var(--muted-on-dark-alt);
+  font-size: 13px;
+}
+
+.admin-challenges-image {
+  width: 72px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-on-dark);
+}
+
+.admin-challenges-image-placeholder {
+  width: 72px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-on-dark);
+  color: var(--muted-on-dark-alt);
+  font-size: 11px;
+}
+
+@media (max-width: 360px) {
+  .admin-challenges {
+    gap: 14px;
+  }
+}

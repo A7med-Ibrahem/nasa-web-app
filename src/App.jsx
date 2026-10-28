@@ -48,6 +48,7 @@ const StaffRequests = lazy(() =>
   import("./pages/StaffRequests/StaffRequests"),
 );
 const StaffTeams = lazy(() => import("./pages/StaffTeams/StaffTeams"));
+const AdminOverview = lazy(() => import("./pages/AdminOverview/AdminOverview"));
 const AdminStaff = lazy(() => import("./pages/AdminStaff/AdminStaff"));
 const AdminSponsors = lazy(() =>
   import("./pages/AdminSponsors/AdminSponsors"),
@@ -59,6 +60,13 @@ const AdminPublishing = lazy(() =>
 const AdminQuestions = lazy(() =>
   import("./pages/AdminQuestions/AdminQuestions"),
 );
+const AdminSeasonMedia = lazy(() =>
+  import("./pages/AdminSeasonMedia/AdminSeasonMedia"),
+);
+const AdminChallenges = lazy(() =>
+  import("./pages/AdminChallenges/AdminChallenges"),
+);
+const AdminTeams = lazy(() => import("./pages/AdminTeams/AdminTeams"));
 
 function RouteFallback() {
   return (
@@ -111,12 +119,15 @@ function App() {
               </RequireAuth>
             }
           >
-            <Route index element={<Navigate to="staff" replace />} />
+            <Route index element={<AdminOverview />} />
             <Route path="staff" element={<AdminStaff />} />
             <Route path="sponsors" element={<AdminSponsors />} />
             <Route path="criteria" element={<AdminCriteria />} />
             <Route path="criteria/publish" element={<AdminPublishing />} />
             <Route path="questions" element={<AdminQuestions />} />
+            <Route path="season-media" element={<AdminSeasonMedia />} />
+            <Route path="challenges" element={<AdminChallenges />} />
+            <Route path="teams" element={<AdminTeams />} />
           </Route>
 
           <Route

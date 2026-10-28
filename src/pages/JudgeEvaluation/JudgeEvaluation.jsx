@@ -4,7 +4,7 @@ import "./JudgeEvaluation.css";
 
 import { ApiError } from "../../api/client";
 import {
-  fetchJudgingCriteria,
+  fetchAllJudgingCriteria,
   publishCriterion,
   submitScores,
   unpublishCriterion,
@@ -314,8 +314,7 @@ export default function JudgeEvaluation() {
         setChallengeId(nextChallengeId);
         phase = "criteria";
 
-        const rawCriteria = await fetchJudgingCriteria({
-          challengeId: nextChallengeId,
+        const rawCriteria = await fetchAllJudgingCriteria({
           signal: controller.signal,
         });
         if (sequence !== loadSequence.current || controller.signal.aborted) {
@@ -663,7 +662,7 @@ export default function JudgeEvaluation() {
         const refreshSequence = publishRefreshSequence.current + 1;
         publishRefreshSequence.current = refreshSequence;
 
-        fetchJudgingCriteria({ challengeId })
+        fetchAllJudgingCriteria({})
           .then((rawCriteria) => {
             if (
               refreshSequence !== publishRefreshSequence.current ||
@@ -799,7 +798,7 @@ export default function JudgeEvaluation() {
           totalQuestions === 0 && (
             <div className="judge-eval-state" role="status">
               <p className="judge-eval-state-text">
-                {judgeEvaluation.criteriaNoQuestions}
+                {"No questions have been added to these criteria yet. Ask an organizer."}
               </p>
             </div>
           )}

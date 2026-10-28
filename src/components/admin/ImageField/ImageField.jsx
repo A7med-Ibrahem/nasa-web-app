@@ -8,7 +8,7 @@ import { toImageSrc } from "../../../utils/image";
 const MAX_FILE_BYTES = 20 * 1024 * 1024;
 const SVG_MAX_BYTES = 200 * 1024;
 const GIF_MAX_BYTES = 1024 * 1024;
-const MAX_RASTER_SIDE = 512;
+const DEFAULT_MAX_RASTER_SIDE = 512;
 
 const MIME_BY_EXTENSION = {
   png: "image/png",
@@ -84,7 +84,7 @@ function dataUrlBytes(dataUrl) {
   return Math.ceil((encoded.length * 3) / 4);
 }
 
-async function shrinkRaster(file) {
+async function shrinkRaster(file, maxDimension = DEFAULT_MAX_RASTER_SIDE) {
   const objectUrl = URL.createObjectURL(file);
 
   try {
@@ -96,9 +96,10 @@ async function shrinkRaster(file) {
       throw new Error("unreadable");
     }
 
+    const maxSide = Number.isFinite(maxDimension) && maxDimension > 0 ? maxDimension : DEFAULT_MAX_RASTER_SIDE;
     const scale = Math.min(
       1,
-      MAX_RASTER_SIDE / Math.max(naturalWidth, naturalHeight),
+      maxSide / Math.max(naturalWidth, naturalHeight),
     );
     const width = Math.max(1, Math.round(naturalWidth * scale));
     const height = Math.max(1, Math.round(naturalHeight * scale));
@@ -133,9 +134,10 @@ async function shrinkRaster(file) {
 /**
  * Image input with local processing.
  *
- * Rasters are re-encoded to fit 512 px on the longest side; SVG and GIF are
- * kept byte-for-byte within their own limits. The emitted value is always a
- * data URI, `null` after Remove, or the previous value when nothing changed.
+ * Rasters are re-encoded to fit 512 px on the longest side by default; SVG
+ * and GIF are kept byte-for-byte within their own limits. The emitted value
+ * is always a data URI, `null` after Remove, or the previous value when
+ * nothing changed.
  */
 export default function ImageField({
   id,
@@ -146,6 +148,7 @@ export default function ImageField({
   onChange,
   disabled = false,
   className = "",
+  maxDimension = DEFAULT_MAX_RASTER_SIDE,
 }) {
   const copy = adminData.common.image;
   const inputRef = useRef(null);
@@ -198,7 +201,7 @@ export default function ImageField({
       let message = copy.ready;
 
       if (kind === "raster") {
-        const result = await shrinkRaster(file);
+        const result = await shrinkRaster(file, maxDimension);
         dataUrl = result.dataUrl;
         message = copy.resized(
           result.width,

@@ -33,6 +33,14 @@ function positiveInteger(value) {
  * a valid challenge id prevents an unscoped response being presented as if it
  * belonged to the selected team.
  */
+export function fetchAllJudgingCriteria({ signal } = {}) {
+  return request("/judging/criteria", {
+    method: "GET",
+    auth: true,
+    signal,
+  });
+}
+
 export function fetchJudgingCriteria({ challengeId, signal } = {}) {
   const numericChallengeId = positiveInteger(challengeId);
 
