@@ -2,9 +2,10 @@
    Homepage content — single source of truth for the marketing homepage.
    --------------------------------------------------------------------------
    Hero, About and Current Event are static copy: the public API exposes no
-   endpoint for them. Top Challenges, Previous Events and Sponsors are rendered
-   from the API and keep only their headings/state copy here — never fixture
-   records.
+   endpoint for them. Previous Events and Sponsors are rendered from the API
+   and keep only their headings/state copy here — never fixture records.
+   Challenges are intentionally not rendered on the homepage; they live on
+   the dedicated /challenges page.
 
    Core Team members are not available publicly, so the section is guarded off
    by SHOW_CORE_TEAM. The component and its fixture are kept for when the
@@ -109,27 +110,6 @@ export const currentEvent = {
   logo: site.logo,
   logoAlt: site.logoAlt,
   links: { details: "/events/nasa-space-apps-hurghada-2026" },
-};
-
-/* --------------------------------------------------------------------------
-   Top challenges (GET /challenges)
-   -------------------------------------------------------------------------- */
-
-export const challenges = {
-  eyebrow: "TOP CHALLENGES",
-  title: "Explore the Challenges",
-  description:
-    "Discover real-world problems and use the power of space data to create innovative solutions.",
-  action: { label: "View All Challenges", href: "/challenges", icon: "arrow" },
-  cardAction: "Explore Challenge",
-  excerptLength: 160,
-  states: {
-    loading: "Loading challenges...",
-    errorTitle: "Couldn't load challenges",
-    retry: "Retry",
-    emptyTitle: "No challenges yet",
-    emptyDescription: "Published challenges will appear here.",
-  },
 };
 
 /* --------------------------------------------------------------------------

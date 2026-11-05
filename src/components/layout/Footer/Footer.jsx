@@ -4,6 +4,7 @@ import "./Footer.css";
 
 import { footer, site } from "../../../data/site";
 import { socialIcons } from "../../common/Icons/iconRegistry";
+import { ExternalLinkIcon, MailIcon } from "../../common/Icons/Icons";
 import { useRevealGroup } from "../../../hooks/useReveal";
 
 function FooterBrand() {
@@ -38,12 +39,38 @@ export default function Footer() {
   return (
     <footer className="footer" ref={footerRef}>
       <div className="container footer-inner">
-        <div className="footer-top">
-          <FooterBrand />
+        <div className="footer-main">
+          <div className="footer-about" data-reveal-item>
+            <FooterBrand />
 
-          <nav className="footer-nav" aria-label="Footer navigation" data-reveal-item>
-            <ul className="footer-nav-list">
-              {footer.links.map((link) => (
+            <h2 className="footer-heading footer-about-heading">
+              {footer.about.title}
+            </h2>
+
+            <p className="footer-about-text">{footer.about.description}</p>
+
+            <a
+              className="footer-event-link"
+              href={footer.about.eventLink.href}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span>{footer.about.eventLink.label}</span>
+              <ExternalLinkIcon size={14} />
+            </a>
+          </div>
+
+          <nav
+            className="footer-column"
+            aria-labelledby="footer-quick-links-title"
+            data-reveal-item
+          >
+            <h2 id="footer-quick-links-title" className="footer-heading">
+              {footer.quickLinksTitle}
+            </h2>
+
+            <ul className="footer-link-list">
+              {footer.quickLinks.map((link) => (
                 <li key={link.id}>
                   <Link to={link.href} className="footer-nav-link">
                     {link.label}
@@ -53,28 +80,46 @@ export default function Footer() {
             </ul>
           </nav>
 
-          <ul className="footer-socials" data-reveal-item>
-            {footer.socials.map((social) => {
-              const Icon = socialIcons[social.icon];
-              if (!Icon) return null;
+          <div className="footer-column" data-reveal-item>
+            <h2 className="footer-heading">{footer.contactTitle}</h2>
 
-              return (
-                <li key={social.id}>
-                  <a
-                    href={social.href}
-                    className="footer-social-link"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Icon />
-                    <span className="visually-hidden">
-                      {site.name} on {social.label}
-                    </span>
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
+            <ul className="footer-link-list">
+              <li>
+                <a
+                  className="footer-contact-link"
+                  href={`mailto:${footer.contact.email}`}
+                >
+                  <MailIcon size={16} />
+                  <span>{footer.contact.email}</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div className="footer-column" data-reveal-item>
+            <h2 className="footer-heading">{footer.socialTitle}</h2>
+
+            <ul className="footer-socials">
+              {footer.socials.map((social) => {
+                const Icon = socialIcons[social.icon];
+                if (!Icon) return null;
+
+                return (
+                  <li key={social.id}>
+                    <a
+                      href={social.href}
+                      className="footer-social-link"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${site.name} on ${social.label}`}
+                    >
+                      <Icon />
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </div>
 
         <div className="footer-bottom" data-reveal-item>

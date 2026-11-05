@@ -47,43 +47,45 @@ export const footer = {
     logoAlt: site.logoAlt,
     href: "/",
   },
-  links: [
+  about: {
+    title: "About",
+    description:
+      "NASA Space Apps Hurghada brings together innovators, creators, and problem-solvers to tackle real-world challenges using open NASA data.",
+    eventLink: {
+      label: "NASA Space Apps Challenge — Hurghada Local Event",
+      href: "https://www.spaceappschallenge.org/2026/local-events/hurghada/",
+    },
+  },
+  quickLinksTitle: "Quick Links",
+  quickLinks: [
     { id: "home", label: "Home", href: "/" },
     { id: "challenges", label: "Challenges", href: "/challenges" },
-    { id: "standings", label: "Live Standings", href: "/live-standings" },
-    { id: "teams", label: "Teams", href: "/teams" },
     { id: "sponsors", label: "Sponsors", href: "/sponsors" },
-    { id: "season-media", label: "Season Media", href: "/season-media" },
-    {
-      id: "game-leaderboard",
-      label: "Game Leaderboard",
-      href: "/leaderboard/game",
-    },
+    { id: "season-media", label: "Previous Events", href: "/season-media" },
   ],
+  contactTitle: "Contact",
+  contact: {
+    email: "info@spaceappshurghada.com",
+  },
+  socialTitle: "Follow Us",
   socials: [
     {
-      id: "x",
-      label: "X",
-      href: "https://x.com/",
-      icon: "x",
+      id: "instagram",
+      label: "Instagram",
+      href: "https://www.instagram.com/spaceappshurghada/",
+      icon: "instagram",
+    },
+    {
+      id: "facebook",
+      label: "Facebook",
+      href: "https://www.facebook.com/spaceappshurghada",
+      icon: "facebook",
     },
     {
       id: "linkedin",
       label: "LinkedIn",
-      href: "https://www.linkedin.com/",
+      href: "https://www.linkedin.com/company/spaceappshurghada/",
       icon: "linkedin",
-    },
-    {
-      id: "instagram",
-      label: "Instagram",
-      href: "https://www.instagram.com/",
-      icon: "instagram",
-    },
-    {
-      id: "youtube",
-      label: "YouTube",
-      href: "https://www.youtube.com/",
-      icon: "youtube",
     },
   ],
   bottomNote: "Space • Science • Technology",

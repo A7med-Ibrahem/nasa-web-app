@@ -12,6 +12,7 @@ import {
   ChartIcon,
   CrownIcon,
   ExternalLinkIcon,
+  FacebookIcon,
   GlobeIcon,
   InstagramIcon,
   LightbulbIcon,
@@ -23,8 +24,6 @@ import {
   TrendDownIcon,
   TrendUpIcon,
   UsersIcon,
-  XIcon,
-  YouTubeIcon,
 } from "./Icons";
 
 export const actionIcons = {
@@ -52,10 +51,9 @@ export const standingsIcons = {
 };
 
 export const socialIcons = {
-  x: XIcon,
-  linkedin: LinkedInIcon,
   instagram: InstagramIcon,
-  youtube: YouTubeIcon,
+  facebook: FacebookIcon,
+  linkedin: LinkedInIcon,
 };
 
 /* Feature icons for the login page, keyed by the string `icon` values in
