@@ -153,6 +153,36 @@
   background-color: var(--nasa-red);
 }
 
+/* ---------- Change password (only rendered while a session exists) ---------- */
+
+.navbar-account {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: var(--radius-pill);
+  color: #dfe7f5;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--ease), color var(--ease);
+}
+
+.navbar-account svg {
+  flex: none;
+}
+
+.navbar-account:hover {
+  background-color: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+}
+
+.navbar-account[aria-current="page"] {
+  background-color: rgba(74, 158, 255, 0.18);
+  color: #ffffff;
+}
+
 /* ---------- Sign out (only rendered while a session exists) ---------- */
 
 .navbar-signout {
@@ -262,6 +292,15 @@
   .navbar-links {
     gap: 18px;
   }
+
+  /* Keep the bar on one row: the account action becomes a labelled icon. */
+  .navbar-account {
+    padding: 8px;
+  }
+
+  .navbar-account-text {
+    display: none;
+  }
 }
 
 @media (max-width: 1024px) {
@@ -278,7 +317,8 @@
     display: none;
   }
 
-  /* The desktop sign-out moves into the mobile panel below. */
+  /* The desktop account and sign-out actions move into the mobile panel. */
+  .navbar-account,
   .navbar-signout {
     display: none;
   }

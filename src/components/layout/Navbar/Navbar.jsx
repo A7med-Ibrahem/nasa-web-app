@@ -3,11 +3,12 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 
 import { useAuth } from "../../../auth/useAuth";
+import { accountData } from "../../../data/accountData";
 import { staffData } from "../../../data/staffData";
 import { navigationLinks, site } from "../../../data/site";
 import useEscapeKey from "../../../hooks/useEscapeKey";
 import { useRevealGroup } from "../../../hooks/useReveal";
-import { CloseIcon, MenuIcon } from "../../common/Icons/Icons";
+import { CloseIcon, LockIcon, MenuIcon } from "../../common/Icons/Icons";
 
 /*
  * A hash href ("#section") is an in-page anchor rather than a route, so it
@@ -122,6 +123,19 @@ export default function Navbar() {
           </Link>
 
           {isAuthenticated && (
+            <NavLink
+              to="/account/password"
+              className="navbar-account"
+              aria-label={accountData.nav.changePassword}
+            >
+              <LockIcon size={14} />
+              <span className="navbar-account-text">
+                {accountData.nav.changePassword}
+              </span>
+            </NavLink>
+          )}
+
+          {isAuthenticated && (
             <button type="button" className="navbar-signout" onClick={handleSignOut}>
               Sign out
             </button>
@@ -169,6 +183,18 @@ export default function Navbar() {
               Live Standings
             </Link>
           </li>
+          {isAuthenticated && (
+            <li>
+              <NavLink
+                to="/account/password"
+                className="navbar-mobile-link"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <LockIcon size={16} />
+                {accountData.nav.changePassword}
+              </NavLink>
+            </li>
+          )}
           {isAuthenticated && (
             <li>
               <button

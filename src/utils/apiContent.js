@@ -189,6 +189,33 @@ function compareMedia(a, b) {
   });
 }
 
+/**
+ * Normalises the public core-team response without inventing members.
+ *
+ * The API already returns active members only, in display order. Records
+ * without a usable name are dropped rather than rendered with placeholder
+ * identities; a missing photo or member type simply removes that element.
+ */
+export function normaliseCoreTeamMembers(members) {
+  if (!Array.isArray(members)) {
+    return [];
+  }
+
+  return members
+    .filter((member) => member && typeof member === "object")
+    .map((member, index) => ({
+      key:
+        member.staffId === null || member.staffId === undefined
+          ? `member-${index}`
+          : `staff-${member.staffId}`,
+      staffId: member.staffId ?? null,
+      name: textValue(member.fullName ?? member.name),
+      memberType: textValue(member.memberType ?? member.role),
+      photo: member.photo ?? member.image ?? null,
+    }))
+    .filter((member) => member.name);
+}
+
 /** Orders season media newest season first, then by `displayOrder` ascending. */
 export function orderSeasonMedia(items) {
   if (!Array.isArray(items)) {

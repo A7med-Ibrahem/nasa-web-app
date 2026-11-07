@@ -128,11 +128,11 @@ Loaded from the API:
 
 - Top Challenges — `GET /challenges`
 - Previous Events — `GET /seasonmedia`
+- Core Team — `GET /core-team`
 - Sponsors — `GET /sponsors`
 
-The Core Team section is disabled by `SHOW_CORE_TEAM` because no public
-core-team endpoint exists. The component and fixture are kept for when real
-member data becomes available.
+The Core Team section renders only the active members returned by the public
+endpoint; an empty response shows an empty state and never a fixture.
 
 ## Project Structure
 
@@ -144,6 +144,7 @@ src/
 │   ├── auth.js              Staff/participant login, /auth/me
 │   ├── challenges.js
 │   ├── teams.js             Search, public detail, staff detail
+│   ├── coreTeam.js          Public active core-team members
 │   ├── sponsors.js
 │   ├── seasonMedia.js
 │   ├── game.js              Questions, answers, game leaderboard

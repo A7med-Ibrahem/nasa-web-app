@@ -2,23 +2,15 @@
    Homepage content — single source of truth for the marketing homepage.
    --------------------------------------------------------------------------
    Hero, About and Current Event are static copy: the public API exposes no
-   endpoint for them. Previous Events and Sponsors are rendered from the API
-   and keep only their headings/state copy here — never fixture records.
-   Challenges are intentionally not rendered on the homepage; they live on
-   the dedicated /challenges page.
-
-   Core Team members are not available publicly, so the section is guarded off
-   by SHOW_CORE_TEAM. The component and its fixture are kept for when the
-   backend can supply real people.
+   endpoint for them. Previous Events, Core Team and Sponsors are rendered
+   from the API and keep only their headings/state copy here — never fixture
+   records. Challenges are intentionally not rendered on the homepage; they
+   live on the dedicated /challenges page.
    ========================================================================== */
 
 import { site } from "./site";
 import heroEarthImage from "../assets/images/hero-earth.jpeg";
 import aboutImage from "../assets/images/about-space.jpeg";
-
-/* No public core-team endpoint exists. Never render placeholder names on the
-   real site; flip this only when real member data is available. */
-export const SHOW_CORE_TEAM = false;
 
 /* --------------------------------------------------------------------------
    Hero
@@ -132,10 +124,10 @@ export const previousEvents = {
 };
 
 /* --------------------------------------------------------------------------
-   Core team
+   Core team (GET /core-team)
    --------------------------------------------------------------------------
-   Fixture retained for the component; not rendered while SHOW_CORE_TEAM is
-   false because the public API exposes no core-team data.
+   Members always come from the public API; this module only owns the section
+   copy and its loading/error/empty states.
    -------------------------------------------------------------------------- */
 
 export const coreTeam = {
@@ -143,38 +135,13 @@ export const coreTeam = {
   title: "The people behind the mission",
   description:
     "A passionate team of organizers, mentors, and volunteers working to make NASA Space Apps a success.",
-  members: [
-    {
-      id: "ahmed-hassan",
-      name: "Ahmed Hassan",
-      role: "Event Lead",
-      image: null,
-    },
-    {
-      id: "sarah-mohamed",
-      name: "Sarah Mohamed",
-      role: "Tech Lead",
-      image: null,
-    },
-    {
-      id: "omar-el-sayed",
-      name: "Omar El-Sayed",
-      role: "Community Lead",
-      image: null,
-    },
-    {
-      id: "nour-ahmed",
-      name: "Nour Ahmed",
-      role: "Partnerships",
-      image: null,
-    },
-    {
-      id: "yousef-ali",
-      name: "Yousef Ali",
-      role: "Operations",
-      image: null,
-    },
-  ],
+  states: {
+    loading: "Loading core team members...",
+    errorTitle: "Couldn't load the core team",
+    emptyTitle: "Core team coming soon",
+    emptyMessage: "The team members for this edition will be announced soon.",
+    retry: "Retry",
+  },
 };
 
 /* --------------------------------------------------------------------------

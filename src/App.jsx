@@ -23,6 +23,9 @@ import Teams from "./pages/Teams/Teams";
    anonymous visitor never downloads the staff, judge, participant or admin
    dashboards. One Suspense boundary (below) shows the existing DataState
    spinner while the requested chunk arrives. */
+const ChangePassword = lazy(() =>
+  import("./pages/ChangePassword/ChangePassword"),
+);
 const JudgeDashboard = lazy(() =>
   import("./pages/JudgeDashboard/JudgeDashboard"),
 );
@@ -110,6 +113,16 @@ function App() {
           <Route path="season-media" element={<SeasonMedia />} />
           <Route path="leaderboard/game" element={<GameLeaderboard />} />
           <Route path="live-standings" element={<LiveStandings />} />
+
+          {/* Any signed-in role may change its own password. */}
+          <Route
+            path="account/password"
+            element={
+              <RequireAuth>
+                <ChangePassword />
+              </RequireAuth>
+            }
+          />
 
           <Route
             path="admin"

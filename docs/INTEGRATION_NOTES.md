@@ -34,6 +34,7 @@
 
 ## Route table by role
 Public: /, /challenges, /challenges/:id, /teams, /teams/:id, /sponsors, /season-media, /leaderboard/game, /live-standings, /login
+Any authenticated role: /account/password
 Judge (auth): /judge, /judge/teams/:teamId/evaluate
 Participant (auth): /participant, /participant/dashboard, /participant/game, /participant/requests
 Staff (auth): /staff, /staff/requests, /staff/attendance, /staff/attendance/check-in (CoreTeam), /staff/teams
