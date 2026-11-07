@@ -116,6 +116,11 @@ export const previousEvents = {
   action: { label: "View all season media", href: "/season-media" },
   linkLabel: "View event",
   newTabHint: "(opens in a new tab)",
+  carousel: {
+    regionLabel: "Previous events carousel",
+    previous: "Show previous events",
+    next: "Show more events",
+  },
   states: {
     loading: "Loading previous events...",
     errorTitle: "Couldn't load previous events",
