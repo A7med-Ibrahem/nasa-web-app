@@ -7,18 +7,14 @@ import {
   fetchCriteriaAdmin,
   updateCriterion,
 } from "../../api/admin/criteria";
-import { fetchChallenges } from "../../api/challenges";
 import { adminData } from "../../data/adminData";
 import { site } from "../../data/site";
-import useApiResource from "../../hooks/useApiResource";
 import { codeKey, loadMessage, statusCode } from "../../utils/adminErrors";
-import { formatNumber, parseDecimalInput, toFiniteNumber } from "../../utils/numbers";
+import { formatNumber, toFiniteNumber } from "../../utils/numbers";
 
 import AdminPageHeader from "../../components/admin/AdminPageHeader/AdminPageHeader";
 import ConfirmDialog from "../../components/admin/ConfirmDialog/ConfirmDialog";
 import {
-  AdminNumberField,
-  AdminSelectField,
   AdminTextareaField,
   AdminTextField,
 } from "../../components/admin/Fields/Fields";
@@ -66,11 +62,6 @@ function criterionErrorState(cause, { deleting = false } = {}) {
       return { form: copy.criterion_not_found, refresh: true };
     case "criterion_invalid":
       return { form: copy.criterion_invalid };
-    case "challenge_not_found":
-      return {
-        fields: { challengeId: copy.challenge_not_found },
-        refresh: true,
-      };
     case "question_invalid":
       return { form: copy.question_invalid };
     case "judging_no_scores":
@@ -104,9 +95,6 @@ function normalizeQuestionsForCompare(questions) {
 function CriterionFormDialog({
   mode,
   row,
-  defaultChallengeId,
-  challenges,
-  challengesStatus,
   saving,
   formError,
   fieldErrors,
@@ -120,23 +108,9 @@ function CriterionFormDialog({
     () => ({
       name: row?.name ?? "",
       description: row?.description ?? "",
-      maxScore:
-        row?.maxScore === null || row?.maxScore === undefined
-          ? ""
-          : String(row.maxScore),
-      weight:
-        row?.weight === null || row?.weight === undefined
-          ? "0"
-          : String(row.weight),
-      challengeId:
-        row?.challengeId === null || row?.challengeId === undefined
-          ? mode === "create"
-            ? defaultChallengeId || ""
-            : ""
-          : String(row.challengeId),
       questions: toQuestionDrafts(row?.questions),
     }),
-    [defaultChallengeId, mode, row],
+    [row],
   );
 
   const initialQuestionTexts = useMemo(
@@ -175,27 +149,6 @@ function CriterionFormDialog({
     [initial, values],
   );
 
-  const challengeOptions = useMemo(() => {
-    const options = challenges.map((challenge) => ({
-      value: String(challenge.challengeId),
-      label:
-        challenge.title || `Challenge ${challenge.challengeId}`,
-    }));
-
-    const current = values.challengeId;
-    if (current && !options.some((option) => option.value === current)) {
-      options.unshift({
-        value: current,
-        label: `Challenge ${current}`,
-      });
-    }
-
-    return [
-      { value: "", label: copy.noChallenge },
-      ...options,
-    ];
-  }, [challenges, copy.noChallenge, values.challengeId]);
-
   function setValue(key, value) {
     setValues((current) => ({ ...current, [key]: value }));
     setClientErrors((current) => ({ ...current, [key]: "" }));
@@ -203,23 +156,9 @@ function CriterionFormDialog({
 
   function validate() {
     const next = {};
-    const maxScore = parseDecimalInput(values.maxScore);
-    const weight = parseDecimalInput(values.weight);
 
     if (!values.name.trim()) {
       next.name = copy.validation.nameRequired;
-    }
-    if (!Number.isFinite(maxScore) || maxScore < 0) {
-      next.maxScore = copy.validation.maxScoreInvalid;
-    }
-    if (!Number.isFinite(weight) || weight < 0) {
-      next.weight = copy.validation.weightInvalid;
-    }
-    if (
-      values.challengeId !== "" &&
-      !/^[1-9]\d*$/.test(values.challengeId)
-    ) {
-      next.challengeId = copy.validation.challengeInvalid;
     }
     if (values.questions.some((question) => !question.text.trim())) {
       next.questions = copy.validation.questionEmpty;
@@ -242,10 +181,6 @@ function CriterionFormDialog({
     const payload = {
       name: values.name.trim(),
       description: values.description.trim() || null,
-      maxScore: parseDecimalInput(values.maxScore),
-      weight: parseDecimalInput(values.weight),
-      challengeId:
-        values.challengeId === "" ? null : Number(values.challengeId),
     };
 
     if (isEdit) {
@@ -305,47 +240,6 @@ function CriterionFormDialog({
           autoComplete="off"
         />
 
-        <AdminSelectField
-          id="criteria-challenge"
-          label={copy.challenge}
-          hint={
-            challengesStatus === "error"
-              ? adminData.criteria.states.challengesError
-              : copy.challengeHint
-          }
-          value={values.challengeId}
-          onChange={(event) => setValue("challengeId", event.target.value)}
-          error={errors.challengeId}
-          disabled={challengesStatus === "loading"}
-          options={challengeOptions}
-        />
-
-        <AdminNumberField
-          id="criteria-max-score"
-          label={copy.maxScore}
-          hint={copy.maxScoreHint}
-          value={values.maxScore}
-          onChange={(event) => setValue("maxScore", event.target.value)}
-          error={errors.maxScore}
-          required
-          min="0"
-          step="any"
-          inputMode="decimal"
-        />
-
-        <AdminNumberField
-          id="criteria-weight"
-          label={copy.weight}
-          hint={copy.weightHint}
-          value={values.weight}
-          onChange={(event) => setValue("weight", event.target.value)}
-          error={errors.weight}
-          required
-          min="0"
-          step="any"
-          inputMode="decimal"
-        />
-
         <div className="admin-form-span">
           <AdminTextareaField
             id="criteria-description"
@@ -379,7 +273,6 @@ function CriterionFormDialog({
 export default function AdminCriteria() {
   const copy = adminData.criteria;
 
-  const [challengeId, setChallengeId] = useState("");
   const [rows, setRows] = useState([]);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
@@ -399,13 +292,6 @@ export default function AdminCriteria() {
 
   const requestIdRef = useRef(0);
 
-  const challengesResource = useApiResource(fetchChallenges);
-  const challenges = useMemo(
-    () =>
-      Array.isArray(challengesResource.data) ? challengesResource.data : [],
-    [challengesResource.data],
-  );
-
   useEffect(() => {
     document.title = `${copy.title} — ${site.name}`;
   }, [copy.title]);
@@ -415,10 +301,7 @@ export default function AdminCriteria() {
     const runId = requestIdRef.current + 1;
     requestIdRef.current = runId;
 
-    fetchCriteriaAdmin({
-      challengeId: challengeId || undefined,
-      signal: controller.signal,
-    })
+    fetchCriteriaAdmin({ signal: controller.signal })
       .then((result) => {
         if (controller.signal.aborted || runId !== requestIdRef.current) {
           return;
@@ -440,7 +323,7 @@ export default function AdminCriteria() {
       });
 
     return () => controller.abort();
-  }, [challengeId, copy.states.errorTitle, reloadKey]);
+  }, [copy.states.errorTitle, reloadKey]);
 
   function handleRetry() {
     setStatus("loading");
@@ -450,13 +333,6 @@ export default function AdminCriteria() {
 
   function refreshList() {
     setReloadKey((current) => current + 1);
-  }
-
-  function updateChallenge(next) {
-    setChallengeId(next);
-    setStatus("loading");
-    setError("");
-    setRows([]);
   }
 
   function openCreate() {
@@ -670,56 +546,6 @@ export default function AdminCriteria() {
         />
       ) : null}
 
-      <section className="admin-criteria-filter" aria-label={copy.filter.challenge}>
-        <label className="admin-criteria-filter-field" htmlFor="criteria-challenge-filter">
-          <span className="admin-field-label">{copy.filter.challenge}</span>
-          <select
-            id="criteria-challenge-filter"
-            className="admin-input admin-select"
-            value={challengeId}
-            onChange={(event) => updateChallenge(event.target.value)}
-            disabled={challengesResource.status === "loading"}
-          >
-            <option value="">{adminData.common.allChallenges}</option>
-            {challenges.map((challenge) => (
-              <option
-                key={challenge.challengeId}
-                value={String(challenge.challengeId)}
-              >
-                {challenge.title || `Challenge ${challenge.challengeId}`}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        {challengesResource.status === "loading" ? (
-          <p className="admin-criteria-note">
-            {copy.states.challengesLoading}
-          </p>
-        ) : null}
-
-        {challengesResource.status === "error" ? (
-          <p className="admin-criteria-note admin-criteria-note--error" role="alert">
-            {copy.states.challengesError}
-            <button
-              type="button"
-              className="admin-criteria-link"
-              onClick={challengesResource.retry}
-            >
-              {adminData.common.retry}
-            </button>
-          </p>
-        ) : null}
-
-        {challengesResource.status === "ready" && challenges.length === 0 ? (
-          <p className="admin-criteria-note">
-            {copy.states.challengesEmpty}
-          </p>
-        ) : null}
-
-        <p className="admin-criteria-hint">{copy.filter.hint}</p>
-      </section>
-
       {status === "loading" ? (
         <DataState status="loading" title={copy.states.loading} tone="dark" compact />
       ) : null}
@@ -748,7 +574,7 @@ export default function AdminCriteria() {
             columns={columns}
             rows={rows}
             rowKey={(row) => row.criterionId}
-            emptyTitle={challengeId ? copy.states.empty : copy.states.emptyAll}
+            emptyTitle={copy.states.emptyAll}
             actionsHeader={copy.table.actions}
             actions={(row) => (
               <span className="admin-row-actions">
@@ -776,9 +602,6 @@ export default function AdminCriteria() {
         <CriterionFormDialog
           mode={formState.mode}
           row={formState.row}
-          defaultChallengeId={challengeId}
-          challenges={challenges}
-          challengesStatus={challengesResource.status}
           saving={saving}
           formError={formError}
           fieldErrors={fieldErrors}

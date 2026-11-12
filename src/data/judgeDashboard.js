@@ -91,63 +91,53 @@ export const judgeEvaluation = {
   eyebrow: "Judge Portal",
   title: "Evaluate Team",
   description:
-    "Score each reference question within its criterion's maximum. Comments are optional and are saved with your score.",
+    "Score each criterion once from 1.0 to its maximum. Submitting a criterion saves your score and publishes it for this team, so the live standings update immediately. Reference prompts are guidance only and are never scored. Comments are optional.",
   teamLabel: "Team",
   teamIdLabel: "Team ID",
   criteriaTitle: "Judging Criteria",
   criteriaLoading: "Loading judging criteria…",
   criteriaErrorTitle: "Could not load the judging criteria",
-  criteriaChallengeTitle: "Cannot determine this team's challenge",
-  criteriaChallengeText:
-    "The team details do not include a usable challenge, so judging criteria cannot be loaded safely.",
+  criteriaTeamIdTitle: "Invalid team link",
+  criteriaTeamIdText:
+    "This page needs a valid team ID. Return to the dashboard and choose a team.",
   criteriaTeamTitle: "Could not load this team",
   criteriaTeamText:
-    "The team details could not be loaded, so judging criteria cannot be matched safely.",
-  criteriaScopeTitle: "Judging criteria do not match this challenge",
-  criteriaScopeText:
-    "The server returned criteria that are not linked to this team's challenge. Scoring is disabled to avoid submitting scores for the wrong challenge.",
+    "The team details could not be loaded, so scoring is unavailable.",
   criteriaMalformedTitle: "Judging criteria are incomplete",
   criteriaMalformedText:
     "The server returned criteria without the fields required for safe scoring.",
-  criteriaEmpty: "No judging criteria are available for this team's challenge.",
-  criteriaNoQuestions:
-    "The criteria for this challenge do not contain any active questions to score.",
-  criterionNoQuestions: "No active questions are available for this criterion.",
-  scoreLabel: (maxScore) => `Score (0 – ${maxScore})`,
-  scorePlaceholder: "0",
+  criteriaEmpty: "No judging criteria are available yet.",
+  referencePromptsLabel: "Reference prompts",
+  scoreLabel: (maxScore) => `Score (1.0 – ${maxScore})`,
+  scorePlaceholder: "1.0",
   weightLabel: (weight) => `Weight ×${weight}`,
   commentLabel: "Comment",
   commentPlaceholder: "Optional comment",
-  skipLabel: "Skip this question for my scoring",
-  skippedBadge: "Skipped",
-  submit: "Submit Scores",
-  submitting: "Submitting…",
-  requiredError: "Enter a score for this question or mark it as skipped.",
-  rangeError: (maxScore) => `Score must be between 0 and ${maxScore}.`,
+  submitCriterion: "Submit & publish",
+  resubmitCriterion: "Update & republish",
+  submittingCriterion: "Submitting & publishing…",
+  resubmittingCriterion: "Updating & republishing…",
+  requiredError: "Enter a score for this criterion.",
+  rangeError: (maxScore) => `Score must be between 1 and ${maxScore}.`,
   numberError: "Scores must be numbers.",
-  successTitle: "Scores saved",
-  successText: (count) =>
-    `${count} ${count === 1 ? "score was" : "scores were"} accepted by the server.`,
+  submitSuccess:
+    "Your score is saved and published. The live standings have been updated.",
   teamMismatchError:
     "The selected team is still loading or has changed. Wait for it to finish loading and try again.",
-  noScoresError: "There are no question scores to submit.",
   unexpectedResponseError:
-    "The server did not return the saved scores. Reload the page to confirm before publishing.",
-  errorTitle: "Submission failed",
+    "The server did not return the updated criterion. Reload the page to confirm.",
+  criterionErrorTitle: "Could not submit this criterion",
   backToTeam: "Back to team",
   publishedBadge: "Published by you",
   notPublishedBadge: "Not published by you",
   publicationUnknownBadge: "Publication status unavailable",
   publishedJudgeCount: (count) =>
     count === 1 ? "1 judge published" : `${count} judges published`,
-  saveBeforePublish: "Save your scores to publish this criterion.",
-  publishHint: "Saving scores does not publish them.",
-  publishAction: "Publish my scores",
-  publishing: "Publishing…",
-  unpublishAction: "Unpublish my scores",
+  publishHint: "Submitting saves your score and publishes it for this team.",
+  unpublishAction: "Unpublish my score",
   unpublishing: "Unpublishing…",
-  publishSuccess: "Your scores for this criterion are now published.",
-  unpublishSuccess: "Your scores for this criterion are no longer published.",
+  unpublishSuccess:
+    "Your score for this criterion is no longer published for this team.",
   publishErrorTitle: "Could not update publication",
   publicationUnknownNote:
     "The server did not report your publication status for this criterion.",
@@ -155,8 +145,6 @@ export const judgeEvaluation = {
     "team.not_found": "This team no longer exists.",
     "criterion.not_found":
       "This criterion no longer exists. Reload the page and try again.",
-    "criterion_question.not_found":
-      "One of the questions no longer exists. Reload the page and try again.",
     "score.invalid":
       "One or more scores are invalid. Check the values and try again.",
     "judging.no_scores":

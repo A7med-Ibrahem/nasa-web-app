@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./AdminPublishing.css";
 
 import {
@@ -7,7 +7,7 @@ import {
   publishCriterionAdmin,
   unpublishCriterionAdmin,
 } from "../../api/admin/criteria";
-import { fetchChallenges } from "../../api/challenges";
+import { parseTeamId, searchTeams } from "../../api/teams";
 import { adminData } from "../../data/adminData";
 import { site } from "../../data/site";
 import useApiResource from "../../hooks/useApiResource";
@@ -29,6 +29,13 @@ function judgeLabel(judge) {
   return adminData.publishing.judgeOption(judge.fullName, judge.username);
 }
 
+function teamLabel(team) {
+  if (!team) {
+    return "";
+  }
+  return adminData.publishing.teamOption(team.name, team.username);
+}
+
 function publishingErrorState(cause) {
   const copy = adminData.publishing.errors;
   const code = codeKey(cause);
@@ -40,6 +47,8 @@ function publishingErrorState(cause) {
       return { message: copy.criterion_not_found, refresh: true };
     case "judge_not_found":
       return { message: copy.judge_not_found, refresh: true };
+    case "team_not_found":
+      return { message: copy.team_not_found, refresh: true };
     default:
       if (statusCode(cause) >= 500) {
         return { message: copy.publishGeneric };
@@ -51,8 +60,8 @@ function publishingErrorState(cause) {
 export default function AdminPublishing() {
   const copy = adminData.publishing;
 
-  const [challengeId, setChallengeId] = useState("");
   const [judgeId, setJudgeId] = useState("");
+  const [teamId, setTeamId] = useState("");
   const [rows, setRows] = useState([]);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
@@ -64,12 +73,18 @@ export default function AdminPublishing() {
   const [notice, setNotice] = useState(null);
 
   const requestIdRef = useRef(0);
+  const scopedTeamId = parseTeamId(teamId);
 
-  const challengesResource = useApiResource(fetchChallenges);
-  const challenges = useMemo(
-    () =>
-      Array.isArray(challengesResource.data) ? challengesResource.data : [],
-    [challengesResource.data],
+  const fetchTeams = useCallback(() => searchTeams(""), []);
+  const teamsResource = useApiResource(fetchTeams);
+  const teams = useMemo(() => {
+    const list = Array.isArray(teamsResource.data) ? teamsResource.data : [];
+    return list.filter((team) => parseTeamId(team?.teamId) !== null);
+  }, [teamsResource.data]);
+
+  const selectedTeam = useMemo(
+    () => teams.find((team) => String(team.teamId) === teamId) || null,
+    [teamId, teams],
   );
 
   const judgesResource = useApiResource(fetchJudgingJudges);
@@ -95,7 +110,7 @@ export default function AdminPublishing() {
     requestIdRef.current = runId;
 
     fetchCriteriaAdmin({
-      challengeId: challengeId || undefined,
+      teamId: scopedTeamId ?? undefined,
       signal: controller.signal,
     })
       .then((result) => {
@@ -119,7 +134,7 @@ export default function AdminPublishing() {
       });
 
     return () => controller.abort();
-  }, [challengeId, copy.states.errorTitle, reloadKey]);
+  }, [copy.states.errorTitle, reloadKey, scopedTeamId]);
 
   function handleRetry() {
     setStatus("loading");
@@ -131,11 +146,14 @@ export default function AdminPublishing() {
     setReloadKey((current) => current + 1);
   }
 
-  function updateChallenge(next) {
-    setChallengeId(next);
+  function handleTeamChange(event) {
+    setTeamId(event.target.value);
+    setRows([]);
     setStatus("loading");
     setError("");
-    setRows([]);
+    setNotice(null);
+    setConfirmState(null);
+    setActionError("");
   }
 
   function openConfirm(row, action) {
@@ -145,6 +163,8 @@ export default function AdminPublishing() {
       action,
       judgeId: judgeId || "",
       judgeLabel: selectedJudge ? judgeLabel(selectedJudge) : "",
+      teamId: scopedTeamId ?? undefined,
+      teamLabel: selectedTeam ? teamLabel(selectedTeam) : "",
     });
   }
 
@@ -161,65 +181,53 @@ export default function AdminPublishing() {
       return;
     }
 
-    const { row, action, judgeId: scopedJudgeId, judgeLabel: scopedLabel } =
-      confirmState;
+    const {
+      row,
+      action,
+      judgeId: scopedJudgeId,
+      judgeLabel: scopedLabel,
+      teamId: scopedTeam,
+      teamLabel: scopedTeamLabel,
+    } = confirmState;
     const publishing = action === "publish";
 
     setActionBusy(true);
     setActionError("");
 
     try {
-      if (publishing) {
-        await publishCriterionAdmin(row.criterionId, {
-          judgeId: scopedJudgeId || undefined,
-        });
+      const target = {
+        judgeId: scopedJudgeId || undefined,
+        teamId: scopedTeam || undefined,
+      };
+      const result = publishing
+        ? await publishCriterionAdmin(row.criterionId, target)
+        : await unpublishCriterionAdmin(row.criterionId, target);
+
+      if (result && result.criterionId === row.criterionId) {
+        setRows((current) =>
+          current.map((item) =>
+            item.criterionId === row.criterionId ? { ...item, ...result } : item,
+          ),
+        );
       } else {
-        await unpublishCriterionAdmin(row.criterionId, {
-          judgeId: scopedJudgeId || undefined,
-        });
+        refreshList();
       }
-
-      /* Show the new state immediately, then replace it with the server's
-         answer. The refetch is the source of truth for every count. */
-      setRows((current) =>
-        current.map((item) => {
-          if (item.criterionId !== row.criterionId) {
-            return item;
-          }
-
-          const previousCount = toFiniteNumber(item.publishedJudgeCount) ?? 0;
-          const nextCount = scopedJudgeId
-            ? Math.max(0, previousCount + (publishing ? 1 : -1))
-            : publishing
-              ? previousCount
-              : 0;
-
-          return {
-            ...item,
-            isPublished: publishing ? true : scopedJudgeId ? nextCount > 0 : false,
-            isPublishedByCaller: publishing
-              ? scopedJudgeId
-                ? item.isPublishedByCaller
-                : true
-              : false,
-            publishedJudgeCount: nextCount,
-            publishedAt: publishing
-              ? new Date().toISOString()
-              : nextCount > 0
-                ? item.publishedAt
-                : null,
-          };
-        }),
-      );
 
       setNotice({
         tone: "success",
         message: publishing
-          ? copy.notice.published(row.name, scopedLabel || "")
-          : copy.notice.unpublished(row.name, scopedLabel || ""),
+          ? copy.notice.published(
+              row.name,
+              scopedLabel || "",
+              scopedTeamLabel || "",
+            )
+          : copy.notice.unpublished(
+              row.name,
+              scopedLabel || "",
+              scopedTeamLabel || "",
+            ),
       });
       setConfirmState(null);
-      refreshList();
     } catch (cause) {
       const next = publishingErrorState(cause);
       setActionError(next.message || "");
@@ -298,28 +306,10 @@ export default function AdminPublishing() {
         />
       ) : null}
 
-      <section className="admin-publishing-filters" aria-label={copy.filters.challenge}>
-        <label className="admin-publishing-field" htmlFor="publishing-challenge-filter">
-          <span className="admin-field-label">{copy.filters.challenge}</span>
-          <select
-            id="publishing-challenge-filter"
-            className="admin-input admin-select"
-            value={challengeId}
-            onChange={(event) => updateChallenge(event.target.value)}
-            disabled={challengesResource.status === "loading"}
-          >
-            <option value="">{adminData.common.allChallenges}</option>
-            {challenges.map((challenge) => (
-              <option
-                key={challenge.challengeId}
-                value={String(challenge.challengeId)}
-              >
-                {challenge.title || `Challenge ${challenge.challengeId}`}
-              </option>
-            ))}
-          </select>
-        </label>
-
+      <section
+        className="admin-publishing-filters"
+        aria-label={copy.filters.scopeLabel}
+      >
         <label className="admin-publishing-field" htmlFor="publishing-judge-filter">
           <span className="admin-field-label">{copy.filters.judge}</span>
           <select
@@ -338,28 +328,25 @@ export default function AdminPublishing() {
           </select>
         </label>
 
-        <p className="admin-publishing-hint">{copy.filters.judgeHint}</p>
+        <label className="admin-publishing-field" htmlFor="publishing-team-filter">
+          <span className="admin-field-label">{copy.filters.team}</span>
+          <select
+            id="publishing-team-filter"
+            className="admin-input admin-select"
+            value={teamId}
+            onChange={handleTeamChange}
+            disabled={teamsResource.status === "loading"}
+          >
+            <option value="">{copy.filters.allTeams}</option>
+            {teams.map((team) => (
+              <option key={team.teamId} value={String(team.teamId)}>
+                {teamLabel(team)}
+              </option>
+            ))}
+          </select>
+        </label>
 
-        {challengesResource.status === "loading" ? (
-          <p className="admin-publishing-note">{copy.states.challengesLoading}</p>
-        ) : null}
-
-        {challengesResource.status === "error" ? (
-          <p className="admin-publishing-note admin-publishing-note--error" role="alert">
-            {copy.states.challengesError}
-            <button
-              type="button"
-              className="admin-publishing-link"
-              onClick={challengesResource.retry}
-            >
-              {adminData.common.retry}
-            </button>
-          </p>
-        ) : null}
-
-        {challengesResource.status === "ready" && challenges.length === 0 ? (
-          <p className="admin-publishing-note">{copy.states.challengesEmpty}</p>
-        ) : null}
+        <p className="admin-publishing-hint">{copy.filters.scopeHint}</p>
 
         {judgesResource.status === "loading" ? (
           <p className="admin-publishing-note">{copy.states.judgesLoading}</p>
@@ -380,6 +367,27 @@ export default function AdminPublishing() {
 
         {judgesResource.status === "ready" && judges.length === 0 ? (
           <p className="admin-publishing-note">{copy.states.judgesEmpty}</p>
+        ) : null}
+
+        {teamsResource.status === "loading" ? (
+          <p className="admin-publishing-note">{copy.states.teamsLoading}</p>
+        ) : null}
+
+        {teamsResource.status === "error" ? (
+          <p className="admin-publishing-note admin-publishing-note--error" role="alert">
+            {copy.states.teamsError}
+            <button
+              type="button"
+              className="admin-publishing-link"
+              onClick={teamsResource.retry}
+            >
+              {adminData.common.retry}
+            </button>
+          </p>
+        ) : null}
+
+        {teamsResource.status === "ready" && teams.length === 0 ? (
+          <p className="admin-publishing-note">{copy.states.teamsEmpty}</p>
         ) : null}
       </section>
 
@@ -405,7 +413,7 @@ export default function AdminPublishing() {
           columns={columns}
           rows={rows}
           rowKey={(row) => row.criterionId}
-          emptyTitle={challengeId ? copy.states.empty : copy.states.emptyAll}
+          emptyTitle={copy.states.emptyAll}
           actionsHeader={copy.table.actions}
           actions={(row) => (
             <span className="admin-row-actions">
@@ -440,10 +448,12 @@ export default function AdminPublishing() {
               ? copy.confirm.publishMessage(
                   confirmState.row.name,
                   confirmState.judgeLabel,
+                  confirmState.teamLabel,
                 )
               : copy.confirm.unpublishMessage(
                   confirmState.row.name,
                   confirmState.judgeLabel,
+                  confirmState.teamLabel,
                 )
           }
           confirmLabel={

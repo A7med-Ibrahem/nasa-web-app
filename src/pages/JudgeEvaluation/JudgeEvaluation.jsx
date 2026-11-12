@@ -4,39 +4,31 @@ import "./JudgeEvaluation.css";
 
 import { ApiError } from "../../api/client";
 import {
-  fetchAllJudgingCriteria,
-  publishCriterion,
-  submitScores,
+  fetchJudgingCriteria,
+  submitCriterionScore,
   unpublishCriterion,
 } from "../../api/judging";
-import { fetchTeam, getTeamChallengeId } from "../../api/teams";
+import { fetchTeam } from "../../api/teams";
 import { judgeDashboard, judgeEvaluation } from "../../data/judgeDashboard";
 import { site } from "../../data/site";
 import { useRevealGroup } from "../../hooks/useReveal";
 
-import { ArrowLeftIcon, CheckIcon, ScaleIcon } from "../../components/common/Icons/Icons";
+import { ArrowLeftIcon, ScaleIcon } from "../../components/common/Icons/Icons";
+
+const MIN_SCORE = 1;
 
 function toPositiveInteger(value) {
   const numeric = Number(value);
   return Number.isInteger(numeric) && numeric > 0 ? numeric : null;
 }
 
-function questionKey(criterionId, criterionQuestionId) {
-  return `${criterionId}:${criterionQuestionId}`;
+function scoreInputId(criterionId) {
+  return `score-criterion-${criterionId}`;
 }
 
-function scoreInputId(key) {
-  return `score-${key.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
-}
-
-function reviewCriteria(rawCriteria, challengeId) {
+function reviewCriteria(rawCriteria) {
   if (!Array.isArray(rawCriteria)) {
     return { criteria: [], error: "malformed" };
-  }
-
-  const expectedChallengeId = toPositiveInteger(challengeId);
-  if (expectedChallengeId === null) {
-    return { criteria: [], error: "challenge" };
   }
 
   const criteria = [];
@@ -53,25 +45,10 @@ function reviewCriteria(rawCriteria, challengeId) {
     if (
       criterionId === null ||
       !Number.isFinite(maxScore) ||
-      maxScore < 0 ||
+      maxScore <= 0 ||
       seenCriteria.has(criterionId)
     ) {
       return { criteria: [], error: "malformed" };
-    }
-
-    if (
-      Object.prototype.hasOwnProperty.call(rawCriterion, "challengeId") &&
-      rawCriterion.challengeId !== null
-    ) {
-      const criterionChallengeId = toPositiveInteger(rawCriterion.challengeId);
-
-      if (criterionChallengeId === null) {
-        return { criteria: [], error: "scope" };
-      }
-
-      if (criterionChallengeId !== expectedChallengeId) {
-        continue;
-      }
     }
 
     const questions = [];
@@ -81,59 +58,27 @@ function reviewCriteria(rawCriteria, challengeId) {
         return { criteria: [], error: "malformed" };
       }
 
-      const seenQuestions = new Set();
-
-      for (let index = 0; index < rawCriterion.questions.length; index += 1) {
-        const rawQuestion = rawCriterion.questions[index];
-
+      rawCriterion.questions.forEach((rawQuestion, index) => {
         if (!rawQuestion || typeof rawQuestion !== "object") {
-          return { criteria: [], error: "malformed" };
+          return;
         }
 
-        const criterionQuestionId = toPositiveInteger(
-          rawQuestion.criterionQuestionId,
-        );
-
-        if (criterionQuestionId === null) {
-          return { criteria: [], error: "malformed" };
-        }
-
-        if (
-          rawQuestion.criterionId !== undefined &&
-          rawQuestion.criterionId !== null
-        ) {
-          const questionCriterionId = toPositiveInteger(rawQuestion.criterionId);
-
-          if (questionCriterionId === null || questionCriterionId !== criterionId) {
-            return { criteria: [], error: "scope" };
-          }
-        }
-
-        if (seenQuestions.has(criterionQuestionId)) {
-          return { criteria: [], error: "malformed" };
-        }
-
-        seenQuestions.add(criterionQuestionId);
-
-        if (rawQuestion.isActive === false) {
-          continue;
+        const text = String(rawQuestion.text ?? "").trim();
+        if (!text) {
+          return;
         }
 
         const displayOrder = Number(rawQuestion.displayOrder);
 
         questions.push({
-          ...rawQuestion,
-          criterionId,
-          criterionQuestionId,
+          text,
           displayOrder: Number.isFinite(displayOrder) ? displayOrder : index,
         });
-      }
+      });
     }
 
     questions.sort(
-      (first, second) =>
-        first.displayOrder - second.displayOrder ||
-        first.criterionQuestionId - second.criterionQuestionId,
+      (first, second) => first.displayOrder - second.displayOrder,
     );
 
     seenCriteria.add(criterionId);
@@ -162,26 +107,6 @@ function reviewCriteria(rawCriteria, challengeId) {
   return { criteria, error: null };
 }
 
-function blockedCriteriaCopy(reason) {
-  switch (reason) {
-    case "challenge":
-      return {
-        title: judgeEvaluation.criteriaChallengeTitle,
-        text: judgeEvaluation.criteriaChallengeText,
-      };
-    case "scope":
-      return {
-        title: judgeEvaluation.criteriaScopeTitle,
-        text: judgeEvaluation.criteriaScopeText,
-      };
-    default:
-      return {
-        title: judgeEvaluation.criteriaMalformedTitle,
-        text: judgeEvaluation.criteriaMalformedText,
-      };
-  }
-}
-
 function describeApiError(error, fallback) {
   if (!(error instanceof ApiError)) {
     return fallback;
@@ -199,14 +124,6 @@ function describeApiError(error, fallback) {
   return error.message || fallback;
 }
 
-function questionKeys(criteria) {
-  return criteria.flatMap((criterion) =>
-    criterion.questions.map((question) =>
-      questionKey(criterion.criterionId, question.criterionQuestionId),
-    ),
-  );
-}
-
 export default function JudgeEvaluation() {
   const { teamId: teamIdParam } = useParams();
   const teamId = toPositiveInteger(teamIdParam);
@@ -220,29 +137,26 @@ export default function JudgeEvaluation() {
   const [criteriaErrorTitle, setCriteriaErrorTitle] = useState(
     judgeEvaluation.criteriaErrorTitle,
   );
-  const [challengeId, setChallengeId] = useState(null);
 
   const [team, setTeam] = useState(null);
   const [teamStatus, setTeamStatus] = useState("loading");
 
   const [values, setValues] = useState({});
   const [comments, setComments] = useState({});
-  const [skips, setSkips] = useState({});
   const [fieldErrors, setFieldErrors] = useState({});
   const [formError, setFormError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(null);
-  const [savedCriteria, setSavedCriteria] = useState(() => new Set());
-  const [publishStates, setPublishStates] = useState({});
+  const [criterionStates, setCriterionStates] = useState({});
+  const [criterionPending, setCriterionPending] = useState({});
 
   const teamIdRef = useRef(teamId);
-  teamIdRef.current = teamId;
 
   const loadSequence = useRef(0);
-  const submitSequence = useRef(0);
-  const publishRefreshSequence = useRef(0);
-  const submissionPending = useRef(false);
-  const publicationPending = useRef(new Set());
+  const pendingCriteria = useRef(new Set());
+  const criterionSequences = useRef(new Map());
+
+  useEffect(() => {
+    teamIdRef.current = teamId;
+  }, [teamId]);
 
   useEffect(() => {
     document.title = `${judgeEvaluation.title} — ${site.name}`;
@@ -253,35 +167,8 @@ export default function JudgeEvaluation() {
     const controller = new AbortController();
     const sequence = loadSequence.current + 1;
     loadSequence.current = sequence;
-    submitSequence.current += 1;
-    publishRefreshSequence.current += 1;
-    submissionPending.current = false;
-    publicationPending.current.clear();
-
-    setTeam(null);
-    setTeamStatus("loading");
-    setCriteria([]);
-    setCriteriaStatus("loading");
-    setCriteriaError("");
-    setCriteriaErrorTitle(judgeEvaluation.criteriaErrorTitle);
-    setChallengeId(null);
-    setValues({});
-    setComments({});
-    setSkips({});
-    setFieldErrors({});
-    setFormError("");
-    setSubmitted(null);
-    setIsSubmitting(false);
-    setSavedCriteria(new Set());
-    setPublishStates({});
-
-    if (teamId === null) {
-      setTeamStatus("error");
-      setCriteriaStatus("error");
-      setCriteriaErrorTitle(judgeEvaluation.criteriaChallengeTitle);
-      setCriteriaError(judgeEvaluation.criteriaChallengeText);
-      return () => controller.abort();
-    }
+    pendingCriteria.current.clear();
+    criterionSequences.current.clear();
 
     async function loadTeamAndCriteria() {
       let phase = "team";
@@ -302,39 +189,31 @@ export default function JudgeEvaluation() {
 
         setTeam(detail);
         setTeamStatus("ready");
-
-        const nextChallengeId = getTeamChallengeId(detail);
-        if (nextChallengeId === null) {
-          setCriteriaStatus("error");
-          setCriteriaErrorTitle(judgeEvaluation.criteriaChallengeTitle);
-          setCriteriaError(judgeEvaluation.criteriaChallengeText);
-          return;
-        }
-
-        setChallengeId(nextChallengeId);
         phase = "criteria";
 
-        const rawCriteria = await fetchAllJudgingCriteria({
+        const rawCriteria = await fetchJudgingCriteria({
+          teamId,
           signal: controller.signal,
         });
         if (sequence !== loadSequence.current || controller.signal.aborted) {
           return;
         }
 
-        const reviewed = reviewCriteria(rawCriteria, nextChallengeId);
+        const reviewed = reviewCriteria(rawCriteria);
         if (reviewed.error) {
-          const copy = blockedCriteriaCopy(reviewed.error);
           setCriteria([]);
           setCriteriaStatus("error");
-          setCriteriaErrorTitle(copy.title);
-          setCriteriaError(copy.text);
+          setCriteriaErrorTitle(judgeEvaluation.criteriaMalformedTitle);
+          setCriteriaError(judgeEvaluation.criteriaMalformedText);
           return;
         }
 
         setCriteria(reviewed.criteria);
         setCriteriaStatus("ready");
         setValues(
-          Object.fromEntries(questionKeys(reviewed.criteria).map((key) => [key, ""])),
+          Object.fromEntries(
+            reviewed.criteria.map((criterion) => [criterion.criterionId, ""]),
+          ),
         );
       } catch (error) {
         if (error?.name === "AbortError" || controller.signal.aborted) {
@@ -367,354 +246,327 @@ export default function JudgeEvaluation() {
       }
     }
 
-    loadTeamAndCriteria();
+    const resetTimer = setTimeout(() => {
+      setTeam(null);
+      setTeamStatus("loading");
+      setCriteria([]);
+      setCriteriaStatus("loading");
+      setCriteriaError("");
+      setCriteriaErrorTitle(judgeEvaluation.criteriaErrorTitle);
+      setValues({});
+      setComments({});
+      setFieldErrors({});
+      setFormError("");
+      setCriterionStates({});
+      setCriterionPending({});
 
-    return () => controller.abort();
+      if (teamId === null) {
+        setTeamStatus("error");
+        setCriteriaStatus("error");
+        setCriteriaErrorTitle(judgeEvaluation.criteriaTeamIdTitle);
+        setCriteriaError(judgeEvaluation.criteriaTeamIdText);
+        return;
+      }
+
+      loadTeamAndCriteria();
+    }, 0);
+
+    return () => {
+      clearTimeout(resetTimer);
+      controller.abort();
+    };
   }, [teamId]);
 
-  const totalQuestions = useMemo(
-    () =>
-      criteria.reduce(
-        (count, criterion) => count + criterion.questions.length,
-        0,
-      ),
-    [criteria],
-  );
-
-  const clearFieldError = useCallback((key) => {
+  const clearFieldError = useCallback((criterionId) => {
     setFieldErrors((previous) => {
-      if (!previous[key]) {
+      if (!previous[criterionId]) {
         return previous;
       }
       const next = { ...previous };
-      delete next[key];
+      delete next[criterionId];
       return next;
     });
   }, []);
 
-  const markCriterionUnsaved = useCallback((key) => {
-    const criterionId = toPositiveInteger(String(key).split(":")[0]);
+  const clearCriterionState = useCallback((criterionId) => {
+    setCriterionStates((previous) => {
+      if (!previous[criterionId]) {
+        return previous;
+      }
+      const next = { ...previous };
+      delete next[criterionId];
+      return next;
+    });
+  }, []);
 
-    if (criterionId === null) {
+  const nextCriterionSequence = useCallback((criterionId) => {
+    const sequence = (criterionSequences.current.get(criterionId) ?? 0) + 1;
+    criterionSequences.current.set(criterionId, sequence);
+    return sequence;
+  }, []);
+
+  const clearPendingCriterion = useCallback((criterionId, sequence) => {
+    if (criterionSequences.current.get(criterionId) !== sequence) {
       return;
     }
 
-    setSavedCriteria((previous) => {
-      if (!previous.has(criterionId)) {
+    pendingCriteria.current.delete(criterionId);
+    setCriterionPending((previous) => {
+      if (!previous[criterionId]) {
         return previous;
       }
-      const next = new Set(previous);
-      next.delete(criterionId);
+      const next = { ...previous };
+      delete next[criterionId];
       return next;
     });
   }, []);
 
   const handleValueChange = useCallback(
-    (key, value) => {
-      setValues((previous) => ({ ...previous, [key]: value }));
-      setSubmitted(null);
-      clearFieldError(key);
-      markCriterionUnsaved(key);
+    (criterionId, value) => {
+      setValues((previous) => ({ ...previous, [criterionId]: value }));
+      setFormError("");
+      clearFieldError(criterionId);
+      clearCriterionState(criterionId);
     },
-    [clearFieldError, markCriterionUnsaved],
+    [clearCriterionState, clearFieldError],
   );
 
   const handleCommentChange = useCallback(
-    (key, value) => {
-      setComments((previous) => ({ ...previous, [key]: value }));
-      setSubmitted(null);
-      markCriterionUnsaved(key);
+    (criterionId, value) => {
+      setComments((previous) => ({ ...previous, [criterionId]: value }));
+      setFormError("");
+      clearCriterionState(criterionId);
     },
-    [markCriterionUnsaved],
+    [clearCriterionState],
   );
 
-  const handleSkipChange = useCallback(
-    (key, skipped) => {
-      setSkips((previous) => ({ ...previous, [key]: skipped }));
-      setSubmitted(null);
-      clearFieldError(key);
-      markCriterionUnsaved(key);
+  const validateCriterion = useCallback(
+    (criterion) => {
+      const criterionId = criterion.criterionId;
+      const maxScore = Number(criterion.maxScore);
+      const text = String(values[criterionId] ?? "").trim();
+
+      if (text === "") {
+        return judgeEvaluation.requiredError;
+      }
+
+      const numeric = Number(text);
+      if (!Number.isFinite(numeric)) {
+        return judgeEvaluation.numberError;
+      }
+
+      if (numeric < MIN_SCORE || numeric > maxScore) {
+        return judgeEvaluation.rangeError(maxScore);
+      }
+
+      return null;
     },
-    [clearFieldError, markCriterionUnsaved],
+    [values],
   );
 
-  const validate = useCallback(() => {
-    const errors = {};
-
-    criteria.forEach((criterion) => {
-      const maxScore = Number(criterion.maxScore);
-
-      criterion.questions.forEach((question) => {
-        const key = questionKey(
-          criterion.criterionId,
-          question.criterionQuestionId,
-        );
-
-        if (skips[key]) {
-          return;
-        }
-
-        const text = String(values[key] ?? "").trim();
-
-        if (text === "") {
-          errors[key] = judgeEvaluation.requiredError;
-          return;
-        }
-
-        const numeric = Number(text);
-        if (!Number.isFinite(numeric)) {
-          errors[key] = judgeEvaluation.numberError;
-          return;
-        }
-
-        if (numeric < 0 || numeric > maxScore) {
-          errors[key] = judgeEvaluation.rangeError(maxScore);
-        }
-      });
-    });
-
-    return errors;
-  }, [criteria, skips, values]);
-
-  function buildScores() {
-    const scores = [];
-
-    criteria.forEach((criterion) => {
-      const maxScore = Number(criterion.maxScore);
-
-      criterion.questions.forEach((question) => {
-        const key = questionKey(
-          criterion.criterionId,
-          question.criterionQuestionId,
-        );
-        const comment = String(comments[key] ?? "").trim();
-        const skipped = Boolean(skips[key]);
-
-        scores.push({
-          criterionId: criterion.criterionId,
-          criterionQuestionId: question.criterionQuestionId,
-          maxScore,
-          score: skipped ? 0 : Number(String(values[key] ?? "").trim()),
-          skipped,
-          ...(comment ? { comment } : {}),
-        });
-      });
-    });
-
-    return scores;
+  function isReadyTeam(targetTeamId) {
+    return Boolean(
+      teamStatus === "ready" &&
+        team &&
+        toPositiveInteger(team.teamId) === targetTeamId,
+    );
   }
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    if (isSubmitting || submissionPending.current) {
+  function focusScoreInput(criterionId) {
+    document.getElementById(scoreInputId(criterionId))?.focus();
+  }
+
+  function setCriterionFeedback(criterionId, status, action, message) {
+    setCriterionStates((previous) => ({
+      ...previous,
+      [criterionId]: { status, action, message },
+    }));
+  }
+
+  function applyCriterionResponse(criterionId, result) {
+    if (!result || typeof result !== "object") {
+      return false;
+    }
+
+    const reviewed = reviewCriteria([result]);
+    if (reviewed.error || reviewed.criteria[0].criterionId !== criterionId) {
+      return false;
+    }
+
+    const fresh = reviewed.criteria[0];
+    setCriteria((previous) =>
+      previous.map((item) =>
+        item.criterionId === criterionId
+          ? {
+              ...item,
+              ...fresh,
+              questions:
+                fresh.questions.length > 0 ? fresh.questions : item.questions,
+            }
+          : item,
+      ),
+    );
+
+    return true;
+  }
+
+  async function handleCriterionSubmit(criterion) {
+    const criterionId = criterion.criterionId;
+
+    if (pendingCriteria.current.has(criterionId)) {
       return;
     }
 
-    if (
-      teamStatus !== "ready" ||
-      !team ||
-      toPositiveInteger(team.teamId) !== teamId
-    ) {
+    const submissionTeamId = teamId;
+
+    if (!isReadyTeam(submissionTeamId)) {
       setFormError(judgeEvaluation.teamMismatchError);
       return;
     }
 
     setFormError("");
-    const errors = validate();
-    setFieldErrors(errors);
+    const validationError = validateCriterion(criterion);
 
-    if (Object.keys(errors).length > 0) {
-      const firstErrorKey = Object.keys(errors)[0];
-      document.getElementById(scoreInputId(firstErrorKey))?.focus();
+    if (validationError) {
+      setFieldErrors((previous) => ({
+        ...previous,
+        [criterionId]: validationError,
+      }));
+      focusScoreInput(criterionId);
       return;
     }
 
-    const scores = buildScores();
-    if (scores.length === 0) {
-      setFormError(judgeEvaluation.noScoresError);
+    clearFieldError(criterionId);
+
+    const score = Number(String(values[criterionId] ?? "").trim());
+    const comment = String(comments[criterionId] ?? "").trim();
+    const sequence = nextCriterionSequence(criterionId);
+
+    pendingCriteria.current.add(criterionId);
+    setCriterionPending((previous) => ({
+      ...previous,
+      [criterionId]: true,
+    }));
+    setCriterionFeedback(criterionId, "pending", "submit", "");
+
+    try {
+      const result = await submitCriterionScore({
+        criterionId,
+        teamId: submissionTeamId,
+        score,
+        comment,
+      });
+
+      if (
+        criterionSequences.current.get(criterionId) !== sequence ||
+        teamIdRef.current !== submissionTeamId
+      ) {
+        return;
+      }
+
+      if (!applyCriterionResponse(criterionId, result?.criterion)) {
+        setCriterionFeedback(
+          criterionId,
+          "error",
+          "submit",
+          judgeEvaluation.unexpectedResponseError,
+        );
+        return;
+      }
+
+      setCriterionFeedback(
+        criterionId,
+        "success",
+        "submit",
+        judgeEvaluation.submitSuccess,
+      );
+    } catch (error) {
+      if (
+        criterionSequences.current.get(criterionId) !== sequence ||
+        teamIdRef.current !== submissionTeamId
+      ) {
+        return;
+      }
+
+      setCriterionFeedback(
+        criterionId,
+        "error",
+        "submit",
+        describeApiError(error, judgeEvaluation.criterionErrorTitle),
+      );
+    } finally {
+      clearPendingCriterion(criterionId, sequence);
+    }
+  }
+
+  async function handleCriterionUnpublish(criterion) {
+    const criterionId = criterion.criterionId;
+
+    if (pendingCriteria.current.has(criterionId)) {
       return;
     }
 
     const submissionTeamId = teamId;
-    const sequence = submitSequence.current + 1;
-    submitSequence.current = sequence;
 
-    submissionPending.current = true;
-    setIsSubmitting(true);
-    setSubmitted(null);
-
-    try {
-      const result = await submitScores({
-        teamId: submissionTeamId,
-        scores,
-      });
-
-      if (
-        sequence !== submitSequence.current ||
-        teamIdRef.current !== submissionTeamId
-      ) {
-        return;
-      }
-
-      if (!Array.isArray(result) || result.length === 0) {
-        setFormError(judgeEvaluation.unexpectedResponseError);
-        return;
-      }
-
-      setSavedCriteria((previous) => {
-        const next = new Set(previous);
-        scores.forEach((score) => next.add(score.criterionId));
-        result.forEach((record) => {
-          const recordCriterionId = toPositiveInteger(record?.criterionId);
-          if (recordCriterionId !== null) {
-            next.add(recordCriterionId);
-          }
-        });
-        return next;
-      });
-      setSubmitted({ count: result.length });
-    } catch (error) {
-      if (
-        sequence !== submitSequence.current ||
-        teamIdRef.current !== submissionTeamId
-      ) {
-        return;
-      }
-      setFormError(describeApiError(error, judgeEvaluation.errorTitle));
-    } finally {
-      if (sequence === submitSequence.current) {
-        submissionPending.current = false;
-        setIsSubmitting(false);
-      }
-    }
-  }
-
-  async function handlePublication(criterion, action) {
-    const criterionId = criterion.criterionId;
-    const currentState = publishStates[criterionId];
-
-    if (
-      currentState?.status === "pending" ||
-      publicationPending.current.has(criterionId)
-    ) {
+    if (!isReadyTeam(submissionTeamId)) {
+      setFormError(judgeEvaluation.teamMismatchError);
       return;
     }
 
-    publicationPending.current.add(criterionId);
+    setFormError("");
+    const sequence = nextCriterionSequence(criterionId);
 
-    setPublishStates((previous) => ({
+    pendingCriteria.current.add(criterionId);
+    setCriterionPending((previous) => ({
       ...previous,
-      [criterionId]: { status: "pending", message: "" },
+      [criterionId]: true,
     }));
+    setCriterionFeedback(criterionId, "pending", "unpublish", "");
 
     try {
-      if (action === "publish") {
-        await publishCriterion(criterionId);
-      } else {
-        await unpublishCriterion(criterionId);
-      }
+      const result = await unpublishCriterion(criterionId, {
+        teamId: submissionTeamId,
+      });
 
-      if (teamIdRef.current !== teamId) {
+      if (
+        criterionSequences.current.get(criterionId) !== sequence ||
+        teamIdRef.current !== submissionTeamId
+      ) {
         return;
       }
 
-      setCriteria((previous) =>
-        previous.map((item) => {
-          if (item.criterionId !== criterionId) {
-            return item;
-          }
+      if (!applyCriterionResponse(criterionId, result)) {
+        setCriterionFeedback(
+          criterionId,
+          "error",
+          "unpublish",
+          judgeEvaluation.unexpectedResponseError,
+        );
+        return;
+      }
 
-          const next = {
-            ...item,
-            isPublishedByCaller: action === "publish",
-          };
-
-          if (typeof item.publishedJudgeCount === "number") {
-            if (action === "publish" && item.isPublishedByCaller !== true) {
-              next.publishedJudgeCount = item.publishedJudgeCount + 1;
-            } else if (
-              action === "unpublish" &&
-              item.isPublishedByCaller === true
-            ) {
-              next.publishedJudgeCount = Math.max(
-                0,
-                item.publishedJudgeCount - 1,
-              );
-            }
-          }
-
-          return next;
-        }),
+      setCriterionFeedback(
+        criterionId,
+        "success",
+        "unpublish",
+        judgeEvaluation.unpublishSuccess,
       );
-
-      setPublishStates((previous) => ({
-        ...previous,
-        [criterionId]: {
-          status: "success",
-          message:
-            action === "publish"
-              ? judgeEvaluation.publishSuccess
-              : judgeEvaluation.unpublishSuccess,
-        },
-      }));
-
-      if (challengeId !== null) {
-        const refreshSequence = publishRefreshSequence.current + 1;
-        publishRefreshSequence.current = refreshSequence;
-
-        fetchAllJudgingCriteria({})
-          .then((rawCriteria) => {
-            if (
-              refreshSequence !== publishRefreshSequence.current ||
-              teamIdRef.current !== teamId
-            ) {
-              return;
-            }
-
-            const reviewed = reviewCriteria(rawCriteria, challengeId);
-            if (reviewed.error) {
-              return;
-            }
-
-            setCriteria((previous) =>
-              previous.map((item) => {
-                const fresh = reviewed.criteria.find(
-                  (candidate) => candidate.criterionId === item.criterionId,
-                );
-
-                if (!fresh) {
-                  return item;
-                }
-
-                return {
-                  ...item,
-                  isPublished: fresh.isPublished,
-                  isPublishedByCaller: fresh.isPublishedByCaller,
-                  publishedAt: fresh.publishedAt,
-                  publishedJudgeCount: fresh.publishedJudgeCount,
-                };
-              }),
-            );
-          })
-          .catch(() => {});
-      }
     } catch (error) {
-      if (teamIdRef.current !== teamId) {
+      if (
+        criterionSequences.current.get(criterionId) !== sequence ||
+        teamIdRef.current !== submissionTeamId
+      ) {
         return;
       }
 
-      setPublishStates((previous) => ({
-        ...previous,
-        [criterionId]: {
-          status: "error",
-          message: describeApiError(
-            error,
-            judgeEvaluation.publishErrorTitle,
-          ),
-        },
-      }));
+      setCriterionFeedback(
+        criterionId,
+        "error",
+        "unpublish",
+        describeApiError(error, judgeEvaluation.publishErrorTitle),
+      );
     } finally {
-      publicationPending.current.delete(criterionId);
+      clearPendingCriterion(criterionId, sequence);
     }
   }
 
@@ -725,7 +577,7 @@ export default function JudgeEvaluation() {
     return team.name?.trim() || judgeDashboard.table.fallbackName;
   }, [team, teamStatus]);
 
-  const canScore = criteriaStatus === "ready" && totalQuestions > 0;
+  const canScore = criteriaStatus === "ready" && criteria.length > 0;
 
   return (
     <div className="judge-eval on-dark" ref={pageRef}>
@@ -759,20 +611,6 @@ export default function JudgeEvaluation() {
           </div>
         </header>
 
-        {submitted && (
-          <div className="judge-eval-success" role="status" data-reveal-item>
-            <span className="judge-eval-success-icon" aria-hidden="true">
-              <CheckIcon size={20} />
-            </span>
-            <div>
-              <p className="judge-eval-success-title">{judgeEvaluation.successTitle}</p>
-              <p className="judge-eval-success-text">
-                {judgeEvaluation.successText(submitted.count)}
-              </p>
-            </div>
-          </div>
-        )}
-
         {criteriaStatus === "loading" && (
           <div className="judge-eval-state" role="status" aria-live="polite">
             <span className="team-state-spinner" aria-hidden="true" />
@@ -793,41 +631,43 @@ export default function JudgeEvaluation() {
           </div>
         )}
 
-        {criteriaStatus === "ready" &&
-          criteria.length > 0 &&
-          totalQuestions === 0 && (
-            <div className="judge-eval-state" role="status">
-              <p className="judge-eval-state-text">
-                {"No questions have been added to these criteria yet. Ask an organizer."}
-              </p>
-            </div>
-          )}
-
         {canScore && (
-          <form className="judge-eval-form" onSubmit={handleSubmit} noValidate>
+          <form
+            className="judge-eval-form"
+            onSubmit={(event) => event.preventDefault()}
+            noValidate
+          >
             <h2 className="judge-eval-criteria-title" data-reveal-item>
               {judgeEvaluation.criteriaTitle}
             </h2>
 
             <ul className="judge-eval-criteria">
               {criteria.map((criterion) => {
+                const criterionId = criterion.criterionId;
                 const maxScore = Number(criterion.maxScore);
                 const publishedByCaller = criterion.isPublishedByCaller === true;
                 const publicationKnown =
                   typeof criterion.isPublishedByCaller === "boolean";
-                const hasSavedScores = savedCriteria.has(criterion.criterionId);
-                const publicationState = publishStates[criterion.criterionId];
-                const publishPending = publicationState?.status === "pending";
+                const submissionState = criterionStates[criterionId];
+                const submissionPending =
+                  criterionPending[criterionId] === true;
+                const pendingAction = submissionPending
+                  ? submissionState?.action
+                  : null;
+                const inputId = scoreInputId(criterionId);
+                const commentId = `comment-${inputId}`;
+                const errorId = `${inputId}-error`;
+                const error = fieldErrors[criterionId];
 
                 return (
                   <li
                     className="judge-eval-criterion"
-                    key={criterion.criterionId}
+                    key={criterionId}
                     data-reveal-item
                   >
                     <div className="judge-eval-criterion-head">
                       <h3 className="judge-eval-criterion-name">
-                        {criterion.name || `Criterion ${criterion.criterionId}`}
+                        {criterion.name || `Criterion ${criterionId}`}
                       </h3>
                       {Number.isFinite(Number(criterion.weight)) && (
                         <span className="judge-eval-criterion-weight">
@@ -840,187 +680,159 @@ export default function JudgeEvaluation() {
                       <p className="judge-eval-criterion-desc">{criterion.description}</p>
                     ) : null}
 
-                    {criterion.questions.length === 0 ? (
-                      <p className="judge-eval-question-empty">
-                        {judgeEvaluation.criterionNoQuestions}
-                      </p>
-                    ) : (
-                      <ul className="judge-eval-questions">
-                        {criterion.questions.map((question, index) => {
-                          const key = questionKey(
-                            criterion.criterionId,
-                            question.criterionQuestionId,
-                          );
-                          const inputId = scoreInputId(key);
-                          const commentId = `comment-${inputId}`;
-                          const errorId = `${inputId}-error`;
-                          const error = fieldErrors[key];
-                          const skipped = Boolean(skips[key]);
-
-                          return (
+                    {criterion.questions.length > 0 ? (
+                      <div className="judge-eval-reference">
+                        <p className="judge-eval-reference-label">
+                          {judgeEvaluation.referencePromptsLabel}
+                        </p>
+                        <ul className="judge-eval-reference-list">
+                          {criterion.questions.map((question, index) => (
                             <li
-                              className={
-                                skipped
-                                  ? "judge-eval-question judge-eval-question--skipped"
-                                  : "judge-eval-question"
-                              }
-                              key={key}
+                              className="judge-eval-reference-item"
+                              key={`${criterionId}-${index}`}
                             >
-                              <div className="judge-eval-question-head">
-                                <span
-                                  className="judge-eval-question-index"
-                                  aria-hidden="true"
-                                >
-                                  {index + 1}
-                                </span>
-                                <p className="judge-eval-question-text">
-                                  {question.text?.trim() || `Question ${index + 1}`}
-                                </p>
-                                {skipped && (
-                                  <span className="judge-eval-badge judge-eval-badge--muted">
-                                    {judgeEvaluation.skippedBadge}
-                                  </span>
-                                )}
-                              </div>
-
-                              <div className="judge-eval-fields">
-                                <div className="judge-eval-field">
-                                  <label className="judge-eval-label" htmlFor={inputId}>
-                                    {judgeEvaluation.scoreLabel(maxScore)}
-                                  </label>
-                                  <input
-                                    id={inputId}
-                                    className="judge-eval-input"
-                                    type="number"
-                                    inputMode="decimal"
-                                    min={0}
-                                    max={maxScore}
-                                    step="0.5"
-                                    placeholder={judgeEvaluation.scorePlaceholder}
-                                    value={values[key] ?? ""}
-                                    onChange={(event) =>
-                                      handleValueChange(key, event.target.value)
-                                    }
-                                    disabled={isSubmitting || skipped}
-                                    aria-invalid={Boolean(error)}
-                                    aria-describedby={error ? errorId : undefined}
-                                  />
-                                  {error && (
-                                    <p
-                                      className="judge-eval-error"
-                                      id={errorId}
-                                      role="alert"
-                                    >
-                                      {error}
-                                    </p>
-                                  )}
-                                </div>
-
-                                <div className="judge-eval-field judge-eval-field--comment">
-                                  <label className="judge-eval-label" htmlFor={commentId}>
-                                    {judgeEvaluation.commentLabel}
-                                  </label>
-                                  <input
-                                    id={commentId}
-                                    className="judge-eval-input"
-                                    type="text"
-                                    placeholder={judgeEvaluation.commentPlaceholder}
-                                    value={comments[key] ?? ""}
-                                    onChange={(event) =>
-                                      handleCommentChange(key, event.target.value)
-                                    }
-                                    disabled={isSubmitting || skipped}
-                                  />
-                                </div>
-                              </div>
-
-                              <label className="judge-eval-skip">
-                                <input
-                                  type="checkbox"
-                                  checked={skipped}
-                                  onChange={(event) =>
-                                    handleSkipChange(key, event.target.checked)
-                                  }
-                                  disabled={isSubmitting}
-                                />
-                                <span>{judgeEvaluation.skipLabel}</span>
-                              </label>
+                              <span
+                                className="judge-eval-question-index"
+                                aria-hidden="true"
+                              >
+                                {index + 1}
+                              </span>
+                              <span className="judge-eval-reference-text">
+                                {question.text}
+                              </span>
                             </li>
-                          );
-                        })}
-                      </ul>
-                    )}
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
 
-                    {criterion.questions.length > 0 && (
-                      <div className="judge-eval-criterion-foot">
-                        <div className="judge-eval-publication">
-                          <span className="judge-eval-publication-status">
-                            {publishedByCaller
-                              ? judgeEvaluation.publishedBadge
-                              : publicationKnown
-                                ? judgeEvaluation.notPublishedBadge
-                                : judgeEvaluation.publicationUnknownBadge}
+                    <div className="judge-eval-fields">
+                      <div className="judge-eval-field">
+                        <label className="judge-eval-label" htmlFor={inputId}>
+                          {judgeEvaluation.scoreLabel(maxScore)}
+                        </label>
+                        <input
+                          id={inputId}
+                          className="judge-eval-input"
+                          type="number"
+                          inputMode="decimal"
+                          min={MIN_SCORE}
+                          max={maxScore}
+                          step="0.1"
+                          placeholder={judgeEvaluation.scorePlaceholder}
+                          value={values[criterionId] ?? ""}
+                          onChange={(event) =>
+                            handleValueChange(criterionId, event.target.value)
+                          }
+                          disabled={submissionPending}
+                          aria-invalid={Boolean(error)}
+                          aria-describedby={error ? errorId : undefined}
+                        />
+                        {error && (
+                          <p
+                            className="judge-eval-error"
+                            id={errorId}
+                            role="alert"
+                          >
+                            {error}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="judge-eval-field judge-eval-field--comment">
+                        <label className="judge-eval-label" htmlFor={commentId}>
+                          {judgeEvaluation.commentLabel}
+                        </label>
+                        <input
+                          id={commentId}
+                          className="judge-eval-input"
+                          type="text"
+                          placeholder={judgeEvaluation.commentPlaceholder}
+                          value={comments[criterionId] ?? ""}
+                          onChange={(event) =>
+                            handleCommentChange(criterionId, event.target.value)
+                          }
+                          disabled={submissionPending}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="judge-eval-criterion-foot">
+                      <div className="judge-eval-publication">
+                        <span className="judge-eval-publication-status">
+                          {publishedByCaller
+                            ? judgeEvaluation.publishedBadge
+                            : publicationKnown
+                              ? judgeEvaluation.notPublishedBadge
+                              : judgeEvaluation.publicationUnknownBadge}
+                        </span>
+
+                        {criterion.publishedJudgeCount !== null && (
+                          <span className="judge-eval-publication-count">
+                            {judgeEvaluation.publishedJudgeCount(
+                              criterion.publishedJudgeCount,
+                            )}
                           </span>
+                        )}
 
-                          {criterion.publishedJudgeCount !== null && (
-                            <span className="judge-eval-publication-count">
-                              {judgeEvaluation.publishedJudgeCount(
-                                criterion.publishedJudgeCount,
-                              )}
-                            </span>
-                          )}
+                        {!publishedByCaller && publicationKnown && (
+                          <span className="judge-eval-publication-note">
+                            {judgeEvaluation.publishHint}
+                          </span>
+                        )}
 
-                          {!publishedByCaller && !hasSavedScores && (
-                            <span className="judge-eval-publication-note">
-                              {judgeEvaluation.saveBeforePublish}
-                            </span>
-                          )}
+                        {!publicationKnown && (
+                          <span className="judge-eval-publication-note">
+                            {judgeEvaluation.publicationUnknownNote}
+                          </span>
+                        )}
+                      </div>
 
-                          {!publicationKnown && (
-                            <span className="judge-eval-publication-note">
-                              {judgeEvaluation.publicationUnknownNote}
-                            </span>
-                          )}
-                        </div>
-
-                        {publishedByCaller ? (
+                      <div className="judge-eval-criterion-actions">
+                        {publishedByCaller && (
                           <button
                             type="button"
                             className="btn judge-eval-publish judge-eval-publish--unpublish"
-                            onClick={() =>
-                              handlePublication(criterion, "unpublish")
-                            }
-                            disabled={publishPending || isSubmitting}
+                            onClick={() => handleCriterionUnpublish(criterion)}
+                            disabled={submissionPending}
+                            aria-busy={pendingAction === "unpublish"}
                           >
-                            {publishPending
+                            {pendingAction === "unpublish"
                               ? judgeEvaluation.unpublishing
                               : judgeEvaluation.unpublishAction}
                           </button>
-                        ) : hasSavedScores ? (
-                          <button
-                            type="button"
-                            className="btn judge-eval-publish"
-                            onClick={() => handlePublication(criterion, "publish")}
-                            disabled={publishPending || isSubmitting}
-                          >
-                            {publishPending
-                              ? judgeEvaluation.publishing
-                              : judgeEvaluation.publishAction}
-                          </button>
-                        ) : null}
-                      </div>
-                    )}
+                        )}
 
-                    {publicationState?.message && (
+                        <button
+                          type="button"
+                          className="btn judge-eval-criterion-submit"
+                          onClick={() => handleCriterionSubmit(criterion)}
+                          disabled={submissionPending}
+                          aria-busy={pendingAction === "submit"}
+                        >
+                          {pendingAction === "submit"
+                            ? publishedByCaller
+                              ? judgeEvaluation.resubmittingCriterion
+                              : judgeEvaluation.submittingCriterion
+                            : publishedByCaller
+                              ? judgeEvaluation.resubmitCriterion
+                              : judgeEvaluation.submitCriterion}
+                        </button>
+                      </div>
+                    </div>
+
+                    {submissionState?.message && (
                       <p
                         className={
-                          publicationState.status === "error"
+                          submissionState.status === "error"
                             ? "judge-eval-publish-feedback judge-eval-publish-feedback--error"
                             : "judge-eval-publish-feedback"
                         }
-                        role={publicationState.status === "error" ? "alert" : "status"}
+                        role={
+                          submissionState.status === "error" ? "alert" : "status"
+                        }
                       >
-                        {publicationState.message}
+                        {submissionState.message}
                       </p>
                     )}
                   </li>
@@ -1035,14 +847,6 @@ export default function JudgeEvaluation() {
             )}
 
             <div className="judge-eval-actions">
-              <button
-                type="submit"
-                className="btn judge-eval-submit"
-                disabled={isSubmitting}
-                aria-busy={isSubmitting}
-              >
-                {isSubmitting ? judgeEvaluation.submitting : judgeEvaluation.submit}
-              </button>
               <Link className="judge-eval-cancel" to="/judge">
                 {judgeEvaluation.backToTeam}
               </Link>

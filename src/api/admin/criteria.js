@@ -1,12 +1,13 @@
 /* ==========================================================================
    Admin judging criteria endpoints
    --------------------------------------------------------------------------
-   Criteria reads can be unscoped or scoped to one challenge. Writes use the
-   server's replace-the-whole-question-list semantics; the page always sends
-   the complete list in display order.
+   Criteria are global: the server exposes one five-criterion catalogue and
+   ignores challenge scoping. Writes use the server's replace-the-whole-
+   question-list semantics; questions are reference prompts, never scored.
 
-   Publication calls accept an optional judgeId. When it is omitted the
-   server targets every judge who has scored the criterion.
+   Publication calls accept an optional judgeId and teamId. When both are
+   omitted the server targets every scored judge/team pair. Supplying either
+   one narrows the change to that judge, that team, or the exact pair.
    ========================================================================== */
 
 import { request } from "../client";
@@ -34,8 +35,8 @@ function criterionPath(criterionId) {
   return `/judging/criteria/${encodeURIComponent(String(criterionId))}`;
 }
 
-export function fetchCriteriaAdmin({ challengeId, signal } = {}) {
-  return request(withQuery("/judging/criteria", { challengeId }), {
+export function fetchCriteriaAdmin({ teamId, signal } = {}) {
+  return request(withQuery("/judging/criteria", { teamId }), {
     method: "GET",
     auth: true,
     signal,
@@ -65,9 +66,12 @@ export function deleteCriterion(criterionId) {
   });
 }
 
-export function publishCriterionAdmin(criterionId, { judgeId } = {}) {
+export function publishCriterionAdmin(
+  criterionId,
+  { judgeId, teamId } = {},
+) {
   return request(
-    withQuery(`${criterionPath(criterionId)}/publish`, { judgeId }),
+    withQuery(`${criterionPath(criterionId)}/publish`, { judgeId, teamId }),
     {
       method: "POST",
       auth: true,
@@ -75,9 +79,12 @@ export function publishCriterionAdmin(criterionId, { judgeId } = {}) {
   );
 }
 
-export function unpublishCriterionAdmin(criterionId, { judgeId } = {}) {
+export function unpublishCriterionAdmin(
+  criterionId,
+  { judgeId, teamId } = {},
+) {
   return request(
-    withQuery(`${criterionPath(criterionId)}/unpublish`, { judgeId }),
+    withQuery(`${criterionPath(criterionId)}/unpublish`, { judgeId, teamId }),
     {
       method: "POST",
       auth: true,

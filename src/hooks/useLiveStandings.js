@@ -7,7 +7,7 @@ import {
   STANDINGS_UPDATED_EVENT,
 } from "../realtime/judgingHub";
 
-const POLL_INTERVAL = 30_000;
+const POLL_INTERVAL = 3_000;
 const REFRESH_COALESCE_DELAY = 250;
 
 /**
@@ -30,6 +30,7 @@ export default function useLiveStandings() {
   const requestIdRef = useRef(0);
   const hubRevisionRef = useRef(0);
   const refreshTimerRef = useRef(null);
+  const isFetchingRef = useRef(false);
 
   const applyStandings = useCallback((payload) => {
     setStandings(payload);
@@ -49,6 +50,7 @@ export default function useLiveStandings() {
 
     abortRef.current = controller;
     requestIdRef.current = requestId;
+    isFetchingRef.current = true;
 
     try {
       const payload = await fetchStandings({ signal: controller.signal });
@@ -74,17 +76,27 @@ export default function useLiveStandings() {
       setError(cause?.message || "Could not load the live standings.");
       setPhase((current) => (current === "ready" ? current : "error"));
     } finally {
-      if (requestId === requestIdRef.current && !controller.signal.aborted) {
-        setIsRefreshing(false);
+      if (requestId === requestIdRef.current) {
+        isFetchingRef.current = false;
+        if (!controller.signal.aborted) {
+          setIsRefreshing(false);
+        }
       }
     }
   }, [applyStandings]);
 
-  const refresh = useCallback(() => {
-    setIsRefreshing(true);
-    setPhase((current) => (current === "ready" ? current : "loading"));
-    loadStandings();
-  }, [loadStandings]);
+  const refresh = useCallback(
+    ({ force = false } = {}) => {
+      if (isFetchingRef.current && !force) {
+        return;
+      }
+
+      setIsRefreshing(true);
+      setPhase((current) => (current === "ready" ? current : "loading"));
+      loadStandings();
+    },
+    [loadStandings],
+  );
 
   const scheduleRefresh = useCallback(() => {
     if (refreshTimerRef.current) {
@@ -93,59 +105,22 @@ export default function useLiveStandings() {
 
     refreshTimerRef.current = setTimeout(() => {
       refreshTimerRef.current = null;
-      refresh();
+      refresh({ force: true });
     }, REFRESH_COALESCE_DELAY);
   }, [refresh]);
 
   useEffect(() => {
-    if (abortRef.current) {
-      abortRef.current.abort();
-    }
-
-    const controller = new AbortController();
-    const requestId = requestIdRef.current + 1;
-    const hubRevision = hubRevisionRef.current;
-
-    abortRef.current = controller;
-    requestIdRef.current = requestId;
-
-    fetchStandings({ signal: controller.signal })
-      .then((payload) => {
-        if (
-          requestId !== requestIdRef.current ||
-          hubRevision !== hubRevisionRef.current
-        ) {
-          return;
-        }
-
-        if (!isStandingsPayload(payload)) {
-          throw new Error("The standings feed returned an unexpected response.");
-        }
-
-        applyStandings(payload);
-      })
-      .catch((cause) => {
-        if (
-          cause?.name === "AbortError" ||
-          requestId !== requestIdRef.current ||
-          hubRevision !== hubRevisionRef.current
-        ) {
-          return;
-        }
-
-        setError(cause?.message || "Could not load the live standings.");
-        setPhase((current) => (current === "ready" ? current : "error"));
-      })
-      .finally(() => {
-        if (requestId === requestIdRef.current && !controller.signal.aborted) {
-          setIsRefreshing(false);
-        }
-      });
+    const timer = setTimeout(() => {
+      loadStandings();
+    }, 0);
 
     return () => {
-      controller.abort();
+      clearTimeout(timer);
+      if (abortRef.current) {
+        abortRef.current.abort();
+      }
     };
-  }, [applyStandings]);
+  }, [loadStandings]);
 
   useEffect(() => {
     let disposed = false;
@@ -228,6 +203,7 @@ export default function useLiveStandings() {
       if (!disposed) {
         clearRetry();
         setConnectionState("reconnecting");
+        scheduleRefresh();
       }
     };
 
@@ -244,6 +220,7 @@ export default function useLiveStandings() {
       if (!disposed) {
         setConnectionState("disconnected");
         scheduleReconnect();
+        scheduleRefresh();
       }
     };
 
@@ -273,7 +250,10 @@ export default function useLiveStandings() {
   }, [applyStandings, scheduleRefresh]);
 
   useEffect(() => {
-    if (connectionState !== "disconnected") {
+    if (
+      connectionState !== "disconnected" &&
+      connectionState !== "reconnecting"
+    ) {
       return undefined;
     }
 

@@ -1,21 +1,21 @@
 /* ==========================================================================
    Judging endpoints
    --------------------------------------------------------------------------
-   GET  /judging/criteria?challengeId={challengeId}
-        Authenticated. Returns the criteria catalogue for one challenge,
-        including each criterion's reference questions.
+   GET  /judging/criteria?teamId={teamId}
+        Authenticated. Returns the five global criteria with publication state
+        scoped to the caller's judge profile and the requested team. Each
+        criterion is scored once per team, from 1.0 to its max score. Questions
+        are reference prompts only and are never scored.
 
-   POST /judging/scores
-        { teamId, scores: [{ criterionId, criterionQuestionId, name,
-                             maxScore, score, skipped, comment }] }
-        Catalogue-question scores always carry the criterion id *and* the
-        matching criterionQuestionId; ad-hoc questions use a null
-        criterionQuestionId plus a name and maxScore.
+   POST /judging/scores/{criterionId}
+        { teamId, score, comment? }
+        Saves and publishes the caller's score for one criterion and team.
+        Re-submitting replaces the previous score and republishes it.
 
-   POST /judging/criteria/{criterionId}/publish
-   POST /judging/criteria/{criterionId}/unpublish
-        Publication is per judge. Both calls are idempotent and affect only
-        the caller's saved scores.
+   POST /judging/criteria/{criterionId}/publish?teamId={teamId}
+   POST /judging/criteria/{criterionId}/unpublish?teamId={teamId}
+        Publication is per judge, team and criterion. Both calls are idempotent
+        and affect only the caller's saved score for that team.
 
    `judgeId` is deliberately never sent: the backend derives the judge from
    the Bearer token.
@@ -28,39 +28,40 @@ function positiveInteger(value) {
   return Number.isInteger(numeric) && numeric > 0 ? numeric : null;
 }
 
-/**
- * Criteria are always challenge-scoped. Refusing to call the endpoint without
- * a valid challenge id prevents an unscoped response being presented as if it
- * belonged to the selected team.
- */
-export function fetchAllJudgingCriteria({ signal } = {}) {
-  return request("/judging/criteria", {
-    method: "GET",
-    auth: true,
-    signal,
-  });
+function hasValue(value) {
+  return value !== undefined && value !== null && value !== "";
 }
 
-export function fetchJudgingCriteria({ challengeId, signal } = {}) {
-  const numericChallengeId = positiveInteger(challengeId);
+function withQuery(path, params) {
+  const query = new URLSearchParams();
 
-  if (numericChallengeId === null) {
+  Object.entries(params).forEach(([key, value]) => {
+    if (hasValue(value)) {
+      query.set(key, String(value));
+    }
+  });
+
+  const suffix = query.toString();
+  return suffix ? `${path}?${suffix}` : path;
+}
+
+export function fetchJudgingCriteria({ teamId, signal } = {}) {
+  const numericTeamId = positiveInteger(teamId);
+
+  if (hasValue(teamId) && numericTeamId === null) {
     return Promise.reject(
-      new ApiError("A valid challenge is required to load judging criteria.", {
+      new ApiError("A valid team is required to load judging criteria.", {
         status: 400,
-        code: "challenge.invalid",
+        code: "team.invalid",
       }),
     );
   }
 
-  return request(
-    `/judging/criteria?challengeId=${encodeURIComponent(numericChallengeId)}`,
-    {
-      method: "GET",
-      auth: true,
-      signal,
-    },
-  );
+  return request(withQuery("/judging/criteria", { teamId: numericTeamId }), {
+    method: "GET",
+    auth: true,
+    signal,
+  });
 }
 
 export function submitScores({ teamId, scores }) {
@@ -71,44 +72,111 @@ export function submitScores({ teamId, scores }) {
   });
 }
 
-export function publishCriterion(criterionId) {
+export function submitCriterionScore({
+  criterionId,
+  teamId,
+  score,
+  comment,
+} = {}) {
   const numericCriterionId = positiveInteger(criterionId);
+  const numericTeamId = positiveInteger(teamId);
 
   if (numericCriterionId === null) {
     return Promise.reject(
-      new ApiError("A valid criterion is required to publish scores.", {
+      new ApiError("A valid criterion is required to submit a score.", {
         status: 400,
         code: "criterion.invalid",
       }),
     );
   }
 
+  if (numericTeamId === null) {
+    return Promise.reject(
+      new ApiError("A valid team is required to submit a score.", {
+        status: 400,
+        code: "team.invalid",
+      }),
+    );
+  }
+
+  if (!hasValue(score) || !Number.isFinite(Number(score))) {
+    return Promise.reject(
+      new ApiError("A valid score is required to submit a score.", {
+        status: 400,
+        code: "score.invalid",
+      }),
+    );
+  }
+
+  const trimmedComment =
+    typeof comment === "string" ? comment.trim() : "";
+
   return request(
-    `/judging/criteria/${encodeURIComponent(numericCriterionId)}/publish`,
+    `/judging/scores/${encodeURIComponent(numericCriterionId)}`,
     {
       method: "POST",
       auth: true,
+      body: {
+        teamId: numericTeamId,
+        score: Number(score),
+        ...(trimmedComment ? { comment: trimmedComment } : {}),
+      },
     },
   );
 }
 
-export function unpublishCriterion(criterionId) {
+function requirePublicationTarget(criterionId, teamId, action) {
   const numericCriterionId = positiveInteger(criterionId);
+  const numericTeamId = positiveInteger(teamId);
 
   if (numericCriterionId === null) {
-    return Promise.reject(
-      new ApiError("A valid criterion is required to unpublish scores.", {
-        status: 400,
-        code: "criterion.invalid",
-      }),
-    );
+    return {
+      error: new ApiError(
+        `A valid criterion is required to ${action} scores.`,
+        { status: 400, code: "criterion.invalid" },
+      ),
+    };
   }
 
-  return request(
-    `/judging/criteria/${encodeURIComponent(numericCriterionId)}/unpublish`,
-    {
-      method: "POST",
-      auth: true,
-    },
-  );
+  if (numericTeamId === null) {
+    return {
+      error: new ApiError(`A valid team is required to ${action} scores.`, {
+        status: 400,
+        code: "team.invalid",
+      }),
+    };
+  }
+
+  return {
+    path: withQuery(
+      `/judging/criteria/${encodeURIComponent(numericCriterionId)}/${action}`,
+      { teamId: numericTeamId },
+    ),
+  };
+}
+
+export function publishCriterion(criterionId, { teamId } = {}) {
+  const target = requirePublicationTarget(criterionId, teamId, "publish");
+
+  if (target.error) {
+    return Promise.reject(target.error);
+  }
+
+  return request(target.path, {
+    method: "POST",
+    auth: true,
+  });
+}
+
+export function unpublishCriterion(criterionId, { teamId } = {}) {
+  const target = requirePublicationTarget(criterionId, teamId, "unpublish");
+
+  if (target.error) {
+    return Promise.reject(target.error);
+  }
+
+  return request(target.path, {
+    method: "POST",
+    auth: true,
+  });
 }

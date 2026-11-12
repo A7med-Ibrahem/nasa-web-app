@@ -5,8 +5,10 @@
    always API responses; this module contains no fixtures.
    ========================================================================== */
 
-function publishScope(judgeLabel) {
-  return judgeLabel ? `for ${judgeLabel}` : "for all judges who have scored";
+function publishScope(judgeLabel, teamLabel) {
+  const judge = judgeLabel ? `for ${judgeLabel}` : "for all judges who have scored";
+  const team = teamLabel ? `on ${teamLabel}` : "across all teams";
+  return `${judge} ${team}`;
 }
 
 export const adminData = {
@@ -109,7 +111,6 @@ export const adminData = {
     criteria: {
       total: (count) => `Total: ${count}`,
       published: (count) => `Published: ${count}`,
-      global: (count) => `Global: ${count}`,
     },
     questions: {
       total: (count) => `Total: ${count}`,
@@ -544,24 +545,19 @@ export const adminData = {
     eyebrow: "Judging",
     title: "Judging criteria",
     description:
-      "Maintain the scoring criteria and the question prompts judges see. Every save sends the complete criterion, including its question list.",
+      "Maintain the global scoring criteria and the reference prompts judges see. Every save sends the complete criterion, including its prompt list. Scores are always 1.0 to 5.0 and the weight is fixed by the server.",
     add: "Add criterion",
-    filter: {
-      challenge: "Challenge",
-      hint: "Some criteria are not linked to a challenge. Choose All challenges to include them in this list.",
-    },
     summary: {
       count: (count) =>
         `${count} ${count === 1 ? "criterion" : "criteria"} shown.`,
-      totalWeight: (total) =>
-        `Total weight: ${total}. This is shown for reference only; the server does not enforce it.`,
+      totalWeight: (total) => `Total weight: ${total}.`,
     },
     table: {
       caption: "Judging criteria returned by the server",
       name: "Name",
       weight: "Weight",
       maxScore: "Max score",
-      questions: "Questions",
+      questions: "Reference prompts",
       published: "Published judges",
       status: "Status",
       actions: "Actions",
@@ -578,72 +574,56 @@ export const adminData = {
     states: {
       loading: "Loading criteria…",
       errorTitle: "Could not load criteria",
-      empty: "No criteria match this challenge.",
       emptyAll: "No criteria were returned by the server.",
-      challengesLoading: "Loading challenges…",
-      challengesError: "Could not load challenges.",
-      challengesEmpty:
-        "The server returned no challenges. Criteria can still be saved without a challenge.",
     },
     form: {
       createTitle: "Add criterion",
       editTitle: "Edit criterion",
       description:
-        "Saving replaces the whole criterion and rebuilds its question numbers from the displayed order.",
+        "Saving replaces the whole criterion and rebuilds its prompt numbers from the displayed order. Scores and weight are fixed by the server.",
       name: "Name",
       nameHint: "Required. Shown to judges.",
       descriptionLabel: "Description",
       descriptionHint: "Optional plain text.",
-      maxScore: "Maximum score",
-      maxScoreHint: "The highest score a judge can enter for this criterion.",
-      weight: "Weight",
-      weightHint:
-        "Used by standings calculations. The list shows the total weight for reference.",
-      challenge: "Challenge",
-      challengeHint: "Choose No challenge for a criterion shared across challenges.",
-      noChallenge: "No challenge (global)",
-      questions: "Questions",
+      questions: "Reference prompts",
       questionsHint:
-        "Add prompts in the order they should appear. Empty questions are not saved.",
-      addQuestion: "Add question",
-      questionListLabel: "Criterion questions",
-      questionLabel: (index) => `Question ${index}`,
-      questionTextLabel: (index) => `Question ${index} text`,
-      questionPlaceholder: "Enter the question prompt",
+        "Add guidance in the order it should appear. Prompts are shown to judges for reference only and are not scored.",
+      addQuestion: "Add prompt",
+      questionListLabel: "Criterion reference prompts",
+      questionLabel: (index) => `Prompt ${index}`,
+      questionTextLabel: (index) => `Prompt ${index} text`,
+      questionPlaceholder: "Enter the reference prompt",
       moveUp: "Move up",
       moveDown: "Move down",
       removeQuestion: "Remove",
-      questionMoveUp: (index) => `Move question ${index} up`,
-      questionMoveDown: (index) => `Move question ${index} down`,
-      questionRemove: (index) => `Remove question ${index}`,
+      questionMoveUp: (index) => `Move prompt ${index} up`,
+      questionMoveDown: (index) => `Move prompt ${index} down`,
+      questionRemove: (index) => `Remove prompt ${index}`,
       noQuestions:
-        "No questions yet. Add a prompt if judges should answer this criterion question by question.",
+        "No reference prompts yet. Add guidance if judges should see extra context for this criterion.",
       questionAdded: (count) =>
-        `Question added. ${count} question${count === 1 ? "" : "s"} in the list.`,
+        `Prompt added. ${count} prompt${count === 1 ? "" : "s"} in the list.`,
       questionRemoved: (index, count) =>
-        `Question ${index} removed. ${count} question${
+        `Prompt ${index} removed. ${count} prompt${
           count === 1 ? " remains" : "s remain"
         }.`,
       questionMoved: (from, to) =>
-        `Question ${from} moved to position ${to}.`,
+        `Prompt ${from} moved to position ${to}.`,
       editWarning:
-        "If judges already scored this criterion, changing or removing a question may affect those scores. The server can reject the save and still keep other changes, so refresh after a failed save.",
+        "Changing or removing a reference prompt does not change existing scores. If the server rejects the save, refresh and check whether other changes were saved.",
       submitCreate: "Create criterion",
       submitEdit: "Save changes",
       saving: "Saving…",
       hint: "Fields marked with an asterisk are required.",
       validation: {
         nameRequired: "Enter a criterion name.",
-        maxScoreInvalid: "Enter a maximum score of 0 or more.",
-        weightInvalid: "Enter a weight of 0 or more.",
-        questionEmpty: "Enter text for every question before saving.",
-        challengeInvalid: "Choose a valid challenge.",
+        questionEmpty: "Enter text for every prompt before saving.",
       },
     },
     confirm: {
       deleteTitle: (name) => `Delete ${name}?`,
       deleteMessage: (name, questionCount, publishedCount) =>
-        `Delete ${name} permanently? This removes ${questionCount} question${
+        `Delete ${name} permanently? This removes ${questionCount} reference prompt${
           questionCount === 1 ? "" : "s"
         } and every score recorded against this criterion. ${publishedCount} judge${
           publishedCount === 1 ? "" : "s"
@@ -662,10 +642,8 @@ export const adminData = {
         "This criterion no longer exists. Refresh the list.",
       criterion_invalid:
         "Some criterion details are not valid. Check the form.",
-      challenge_not_found:
-        "That challenge no longer exists. Refresh the list and choose another.",
       question_invalid:
-        "At least one question is not valid. Check the question text.",
+        "At least one reference prompt is not valid. Check the prompt text.",
       judging_no_scores:
         "This criterion has no scores to publish for that judge yet.",
       updateConflict:
@@ -678,14 +656,16 @@ export const adminData = {
     eyebrow: "Judging",
     title: "Publish criteria",
     description:
-      "Publish or unpublish scored criteria for every judge who scored or for one judge at a time. Changes are reflected in live standings immediately.",
-    note: "Publishing affects the live standings immediately. Choose All judges who scored to target everyone who has saved a score for the criterion, or choose one judge to change only that judge's scores.",
+      "Publish or unpublish global criteria for every judge who scored or for one judge at a time, optionally narrowed to a single team. Changes are reflected in live standings immediately.",
+    note: "Publishing affects the live standings immediately. Leave both filters on their All options to target every scored judge/team pair, or narrow the change by judge, team, or both.",
     filters: {
-      challenge: "Challenge",
+      scopeLabel: "Publication scope",
       judge: "Judge",
       allJudges: "All judges who scored",
-      judgeHint:
-        "With All judges who scored, the request omits judgeId. Choosing one judge sends that judgeId only.",
+      team: "Team",
+      allTeams: "All teams",
+      scopeHint:
+        "Blank judge and team target every scored pair. A judge or team alone narrows to that judge or team; choosing both targets only that pair.",
     },
     table: {
       caption: "Criteria and their publication state",
@@ -706,46 +686,45 @@ export const adminData = {
     states: {
       loading: "Loading criteria…",
       errorTitle: "Could not load criteria",
-      empty: "No criteria match this challenge.",
       emptyAll: "No criteria were returned by the server.",
       judgesLoading: "Loading judges…",
       judgesError: "Could not load judges.",
       judgesEmpty:
         "No judge accounts with a judge id were returned. Publishing still targets every judge who scored.",
-      challengesLoading: "Loading challenges…",
-      challengesError: "Could not load challenges.",
-      challengesEmpty:
-        "The server returned no challenges. Choose All challenges to include unscoped criteria.",
+      teamsLoading: "Loading teams…",
+      teamsError: "Could not load teams.",
+      teamsEmpty:
+        "No teams were returned by the server. Publishing still targets every scored team.",
     },
     judgeOption: (name, username) =>
       username ? `${name || "Judge"} (${username})` : name || "Judge",
+    teamOption: (name, username) =>
+      username ? `${name || "Team"} (@${username})` : name || "Team",
     confirm: {
       publishTitle: "Publish this criterion?",
       unpublishTitle: "Unpublish this criterion?",
-      scope: (judgeLabel) =>
-        judgeLabel
-          ? `for ${judgeLabel}`
-          : "for all judges who have scored",
-      publishMessage: (name, judgeLabel) =>
-        `Publish ${name || "this criterion"} ${publishScope(judgeLabel)}? Live standings change immediately.`,
-      unpublishMessage: (name, judgeLabel) =>
-        `Unpublish ${name || "this criterion"} ${publishScope(judgeLabel)}? Live standings change immediately.`,
+      publishMessage: (name, judgeLabel, teamLabel) =>
+        `Publish ${name || "this criterion"} ${publishScope(judgeLabel, teamLabel)}? Live standings change immediately.`,
+      unpublishMessage: (name, judgeLabel, teamLabel) =>
+        `Unpublish ${name || "this criterion"} ${publishScope(judgeLabel, teamLabel)}? Live standings change immediately.`,
       confirmPublish: "Publish now",
       confirmUnpublish: "Unpublish now",
     },
     notice: {
-      published: (name, judgeLabel) =>
-        `${name || "Criterion"} was published ${publishScope(judgeLabel)}.`,
-      unpublished: (name, judgeLabel) =>
-        `${name || "Criterion"} was unpublished ${publishScope(judgeLabel)}.`,
+      published: (name, judgeLabel, teamLabel) =>
+        `${name || "Criterion"} was published ${publishScope(judgeLabel, teamLabel)}.`,
+      unpublished: (name, judgeLabel, teamLabel) =>
+        `${name || "Criterion"} was unpublished ${publishScope(judgeLabel, teamLabel)}.`,
     },
     errors: {
       judging_no_scores:
-        "There are no saved scores to publish for that judge. Nothing was changed.",
+        "There are no saved scores to publish for that scope. Nothing was changed.",
       criterion_not_found:
         "This criterion no longer exists. Refresh the list.",
       judge_not_found:
         "That judge no longer exists. Refresh the list and choose another.",
+      team_not_found:
+        "That team no longer exists. Refresh the list and choose another.",
       publishGeneric: "The criterion could not be published.",
       unpublishGeneric: "The criterion could not be unpublished.",
     },

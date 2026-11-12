@@ -164,11 +164,6 @@ export default function AdminOverview() {
     () => criteriaRows.filter((row) => row?.isPublished).length,
     [criteriaRows],
   );
-  const criteriaGlobal = useMemo(
-    () => criteriaRows.filter((row) => row?.challengeId === null || row?.challengeId === undefined).length,
-    [criteriaRows],
-  );
-
   const questionsPublished = useMemo(
     () => questionsRows.filter((row) => row?.isPublished).length,
     [questionsRows],
@@ -240,7 +235,6 @@ export default function AdminOverview() {
           <CardState status={criteriaState.status} error={criteriaState.error} onRetry={() => setReloadKey((c) => c + 1)}>
             <div>{copy.criteria.total(criteriaRows.length)}</div>
             <div>{copy.criteria.published(criteriaPublished)}</div>
-            <div>{copy.criteria.global(criteriaGlobal)}</div>
           </CardState>
         </OverviewCard>
 
