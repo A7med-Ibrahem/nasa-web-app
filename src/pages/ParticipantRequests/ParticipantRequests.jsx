@@ -151,6 +151,16 @@ export default function ParticipantRequests() {
       debounceTimer = setTimeout(() => load(), 300);
     }
 
+    function joinTeamGroup(target) {
+      return target
+        .invoke("JoinTeamGroup")
+        .catch(() => {
+          if (mounted) {
+            setHubPushedEvent(false);
+          }
+        });
+    }
+
     const start = async () => {
       try {
         connection = createHub("/hubs/requests");
@@ -167,6 +177,7 @@ export default function ParticipantRequests() {
           if (mounted) {
             setHubPushedEvent(false);
           }
+          joinTeamGroup(connection);
         });
         connection.onclose(() => {
           if (mounted) {
@@ -175,6 +186,9 @@ export default function ParticipantRequests() {
         });
 
         await connection.start();
+        if (mounted) {
+          await joinTeamGroup(connection);
+        }
       } catch {
         if (mounted) {
           setHubPushedEvent(false);

@@ -94,9 +94,9 @@ export const currentEvent = {
   title: "NASA Space Apps Hurghada 2026",
   description:
     "Join us for an exciting journey of innovation, collaboration, and impact. Take on real NASA challenges and help build a better future — on Earth and beyond.",
-  startDate: "2026-04-24",
-  endDate: "2026-04-26",
-  dateLabel: "April 24 – 26, 2026",
+  startDate: "2026-11-14",
+  endDate: "2026-11-15",
+  dateLabel: "November 14 – 15, 2026",
   location: "Hurghada, Egypt",
   /* The brand logo comes from site.js so the asset has a single definition. */
   logo: site.logo,
