@@ -107,6 +107,14 @@ export const judgeEvaluation = {
   criteriaMalformedText:
     "The server returned criteria without the fields required for safe scoring.",
   criteriaEmpty: "No judging criteria are available yet.",
+  challengeReferenceTitle: "Challenge Reference Q&A",
+  challengeReferenceDescription:
+    "Background questions and answers for this team's challenge. For judge context only; they are never scored.",
+  challengeReferenceLoading: "Loading challenge reference Q&A...",
+  challengeReferenceEmpty:
+    "No reference Q&A has been added for this challenge.",
+  challengeReferenceError: "Challenge reference Q&A could not be loaded.",
+  challengeReferenceAnswerLabel: "Answer",
   referencePromptsLabel: "Reference prompts",
   scoreLabel: (maxScore) => `Score (1.0 – ${maxScore})`,
   scorePlaceholder: "1.0",

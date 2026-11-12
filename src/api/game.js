@@ -15,3 +15,15 @@ export function submitAnswer(questionId, answer) {
 export function fetchGameLeaderboard({ signal } = {}) {
   return request("/game/leaderboard", { method: "GET", signal });
 }
+
+export function fetchGameState({ signal } = {}) {
+  return request("/game/state", { method: "GET", signal });
+}
+
+export function startGame() {
+  return request("/game/start", { method: "POST", auth: true });
+}
+
+export function stopGame() {
+  return request("/game/stop", { method: "POST", auth: true });
+}

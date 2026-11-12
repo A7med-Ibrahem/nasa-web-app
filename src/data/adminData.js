@@ -64,6 +64,7 @@ export const adminData = {
         to: "/admin/criteria/publish",
       },
       { id: "questions", label: "Questions", to: "/admin/questions" },
+      { id: "game", label: "Game", to: "/admin/game" },
       { id: "season-media", label: "Season media", to: "/admin/season-media" },
       { id: "challenges", label: "Challenges", to: "/admin/challenges" },
       { id: "teams", label: "Teams", to: "/admin/teams" },
@@ -727,6 +728,52 @@ export const adminData = {
         "That team no longer exists. Refresh the list and choose another.",
       publishGeneric: "The criterion could not be published.",
       unpublishGeneric: "The criterion could not be unpublished.",
+    },
+  },
+  game: {
+    eyebrow: "Competition",
+    title: "Game control",
+    description:
+      "Start the live quiz when participants should begin answering, and end it to close question access immediately.",
+    statusLabel: "Game status",
+    status: {
+      started: "Live",
+      stopped: "Not started",
+      startedHint:
+        "Published questions are available to participants. Ending the game closes access immediately.",
+      stoppedHint:
+        "Participants cannot answer questions until the game is started.",
+    },
+    start: "Start game",
+    stop: "End game",
+    startedAt: "Started",
+    stoppedAt: "Ended",
+    updatedAt: "Last updated",
+    detailsLabel: "Game timestamps",
+    detailsHint: "Timestamps are shown in your local time.",
+    states: {
+      loading: "Loading game state…",
+      errorTitle: "Could not load game state",
+    },
+    notice: {
+      started:
+        "The game is live. Published questions are now available to participants.",
+      stopped:
+        "The game has ended. Participants can no longer answer questions.",
+    },
+    confirm: {
+      startTitle: "Start the game?",
+      startMessage:
+        "Participants will be able to answer published questions immediately.",
+      stopTitle: "End the game?",
+      stopMessage:
+        "Participants will lose access to questions immediately. This can be reversed by starting the game again.",
+      confirmStart: "Start now",
+      confirmStop: "End game",
+    },
+    errors: {
+      start: "The game could not be started.",
+      stop: "The game could not be ended.",
     },
   },
   questions: {

@@ -44,3 +44,22 @@ export function fetchChallenge(challengeId, { signal } = {}) {
 
   return request(`/challenges/${id}`, { signal });
 }
+
+/**
+ * Staff-only challenge reference Q&A. The backend stores these as unpublished
+ * questions of type `reference`, so participants never see them.
+ */
+export function fetchChallengeReferenceQuestions(challengeId, { signal } = {}) {
+  const id = parseChallengeId(challengeId);
+
+  if (id === null) {
+    return Promise.reject(
+      new ApiError("Challenge was not found.", {
+        status: 404,
+        code: "challenge.not_found",
+      }),
+    );
+  }
+
+  return request(`/questions?challengeId=${id}`, { signal, auth: true });
+}

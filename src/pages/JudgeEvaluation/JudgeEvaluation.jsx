@@ -3,12 +3,13 @@ import { Link, useParams } from "react-router-dom";
 import "./JudgeEvaluation.css";
 
 import { ApiError } from "../../api/client";
+import { fetchChallengeReferenceQuestions } from "../../api/challenges";
 import {
   fetchJudgingCriteria,
   submitCriterionScore,
   unpublishCriterion,
 } from "../../api/judging";
-import { fetchTeam } from "../../api/teams";
+import { fetchTeam, getTeamChallengeId } from "../../api/teams";
 import { judgeDashboard, judgeEvaluation } from "../../data/judgeDashboard";
 import { site } from "../../data/site";
 import { useRevealGroup } from "../../hooks/useReveal";
@@ -107,6 +108,31 @@ function reviewCriteria(rawCriteria) {
   return { criteria, error: null };
 }
 
+function reviewReferenceQuestions(rawQuestions) {
+  if (!Array.isArray(rawQuestions)) {
+    return [];
+  }
+
+  return rawQuestions
+    .filter((rawQuestion) => rawQuestion && typeof rawQuestion === "object")
+    .filter(
+      (rawQuestion) =>
+        String(rawQuestion.type ?? "").trim().toLowerCase() === "reference",
+    )
+    .map((rawQuestion, index) => {
+      const questionId = Number(rawQuestion.questionId);
+
+      return {
+        key: Number.isFinite(questionId) ? questionId : `reference-${index}`,
+        order: Number.isFinite(questionId) ? questionId : index,
+        text: String(rawQuestion.text ?? "").trim(),
+        answer: String(rawQuestion.correctAnswer ?? "").trim(),
+      };
+    })
+    .filter((item) => item.text && item.answer)
+    .sort((first, second) => first.order - second.order);
+}
+
 function describeApiError(error, fallback) {
   if (!(error instanceof ApiError)) {
     return fallback;
@@ -140,6 +166,11 @@ export default function JudgeEvaluation() {
 
   const [team, setTeam] = useState(null);
   const [teamStatus, setTeamStatus] = useState("loading");
+
+  const [challengeQuestions, setChallengeQuestions] = useState([]);
+  const [challengeQuestionsStatus, setChallengeQuestionsStatus] =
+    useState("idle");
+  const [challengeQuestionsError, setChallengeQuestionsError] = useState("");
 
   const [values, setValues] = useState({});
   const [comments, setComments] = useState({});
@@ -190,6 +221,54 @@ export default function JudgeEvaluation() {
         setTeam(detail);
         setTeamStatus("ready");
         phase = "criteria";
+
+        const challengeId = getTeamChallengeId(detail);
+
+        if (challengeId === null) {
+          setChallengeQuestions([]);
+          setChallengeQuestionsStatus("empty");
+          setChallengeQuestionsError("");
+        } else {
+          setChallengeQuestions([]);
+          setChallengeQuestionsStatus("loading");
+          setChallengeQuestionsError("");
+
+          fetchChallengeReferenceQuestions(challengeId, {
+            signal: controller.signal,
+          })
+            .then((rawQuestions) => {
+              if (
+                sequence !== loadSequence.current ||
+                controller.signal.aborted
+              ) {
+                return;
+              }
+
+              const reviewed = reviewReferenceQuestions(rawQuestions);
+              setChallengeQuestions(reviewed);
+              setChallengeQuestionsStatus(
+                reviewed.length > 0 ? "ready" : "empty",
+              );
+            })
+            .catch((error) => {
+              if (
+                error?.name === "AbortError" ||
+                controller.signal.aborted ||
+                sequence !== loadSequence.current
+              ) {
+                return;
+              }
+
+              setChallengeQuestions([]);
+              setChallengeQuestionsStatus("error");
+              setChallengeQuestionsError(
+                describeApiError(
+                  error,
+                  judgeEvaluation.challengeReferenceError,
+                ),
+              );
+            });
+        }
 
         const rawCriteria = await fetchJudgingCriteria({
           teamId,
@@ -249,6 +328,9 @@ export default function JudgeEvaluation() {
     const resetTimer = setTimeout(() => {
       setTeam(null);
       setTeamStatus("loading");
+      setChallengeQuestions([]);
+      setChallengeQuestionsStatus("idle");
+      setChallengeQuestionsError("");
       setCriteria([]);
       setCriteriaStatus("loading");
       setCriteriaError("");
@@ -610,6 +692,77 @@ export default function JudgeEvaluation() {
             </span>
           </div>
         </header>
+
+        {challengeQuestionsStatus !== "idle" && (
+          <section
+            className="judge-eval-challenge-reference"
+            aria-labelledby="challenge-reference-title"
+            data-reveal-item
+          >
+            <h2
+              className="judge-eval-challenge-reference-title"
+              id="challenge-reference-title"
+            >
+              {judgeEvaluation.challengeReferenceTitle}
+            </h2>
+            <p className="judge-eval-challenge-reference-desc">
+              {judgeEvaluation.challengeReferenceDescription}
+            </p>
+
+            {challengeQuestionsStatus === "loading" && (
+              <div
+                className="judge-eval-challenge-reference-state"
+                role="status"
+                aria-live="polite"
+              >
+                <span className="team-state-spinner" aria-hidden="true" />
+                <span>{judgeEvaluation.challengeReferenceLoading}</span>
+              </div>
+            )}
+
+            {challengeQuestionsStatus === "error" && (
+              <p
+                className="judge-eval-challenge-reference-error"
+                role="alert"
+              >
+                {challengeQuestionsError}
+              </p>
+            )}
+
+            {challengeQuestionsStatus === "empty" && (
+              <p className="judge-eval-challenge-reference-empty">
+                {judgeEvaluation.challengeReferenceEmpty}
+              </p>
+            )}
+
+            {challengeQuestionsStatus === "ready" && (
+              <ul className="judge-eval-challenge-reference-list">
+                {challengeQuestions.map((item, index) => (
+                  <li
+                    className="judge-eval-challenge-reference-item"
+                    key={item.key}
+                  >
+                    <div className="judge-eval-challenge-reference-question">
+                      <span
+                        className="judge-eval-question-index"
+                        aria-hidden="true"
+                      >
+                        {index + 1}
+                      </span>
+                      <span>{item.text}</span>
+                    </div>
+                    <div className="judge-eval-challenge-reference-answer">
+                      <span className="judge-eval-challenge-reference-answer-label">
+                        {judgeEvaluation.challengeReferenceAnswerLabel}
+                      </span>
+                      <span>{item.answer}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        )}
 
         {criteriaStatus === "loading" && (
           <div className="judge-eval-state" role="status" aria-live="polite">

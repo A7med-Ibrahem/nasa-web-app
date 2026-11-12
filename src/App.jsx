@@ -63,6 +63,7 @@ const AdminPublishing = lazy(() =>
 const AdminQuestions = lazy(() =>
   import("./pages/AdminQuestions/AdminQuestions"),
 );
+const AdminGame = lazy(() => import("./pages/AdminGame/AdminGame"));
 const AdminSeasonMedia = lazy(() =>
   import("./pages/AdminSeasonMedia/AdminSeasonMedia"),
 );
@@ -138,6 +139,7 @@ function App() {
             <Route path="criteria" element={<AdminCriteria />} />
             <Route path="criteria/publish" element={<AdminPublishing />} />
             <Route path="questions" element={<AdminQuestions />} />
+            <Route path="game" element={<AdminGame />} />
             <Route path="season-media" element={<AdminSeasonMedia />} />
             <Route path="challenges" element={<AdminChallenges />} />
             <Route path="teams" element={<AdminTeams />} />

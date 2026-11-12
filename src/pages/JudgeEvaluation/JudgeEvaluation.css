@@ -112,6 +112,108 @@
   font-weight: 600;
 }
 
+/* ---------- Challenge reference Q&A ---------- */
+
+.judge-eval-challenge-reference {
+  margin-top: 26px;
+  padding: clamp(18px, 2.4vw, 24px);
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-lg);
+  background-color: var(--card-navy);
+}
+
+.judge-eval-challenge-reference-title {
+  color: var(--blue-strong);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.judge-eval-challenge-reference-desc {
+  margin-top: 8px;
+  color: var(--muted-on-dark);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.judge-eval-challenge-reference-state {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  color: var(--muted-on-dark);
+  font-size: 13.5px;
+}
+
+.judge-eval-challenge-reference-error {
+  margin-top: 16px;
+  color: #ffd9d9;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.judge-eval-challenge-reference-empty {
+  margin-top: 16px;
+  color: var(--muted-on-dark);
+  font-size: 13.5px;
+}
+
+.judge-eval-challenge-reference-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.judge-eval-challenge-reference-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-on-dark);
+}
+
+.judge-eval-challenge-reference-item:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.judge-eval-challenge-reference-question {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.judge-eval-challenge-reference-question > span:last-child {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.judge-eval-challenge-reference-answer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 34px;
+  color: var(--muted-on-dark);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.judge-eval-challenge-reference-answer-label {
+  color: var(--muted-on-dark-alt);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 /* ---------- Success banner ---------- */
 
 .judge-eval-success {
