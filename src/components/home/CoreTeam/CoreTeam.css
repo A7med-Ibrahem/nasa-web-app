@@ -45,10 +45,11 @@
 
 .team-avatar {
   display: inline-flex;
+  flex: none;
   align-items: center;
   justify-content: center;
   width: 108px;
-  height: 108px;
+  aspect-ratio: 1 / 1;
   margin-bottom: 16px;
   overflow: hidden;
   border: 1px solid rgba(140, 180, 255, 0.22);
@@ -57,9 +58,11 @@
 }
 
 .team-avatar-image {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
 }
 
 .team-avatar-placeholder {

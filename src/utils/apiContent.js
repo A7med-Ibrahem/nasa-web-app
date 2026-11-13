@@ -189,12 +189,30 @@ function compareMedia(a, b) {
   });
 }
 
+const CORE_TEAM_ROLE_RANKS = new Map([
+  ["local lead", 0],
+  ["highboard", 1],
+  ["developer", 2],
+  ["mentor", 3],
+  ["media", 4],
+  ["marketing", 5],
+  ["pr", 6],
+  ["organizer", 7],
+]);
+
+function coreTeamRoleRank(memberType) {
+  const key = textValue(memberType).toLowerCase();
+  return CORE_TEAM_ROLE_RANKS.has(key)
+    ? CORE_TEAM_ROLE_RANKS.get(key)
+    : Number.POSITIVE_INFINITY;
+}
+
 /**
  * Normalises the public core-team response without inventing members.
  *
- * The API already returns active members only, in display order. Records
- * without a usable name are dropped rather than rendered with placeholder
- * identities; a missing photo or member type simply removes that element.
+ * Records without a usable name are dropped rather than rendered with
+ * placeholder identities; a missing photo or member type simply removes that
+ * element. Members are ordered by role priority, then by name.
  */
 export function normaliseCoreTeamMembers(members) {
   if (!Array.isArray(members)) {
@@ -213,7 +231,25 @@ export function normaliseCoreTeamMembers(members) {
       memberType: textValue(member.memberType ?? member.role),
       photo: member.photo ?? member.image ?? null,
     }))
-    .filter((member) => member.name);
+    .filter((member) => member.name)
+    .sort((a, b) => {
+      const rankA = coreTeamRoleRank(a.memberType);
+      const rankB = coreTeamRoleRank(b.memberType);
+
+      if (rankA !== rankB) {
+        if (rankA === Number.POSITIVE_INFINITY) {
+          return 1;
+        }
+        if (rankB === Number.POSITIVE_INFINITY) {
+          return -1;
+        }
+        return rankA - rankB;
+      }
+
+      return a.name.localeCompare(b.name, undefined, {
+        sensitivity: "base",
+      });
+    });
 }
 
 /** Orders season media newest season first, then by `displayOrder` ascending. */
