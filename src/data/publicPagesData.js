@@ -1,9 +1,8 @@
 /* ==========================================================================
-   Public pages copy — /teams, /teams/:teamId, /sponsors, /season-media,
-   /leaderboard/game
+   Public pages copy — /teams, /teams/:teamId, /sponsors, /season-media
    --------------------------------------------------------------------------
-   UI chrome only. Every team, sponsor, media item and leaderboard row comes
-   from the public API; nothing here is a record or a stand-in for one.
+   UI chrome only. Every team, sponsor and media item comes from the public
+   API; nothing here is a record or a stand-in for one.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -138,41 +137,3 @@ export const seasonMediaPage = {
   },
 };
 
-/* --------------------------------------------------------------------------
-   Game leaderboard (/leaderboard/game)
-   -------------------------------------------------------------------------- */
-
-export const gameLeaderboardPage = {
-  hero: {
-    eyebrow: "NASA SPACE APPS HURGHADA",
-    title: "Game Leaderboard",
-    description:
-      "Correct answers and points for every team that has submitted an answer.",
-  },
-  table: {
-    caption: "Game leaderboard",
-    columns: {
-      rank: "Rank",
-      team: "Team",
-      correct: "Correct Answers",
-      points: "Points",
-    },
-    tied: "Tied",
-    ownTeam: "Your team",
-  },
-  refresh: "Refresh",
-  refreshing: "Refreshing...",
-  lastUpdated: "Last updated",
-  pollingNote:
-    "Refreshes every 20 seconds while this tab is visible. No realtime connection is used.",
-  staleError: "Couldn't refresh the leaderboard. Showing the last successful update.",
-  states: {
-    loading: "Loading leaderboard...",
-    errorTitle: "Couldn't load the leaderboard",
-    retry: "Retry",
-  },
-  empty: {
-    title: "No answers submitted yet",
-    description: "Teams will appear here after they submit their first answer.",
-  },
-};

@@ -13,7 +13,7 @@ export function submitAnswer(questionId, answer) {
 }
 
 export function fetchGameLeaderboard({ signal } = {}) {
-  return request("/game/leaderboard", { method: "GET", signal });
+  return request("/game/leaderboard", { method: "GET", auth: true, signal });
 }
 
 export function fetchGameState({ signal } = {}) {

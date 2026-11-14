@@ -65,6 +65,11 @@ export const adminData = {
       },
       { id: "questions", label: "Questions", to: "/admin/questions" },
       { id: "game", label: "Game", to: "/admin/game" },
+      {
+        id: "game-leaderboard",
+        label: "Game leaderboard",
+        to: "/admin/game/leaderboard",
+      },
       { id: "season-media", label: "Season media", to: "/admin/season-media" },
       { id: "challenges", label: "Challenges", to: "/admin/challenges" },
       { id: "teams", label: "Teams", to: "/admin/teams" },
@@ -774,6 +779,48 @@ export const adminData = {
     errors: {
       start: "The game could not be started.",
       stop: "The game could not be ended.",
+    },
+  },
+  gameLeaderboard: {
+    eyebrow: "Competition",
+    title: "Game leaderboard",
+    description:
+      "Live quiz results for every team. This board is visible to administrators only.",
+    refresh: "Refresh",
+    refreshing: "Refreshing…",
+    lastUpdated: "Last updated",
+    liveNote:
+      "Updates live as participants submit answers. A 20-second poll keeps the board fresh if the realtime connection drops.",
+    table: {
+      caption: "Game leaderboard",
+      columns: {
+        rank: "Rank",
+        team: "Team",
+        correct: "Correct answers",
+        points: "Points",
+      },
+      tied: "Tied",
+    },
+    feed: {
+      title: "Recent answers",
+      empty: "Answers will appear here as teams submit them.",
+      correct: "Correct",
+      incorrect: "Incorrect",
+      question: "Question",
+      team: "Team",
+      points: "Points",
+    },
+    staleError:
+      "Couldn't refresh the leaderboard. Showing the last successful update.",
+    states: {
+      loading: "Loading leaderboard…",
+      errorTitle: "Could not load the game leaderboard",
+      retry: "Retry",
+    },
+    empty: {
+      title: "No answers submitted yet",
+      description:
+        "Teams will appear here after they submit their first answer.",
     },
   },
   questions: {

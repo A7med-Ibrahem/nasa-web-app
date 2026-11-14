@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./AdminQuestions.css";
 
 import {
@@ -13,6 +13,13 @@ import { fetchChallenges } from "../../api/challenges";
 import { adminData } from "../../data/adminData";
 import { site } from "../../data/site";
 import useApiResource from "../../hooks/useApiResource";
+import useGameHub from "../../hooks/useGameHub";
+import {
+  GAME_STATE_CHANGED_EVENT,
+  QUESTION_RELEASED_EVENT,
+  QUESTION_RETRACTED_EVENT,
+  QUESTION_UPDATED_EVENT,
+} from "../../realtime/gameHub";
 import { codeKey, loadMessage, statusCode } from "../../utils/adminErrors";
 import { formatNumber, parseIntegerInput, toFiniteNumber } from "../../utils/numbers";
 
@@ -559,6 +566,35 @@ export default function AdminQuestions() {
   function refreshList() {
     setReloadKey((current) => current + 1);
   }
+
+  const refreshTimerRef = useRef(null);
+
+  const scheduleRefresh = useCallback(() => {
+    if (refreshTimerRef.current) {
+      clearTimeout(refreshTimerRef.current);
+    }
+
+    refreshTimerRef.current = setTimeout(() => {
+      refreshTimerRef.current = null;
+      setReloadKey((current) => current + 1);
+    }, 400);
+  }, []);
+
+  useEffect(
+    () => () => {
+      if (refreshTimerRef.current) {
+        clearTimeout(refreshTimerRef.current);
+      }
+    },
+    [],
+  );
+
+  useGameHub("admin", {
+    [GAME_STATE_CHANGED_EVENT]: scheduleRefresh,
+    [QUESTION_RELEASED_EVENT]: scheduleRefresh,
+    [QUESTION_UPDATED_EVENT]: scheduleRefresh,
+    [QUESTION_RETRACTED_EVENT]: scheduleRefresh,
+  });
 
   function updateChallenge(next) {
     setChallengeId(next);

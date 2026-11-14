@@ -9,7 +9,6 @@ import RequireAuth from "./auth/RequireAuth";
 import DataState from "./components/common/DataState/DataState";
 import ChallengeDetails from "./pages/ChallengeDetails/ChallengeDetails";
 import Challenges from "./pages/Challenges/Challenges";
-import GameLeaderboard from "./pages/GameLeaderboard/GameLeaderboard";
 import Home from "./pages/Home/Home";
 import LiveStandings from "./pages/LiveStandings/LiveStandings";
 import Login from "./pages/Login/Login";
@@ -64,6 +63,9 @@ const AdminQuestions = lazy(() =>
   import("./pages/AdminQuestions/AdminQuestions"),
 );
 const AdminGame = lazy(() => import("./pages/AdminGame/AdminGame"));
+const AdminGameLeaderboard = lazy(() =>
+  import("./pages/AdminGameLeaderboard/AdminGameLeaderboard"),
+);
 const AdminSeasonMedia = lazy(() =>
   import("./pages/AdminSeasonMedia/AdminSeasonMedia"),
 );
@@ -112,7 +114,6 @@ function App() {
           <Route path="teams/:teamId" element={<TeamDetails />} />
           <Route path="sponsors" element={<Sponsors />} />
           <Route path="season-media" element={<SeasonMedia />} />
-          <Route path="leaderboard/game" element={<GameLeaderboard />} />
           <Route path="live-standings" element={<LiveStandings />} />
 
           {/* Any signed-in role may change its own password. */}
@@ -140,6 +141,7 @@ function App() {
             <Route path="criteria/publish" element={<AdminPublishing />} />
             <Route path="questions" element={<AdminQuestions />} />
             <Route path="game" element={<AdminGame />} />
+            <Route path="game/leaderboard" element={<AdminGameLeaderboard />} />
             <Route path="season-media" element={<AdminSeasonMedia />} />
             <Route path="challenges" element={<AdminChallenges />} />
             <Route path="teams" element={<AdminTeams />} />

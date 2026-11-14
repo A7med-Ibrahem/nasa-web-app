@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "./AdminGame.css";
 
 import { fetchGameState, startGame, stopGame } from "../../api/game";
 import { adminData } from "../../data/adminData";
 import { site } from "../../data/site";
-import useApiResource from "../../hooks/useApiResource";
+import useGameHub from "../../hooks/useGameHub";
+import { GAME_STATE_CHANGED_EVENT } from "../../realtime/gameHub";
 import { loadMessage } from "../../utils/adminErrors";
 import { formatDateTime } from "../../utils/dates";
 
@@ -17,22 +18,87 @@ import DataState from "../../components/common/DataState/DataState";
 export default function AdminGame() {
   const copy = adminData.game;
 
-  const gameResource = useApiResource(fetchGameState);
+  const [gameState, setGameState] = useState(null);
+  const [status, setStatus] = useState("loading");
+  const [error, setError] = useState(null);
   const [confirmAction, setConfirmAction] = useState(null);
   const [actionBusy, setActionBusy] = useState(false);
   const [actionError, setActionError] = useState("");
   const [notice, setNotice] = useState(null);
 
+  const controllerRef = useRef(null);
+
   useEffect(() => {
     document.title = `${copy.title} — ${site.name}`;
   }, [copy.title]);
 
-  const gameState = gameResource.data;
+  const load = useCallback(async () => {
+    if (controllerRef.current) {
+      controllerRef.current.abort();
+    }
+
+    const controller = new AbortController();
+    controllerRef.current = controller;
+
+    try {
+      const result = await fetchGameState({ signal: controller.signal });
+      setGameState(result ?? null);
+      setError(null);
+      setStatus("ready");
+    } catch (cause) {
+      if (cause?.name === "AbortError") {
+        return;
+      }
+
+      setError(cause);
+      setStatus("error");
+    }
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    const controller = new AbortController();
+    controllerRef.current = controller;
+
+    fetchGameState({ signal: controller.signal })
+      .then((result) => {
+        if (cancelled) {
+          return;
+        }
+        setGameState(result ?? null);
+        setError(null);
+        setStatus("ready");
+      })
+      .catch((cause) => {
+        if (cancelled || cause?.name === "AbortError") {
+          return;
+        }
+        setError(cause);
+        setStatus("error");
+      });
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, []);
+
+  const refresh = useCallback(() => {
+    setStatus("loading");
+    load();
+  }, [load]);
+
+  useGameHub("admin", {
+    [GAME_STATE_CHANGED_EVENT]: (next) => {
+      setGameState(next ?? null);
+      setError(null);
+      setStatus("ready");
+    },
+  });
+
   const isStarted = gameState?.isStarted === true;
-  const canStart =
-    gameResource.status === "ready" && Boolean(gameState) && !isStarted;
-  const canStop =
-    gameResource.status === "ready" && Boolean(gameState) && isStarted;
+  const canStart = status === "ready" && Boolean(gameState) && !isStarted;
+  const canStop = status === "ready" && Boolean(gameState) && isStarted;
 
   function openConfirm(action) {
     setActionError("");
@@ -57,16 +123,23 @@ export default function AdminGame() {
     setActionError("");
 
     try {
-      if (action === "start") {
-        await startGame();
-        setNotice({ tone: "success", message: copy.notice.started });
+      const nextState =
+        action === "start" ? await startGame() : await stopGame();
+
+      if (nextState) {
+        setGameState(nextState);
+        setError(null);
+        setStatus("ready");
       } else {
-        await stopGame();
-        setNotice({ tone: "success", message: copy.notice.stopped });
+        load();
       }
 
+      setNotice({
+        tone: "success",
+        message:
+          action === "start" ? copy.notice.started : copy.notice.stopped,
+      });
       setConfirmAction(null);
-      gameResource.retry();
     } catch (cause) {
       setActionError(
         loadMessage(
@@ -113,7 +186,7 @@ export default function AdminGame() {
         />
       ) : null}
 
-      {gameResource.status === "loading" ? (
+      {status === "loading" ? (
         <DataState
           status="loading"
           title={copy.states.loading}
@@ -122,21 +195,24 @@ export default function AdminGame() {
         />
       ) : null}
 
-      {gameResource.status === "error" ? (
+      {status === "error" ? (
         <DataState
           status="error"
           title={copy.states.errorTitle}
-          message={loadMessage(gameResource.error, copy.states.errorTitle)}
+          message={loadMessage(error, copy.states.errorTitle)}
           retryLabel={adminData.common.retry}
-          onRetry={gameResource.retry}
+          onRetry={refresh}
           tone="dark"
           compact
         />
       ) : null}
 
-      {gameResource.status === "ready" && gameState ? (
+      {status === "ready" && gameState ? (
         <>
-          <section className="admin-game-panel" aria-labelledby="admin-game-status">
+          <section
+            className="admin-game-panel"
+            aria-labelledby="admin-game-status"
+          >
             <div className="admin-game-status">
               <p className="admin-game-label" id="admin-game-status">
                 {copy.statusLabel}
@@ -169,7 +245,7 @@ export default function AdminGame() {
               <button
                 type="button"
                 className="btn btn--ghost-dark"
-                onClick={gameResource.retry}
+                onClick={refresh}
               >
                 {adminData.common.refresh}
               </button>

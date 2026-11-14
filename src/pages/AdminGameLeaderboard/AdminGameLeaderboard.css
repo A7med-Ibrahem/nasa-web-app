@@ -1,16 +1,8 @@
-/* ==========================================================================
-   Game leaderboard page — toolbar, table and small-screen cards
-   ========================================================================== */
-
-.game-leaderboard-page {
-  background-color: var(--navy-950);
+.admin-game-board {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
-
-.game-leaderboard-section {
-  padding-top: clamp(28px, 4vw, 44px);
-}
-
-/* ---------- Toolbar ---------- */
 
 .game-board-toolbar {
   display: flex;
@@ -48,13 +40,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-.game-board-refresh:disabled {
-  opacity: 0.6;
-  cursor: progress;
-}
-
-/* ---------- Stale-refresh notice ---------- */
-
 .game-board-notice {
   display: flex;
   flex-wrap: wrap;
@@ -80,8 +65,6 @@
   text-decoration: underline;
   cursor: pointer;
 }
-
-/* ---------- Table card ---------- */
 
 .game-board-card {
   overflow: hidden;
@@ -141,16 +124,6 @@
   background-color: rgba(255, 255, 255, 0.035);
 }
 
-/* A participant's own team is marked with the same blue language the rest of
-   the app uses for a current/selected item. */
-.game-board-table tbody tr.is-current .game-board-cell {
-  background-color: rgba(74, 158, 255, 0.1);
-}
-
-.game-board-table tbody tr.is-current .game-board-cell:first-child {
-  box-shadow: inset 2px 0 0 var(--blue-strong);
-}
-
 .game-board-cell--rank {
   width: 96px;
   white-space: nowrap;
@@ -181,34 +154,12 @@
   min-width: 0;
 }
 
-.game-board-team-link,
 .game-board-team-name {
   color: #ffffff;
   font-size: 15px;
   font-weight: 600;
   line-height: 1.35;
   overflow-wrap: anywhere;
-  text-decoration: none;
-}
-
-.game-board-team-link:hover {
-  color: var(--blue-strong);
-  text-decoration: underline;
-}
-
-.game-board-own {
-  display: inline-block;
-  margin-left: 10px;
-  padding: 2px 8px;
-  border: 1px solid rgba(93, 156, 255, 0.4);
-  border-radius: var(--radius-pill);
-  color: var(--blue-strong);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  line-height: 1.4;
-  text-transform: uppercase;
-  white-space: nowrap;
 }
 
 .game-board-cell--number {
@@ -224,7 +175,89 @@
   color: var(--blue-strong);
 }
 
-/* ---------- Small screens: one card per row ---------- */
+.admin-game-feed {
+  margin-top: clamp(24px, 3vw, 34px);
+}
+
+.admin-game-feed-title {
+  margin-bottom: 12px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.admin-game-feed-empty {
+  padding: 18px;
+  border: 1px dashed var(--border-on-dark);
+  border-radius: var(--radius-md);
+  color: var(--muted-on-dark-alt);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.admin-game-feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-game-feed-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 18px;
+  padding: 12px 16px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-md);
+  background-color: var(--card-navy);
+}
+
+.admin-game-feed-main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  min-width: 0;
+}
+
+.admin-game-feed-team {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.admin-game-feed-meta {
+  color: var(--muted-on-dark-alt);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-game-feed-side {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+.admin-game-feed-points {
+  color: var(--blue-strong);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-game-feed-time {
+  color: var(--muted-on-dark);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
 
 @media (max-width: 680px) {
   .game-board-toolbar {
@@ -281,18 +314,6 @@
     background-color: var(--card-navy);
   }
 
-  .game-board-table tbody tr.is-current {
-    border-color: rgba(93, 156, 255, 0.45);
-  }
-
-  .game-board-table tbody tr.is-current .game-board-cell {
-    background-color: transparent;
-  }
-
-  .game-board-table tbody tr.is-current .game-board-cell:first-child {
-    box-shadow: none;
-  }
-
   .game-board-cell {
     display: flex;
     align-items: center;
@@ -330,21 +351,5 @@
 
   .game-board-cell--number {
     text-align: right;
-  }
-
-  .game-board-own {
-    margin-left: 8px;
-  }
-}
-
-@media (max-width: 420px) {
-  .game-board-actions {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .game-board-refresh {
-    width: 100%;
   }
 }

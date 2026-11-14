@@ -31,14 +31,15 @@
 - Lazy routes for role-gated areas; public pages eager
 - Errors normalized via codeKey/statusCode/loadMessage
 - Images via toImageSrc; no dangerouslySetInnerHTML
+- Game realtime: /hubs/game (GameHub). Admins join via JoinAdminGroup, participants via JoinParticipantGroup. Events: GameStateChanged, QuestionReleased, QuestionUpdated, QuestionRetracted, AnswerSubmitted, LeaderboardUpdated. GET /game/leaderboard is AdminOnly; the participant answer response exposes only submittedAt.
 
 ## Route table by role
-Public: /, /challenges, /challenges/:id, /teams, /teams/:id, /sponsors, /season-media, /leaderboard/game, /live-standings, /login
+Public: /, /challenges, /challenges/:id, /teams, /teams/:id, /sponsors, /season-media, /live-standings, /login
 Any authenticated role: /account/password
 Judge (auth): /judge, /judge/teams/:teamId/evaluate
 Participant (auth): /participant, /participant/dashboard, /participant/game, /participant/requests
 Staff (auth): /staff, /staff/requests, /staff/attendance, /staff/attendance/check-in (CoreTeam), /staff/teams
-Admin (auth): /admin (Overview), /admin/staff, /admin/sponsors, /admin/criteria, /admin/criteria/publish, /admin/questions, /admin/season-media, /admin/challenges, /admin/teams
+Admin (auth): /admin (Overview), /admin/staff, /admin/sponsors, /admin/criteria, /admin/criteria/publish, /admin/questions, /admin/game, /admin/game/leaderboard, /admin/season-media, /admin/challenges, /admin/teams
 
 ## Dev seed account names only (no passwords)
 admin, coreteam, judge, judge2, judge2b, judge2c, judge2d, omar.dev, sara.mentor, admin2
